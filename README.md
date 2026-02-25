@@ -1,23 +1,28 @@
-# 📱 Fridge Manager App
+# Fridge Manager App
 
-## 📌 Obiettivo del progetto
-L’obiettivo del progetto è la realizzazione di un’applicazione mobile per la gestione e l’organizzazione degli alimenti all’interno di un frigorifero condiviso.
+## Obiettivo del progetto
 
-## 🎯 Funzionalità principali
+Il progetto prevede la realizzazione di un’applicazione mobile dedicata alla gestione e all’organizzazione degli alimenti all’interno di un frigorifero condiviso.  
+L’obiettivo è offrire uno strumento pratico per monitorare le scorte, migliorare la collaborazione tra più utenti e ridurre gli sprechi alimentari.
+
+## Funzionalità principali
+
 L’applicazione è progettata per:
 
-- 🥗 Ridurre gli sprechi alimentari  
-- 👥 Facilitare la condivisione degli alimenti tra più utenti  
-- 🧊 Migliorare l’organizzazione del frigorifero  
-- 🍳 Supportare la creazione di ricette basate sugli alimenti disponibili  
+- Ridurre gli sprechi alimentari attraverso un migliore controllo delle scadenze e delle quantità disponibili  
+- Facilitare la condivisione degli alimenti tra più utenti  
+- Migliorare l’organizzazione degli spazi e delle categorie di prodotti  
+- Supportare la creazione di ricette basate sugli ingredienti presenti  
 
-## 🏠 Contesti di utilizzo
-Il sistema è pensato per essere utilizzato in diversi scenari, tra cui:
+## Contesti di utilizzo
+
+Il sistema è pensato per essere adottato in diversi contesti, tra cui:
 
 - Abitazioni condivise  
-- Famiglie  
+- Nuclei familiari  
 - Residenze universitarie  
-- Uffici  
+- Ambienti di lavoro  
 
-## 🚀 Visione
-L’obiettivo è fornire uno strumento semplice e intuitivo che aiuti gruppi di persone a gestire in modo collaborativo gli alimenti, ottimizzando i consumi e riducendo gli sprechi.
+## Visione
+
+L’obiettivo è fornire uno strumento semplice, intuitivo e affidabile che consenta a gruppi di persone di gestire in modo collaborativo gli alimenti, ottimizzando i consumi e promuovendo una gestione più consapevole delle risorse.
