@@ -29,11 +29,10 @@ CREATE TABLE fridge_members (
 );
 
 -- 4. FRIDGE_INVITATIONS Table (Fridge Service - Invitations)
--- Gestisce gli inviti inviati dagli admin agli altri utenti per unirsi a un frigo
 CREATE TABLE fridge_invitations (
-    inviter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Utente (admin) che manda l'invito
-    invitee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Utente che riceve l'invito
-    fridge_id UUID NOT NULL REFERENCES fridges(id) ON DELETE CASCADE, -- Frigo a cui si viene invitati
+    inviter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    invitee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    fridge_id UUID NOT NULL REFERENCES fridges(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (inviter_id, invitee_id, fridge_id)
 );
