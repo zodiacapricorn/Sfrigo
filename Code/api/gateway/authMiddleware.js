@@ -1,8 +1,6 @@
 // authMiddleware.js
 const admin = require('firebase-admin');
 
-// Inizializza Firebase Admin con le credenziali del tuo progetto
-// Assicurati di avere il file serviceAccountKey.json scaricato da Firebase
 const serviceAccount = require('./serviceAccountKey.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -21,8 +19,7 @@ const verifyToken = async (req, res, next) => {
     // Valida il JWT con Firebase
     const decodedToken = await admin.auth().verifyIdToken(token);
     
-    // Inserisce i dati dell'utente nella richiesta
-    // uid è l'identificativo univoco di Firebase (che useremo come UUID in Postgres)
+    // uid è l'identificativo univoco di Firebase (id univoco saalvato il prostgres)
     req.user = {
       id: decodedToken.uid,
       email: decodedToken.email
