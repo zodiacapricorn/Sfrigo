@@ -1,2 +1,3 @@
-Deployment/kube/*
+Deployment/kube/
 .env
+node_modules/
