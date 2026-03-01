@@ -1,9 +1,8 @@
 -- 1. USERS Table (User Service)
 -- Maps the authenticated user from Firebase to our internal system.
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    firebase_uid VARCHAR(128) UNIQUE NOT NULL, -- ID from Firebase JWT
-    username VARCHAR(50) UNIQUE NOT NULL,      -- Unique username for invitations
+    id VARCHAR(128) PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL, 
     email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
