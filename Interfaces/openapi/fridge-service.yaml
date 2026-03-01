@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: PAC Internal API - Fridge Service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082
+    description: Local Internal Server
+
+components:
+  parameters:
+    XUserIdHeader:
+      name: X-User-Id
+      in: header
+      required: true
+      description: ID univoco dell'utente (Firebase UID) validato dall'API Gateway.
+      schema:
+        type: string
+        example: "5kySMzsb6dbrE3Jqd7lNQhZulI23"
+    XUserEmailHeader:
+      name: X-User-Email
+      in: header
+      required: false
+      description: Email dell'utente validata dall'API Gateway.
+      schema:
+        type: string
+        example: "test1@example.com"
+
+  schemas:
+    Fridge:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        owner_id:
+          type: string
+          description: L'ID dell'utente creatore
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - owner_id
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          description: MongoDB ObjectId
+        fridge_id:
+          type: string
+          format: uuid
+        owner_id:
+          type: string
+        name:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        expiration_date:
+          type: string
+          format: date-time
+      required:
+        - id
+        - fridge_id
+        - owner_id
+        - name
+
+paths:
+  /fridges:
+    get:
+      summary: Lista dei frigoriferi dell'utente
+      description: Restituisce i frigoriferi di cui l'utente è ADMIN o MEMBER.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fridge'
+    post:
+      summary: Creazione Frigorifero
+      description: Crea un nuovo frigorifero. L'utente specificato in X-User-Id diventa OWNER e ADMIN.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        '201':
+          description: Frigorifero creato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fridge'
+
+  /fridges/{fridgeId}/invites:
+    post:
+      summary: Invita utente al frigorifero
+      description: Crea un invito. Solo un ADMIN del frigorifero può farlo.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+        - name: fridgeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username dell'utente da invitare
+              required:
+                - username
+      responses:
+        '201':
+          description: Invito creato con successo
+        '403':
+          description: Forbidden - L'utente non è admin del frigorifero
+        '404':
+          description: Not Found - Utente da invitare o frigorifero non trovato
+
+  /fridges/{fridgeId}/items:
+    get:
+      summary: Visualizzazione Inventario
+      description: Recupera gli item da MongoDB. Richiede di essere membro del frigorifero in PostgreSQL.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+        - name: fridgeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista degli alimenti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+    post:
+      summary: Aggiunta Alimento
+      description: Salva l'alimento su MongoDB.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+        - name: fridgeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                quantity:
+                  type: number
+                unit:
+                  type: string
+                expiration_date:
+                  type: string
+                  format: date-time
+              required:
+                - name
+      responses:
+        '201':
+          description: Alimento aggiunto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /fridges/{fridgeId}/items/{itemId}:
+    delete:
+      summary: Rimozione Alimento
+      description: Elimina un record da MongoDB.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+        - name: fridgeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: MongoDB ObjectId
+      responses:
+        '204':
+          description: Alimento rimosso
