@@ -26,3 +26,16 @@ Il sistema è pensato per essere adottato in diversi contesti, tra cui:
 ## Visione
 
 L’obiettivo è fornire uno strumento semplice, intuitivo e affidabile che consenta a gruppi di persone di gestire in modo collaborativo gli alimenti, ottimizzando i consumi e promuovendo una gestione più consapevole delle risorse.
+
+## Avvio programma
+**Clonare la repo**
+- Aprire terminale `git clone https://github.com/zodiacapricorn/Sfrigo.git`
+- Spostarsi nella cartella `cd Sfrigo\Code\sfrigo`
+
+**Controlla che node sia installato**
+- Inserisci `node -v` nel terminale, se non viene restituita la versione di node allora bisogna installarlo. (sito: https://nodejs.org, dopodiche riavvia il terminale e riesegui il comando).
+
+**Installa dependencies e avvio**
+- Apri il terminale e inserisci `npm install`, dopodiché inserire `npm run dev`
+
+
