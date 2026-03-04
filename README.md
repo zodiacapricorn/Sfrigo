@@ -27,7 +27,7 @@ Il sistema è pensato per essere adottato in diversi contesti, tra cui:
 
 L’obiettivo è fornire uno strumento semplice, intuitivo e affidabile che consenta a gruppi di persone di gestire in modo collaborativo gli alimenti, ottimizzando i consumi e promuovendo una gestione più consapevole delle risorse.
 
-## Avvio programma
+# Avvio programma
 **Clonare la repo**
 - Aprire terminale `git clone https://github.com/zodiacapricorn/Sfrigo.git`
 - Spostarsi nella cartella `cd Sfrigo\Code\sfrigo`
