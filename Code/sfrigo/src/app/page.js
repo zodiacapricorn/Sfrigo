@@ -1,8 +1,29 @@
 "use client";
-import { Clock, Users, Grid, ChefHat, ArrowRight, LogIn, UserPlus } from "lucide-react";
-import { globalStyles,AnimatedStat,FeatureCard,ContextCard } from "./layout.js";
+import { Clock, Users, Grid, ChefHat, ArrowRight, LogIn, UserPlus, LogOut } from "lucide-react";
+import { globalStyles, AnimatedStat, FeatureCard, ContextCard } from "./layout.js";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    document.cookie = "__session=; path=/; max-age=0";
+    router.refresh();
+  };
+
+
   return (
     <>
       <style>{globalStyles}</style>
@@ -10,14 +31,33 @@ export default function HomePage() {
 
         {/* NAV */}
         <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 clamp(24px, 5vw, 64px)", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(245,240,232,0.88)", backdropFilter: "blur(18px)", borderBottom: "1px solid rgba(45,74,45,0.07)" }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: "1.15rem", color: "var(--forest)", letterSpacing: "-0.01em" }}>Sfrigo</div>
+
+          {/* Logo */}
+          <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: "1.35rem", color: "var(--forest)", letterSpacing: "-0.01em" }}>Sfrigo</div>
+
+          {/* Buttons */}
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <a href="/login" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 100, color: "var(--forest)", fontSize: "0.87rem", fontWeight: 400, textDecoration: "none", transition: "background 0.2s" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-              <LogIn size={14} strokeWidth={1.75} /> Accedi
-            </a>
-            <a href="/register" className="btn-primary" style={{ padding: "9px 22px", fontSize: "0.87rem" }}>Registrati</a>
+            {user ? (
+              <>
+                <a href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 100, color: "var(--forest)", fontSize: "0.87rem", fontWeight: 400, textDecoration: "none", transition: "background 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <Grid size={14} strokeWidth={1.75} /> Dashboard
+                </a>
+                <button onClick={handleLogout} className="btn-primary" style={{ padding: "9px 22px", fontSize: "0.87rem", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <LogOut size={14} strokeWidth={1.75} /> Esci
+                </button>
+              </>
+            ) : (
+              <>
+                <a href="/login" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 100, color: "var(--forest)", fontSize: "0.87rem", fontWeight: 400, textDecoration: "none", transition: "background 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <LogIn size={14} strokeWidth={1.75} /> Accedi
+                </a>
+                <a href="/register" className="btn-primary" style={{ padding: "9px 22px", fontSize: "0.87rem" }}>Registrati</a>
+              </>
+            )}
           </div>
         </nav>
 
@@ -27,9 +67,9 @@ export default function HomePage() {
             <div key={i} style={{ position: "absolute", width: s, height: s, borderRadius: "50%", border: "1px solid rgba(168,197,168,0.07)", top: "50%", left: "50%", transform: "translate(-50%, -50%)", pointerEvents: "none" }} />
           ))}
           {[
-            { text: "scorte",   style: { top: "22%", left: "7%",   animationDuration: "5s" } },
+            { text: "scorte", style: { top: "22%", left: "7%", animationDuration: "5s" } },
             { text: "scadenze", style: { bottom: "26%", right: "8%", animationDuration: "6s", animationDelay: "1.5s" } },
-            { text: "ricette",  style: { top: "60%", left: "5%",   animationDuration: "7s", animationDelay: "0.8s" } },
+            { text: "ricette", style: { top: "60%", left: "5%", animationDuration: "7s", animationDelay: "0.8s" } },
           ].map(({ text, style }, i) => (
             <div key={i} style={{ position: "absolute", fontFamily: "'Playfair Display', serif", fontSize: "clamp(0.65rem, 1.2vw, 0.8rem)", color: "rgba(168,197,168,0.3)", letterSpacing: "0.14em", textTransform: "uppercase", animation: "drift 5s ease-in-out infinite", userSelect: "none", ...style }}>{text}</div>
           ))}
@@ -50,7 +90,7 @@ export default function HomePage() {
 
           <div style={{ position: "absolute", bottom: -1, left: 0, right: 0, zIndex: 4 }}>
             <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
-              <path d="M0 80 C360 20 1080 20 1440 80 L1440 80 L0 80 Z" fill="var(--cream)"/>
+              <path d="M0 80 C360 20 1080 20 1440 80 L1440 80 L0 80 Z" fill="var(--cream)" />
             </svg>
           </div>
         </section>
@@ -96,7 +136,7 @@ export default function HomePage() {
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 70% 50%, rgba(168,197,168,0.06) 0%, transparent 65%)", pointerEvents: "none" }} />
           <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 48, position: "relative" }}>
             <AnimatedStat value={30} suffix="%" label="spreco risparmiato" />
-            <AnimatedStat value={4}  suffix="×" label="contesti d'uso" />
+            <AnimatedStat value={4} suffix="×" label="contesti d'uso" />
             <AnimatedStat value={100} suffix="%" label="collaborativo" />
           </div>
         </section>
@@ -109,10 +149,10 @@ export default function HomePage() {
               <h2 className="serif" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "var(--forest)" }}>Tutto ciò di cui hai bisogno</h2>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
-              <FeatureCard number="01" LucideIcon={Clock}    accent="#C4622D" title="Scadenze & Quantità"    desc="Avvisi automatici prima che un prodotto scada. Dì addio al cibo dimenticato in fondo al cassetto." />
-              <FeatureCard number="02" LucideIcon={Users}    accent="#2D4A2D" title="Condivisione facile"    desc="Invita coinquilini, familiari o colleghi. Ogni aggiornamento è visibile a tutti in tempo reale." />
-              <FeatureCard number="03" LucideIcon={Grid}     accent="#6B8C6B" title="Organizzazione smart"   desc="Categorizza i prodotti per tipo o zona del frigo. Trova tutto al volo con un sistema intuitivo." />
-              <FeatureCard number="04" LucideIcon={ChefHat}  accent="#C8E06E" title="Ricette personalizzate" desc="Suggerimenti di ricette basati su ciò che hai già. Cucina di più, spreca meno." />
+              <FeatureCard number="01" LucideIcon={Clock} accent="#C4622D" title="Scadenze & Quantità" desc="Avvisi automatici prima che un prodotto scada. Dì addio al cibo dimenticato in fondo al cassetto." />
+              <FeatureCard number="02" LucideIcon={Users} accent="#2D4A2D" title="Condivisione facile" desc="Invita coinquilini, familiari o colleghi. Ogni aggiornamento è visibile a tutti in tempo reale." />
+              <FeatureCard number="03" LucideIcon={Grid} accent="#6B8C6B" title="Organizzazione smart" desc="Categorizza i prodotti per tipo o zona del frigo. Trova tutto al volo con un sistema intuitivo." />
+              <FeatureCard number="04" LucideIcon={ChefHat} accent="#C8E06E" title="Ricette personalizzate" desc="Suggerimenti di ricette basati su ciò che hai già. Cucina di più, spreca meno." />
             </div>
           </div>
         </section>
@@ -126,10 +166,10 @@ export default function HomePage() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
               {[
-                { label: "Case condivise",          subtitle: "Ordine senza discussioni tra coinquilini." },
-                { label: "Famiglie",                 subtitle: "Coordina la spesa, evita i doppioni, pianifica i pasti." },
+                { label: "Case condivise", subtitle: "Ordine senza discussioni tra coinquilini." },
+                { label: "Famiglie", subtitle: "Coordina la spesa, evita i doppioni, pianifica i pasti." },
                 { label: "Residenze universitarie", subtitle: "Gestisci le scorte comuni in modo trasparente." },
-                { label: "Ambienti di lavoro",       subtitle: "La cucina dell'ufficio, finalmente organizzata." },
+                { label: "Ambienti di lavoro", subtitle: "La cucina dell'ufficio, finalmente organizzata." },
               ].map((c, i) => <ContextCard key={i} {...c} index={i} />)}
             </div>
           </div>
