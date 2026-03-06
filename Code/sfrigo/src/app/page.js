@@ -44,8 +44,9 @@ export default function HomePage() {
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   <Grid size={14} strokeWidth={1.75} /> Dashboard
                 </a>
-                <button onClick={handleLogout} className="btn-primary" style={{ padding: "9px 22px", fontSize: "0.87rem", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
-                  <LogOut size={14} strokeWidth={1.75} /> Esci
+                <button onClick={handleLogout} className="btn-primary" style={{ padding: "9px 14px", fontSize: "0.87rem", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <LogOut size={14} strokeWidth={1.75} />
+                  <span className="logout-text">Logout</span>
                 </button>
               </>
             ) : (
@@ -83,8 +84,16 @@ export default function HomePage() {
               Monitora gli alimenti, condividi le scorte e organizza gli spazi in modo semplice e collaborativo.
             </p>
             <div className="animate-floatUp delay-3" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-              <a href="/register" className="btn-primary">Inizia gratis <ArrowRight size={15} strokeWidth={2.25} /></a>
-              <a href="/login" className="btn-ghost">Accedi al tuo account</a>
+              {user ? (
+                <a href="/dashboard" className="btn-primary">
+                  Vai alla dashboard <ArrowRight size={15} strokeWidth={2.25} />
+                </a>
+              ) : (
+                <>
+                  <a href="/register" className="btn-primary">Inizia gratis <ArrowRight size={15} strokeWidth={2.25} /></a>
+                  <a href="/login" className="btn-ghost">Accedi al tuo account</a>
+                </>
+              )}
             </div>
           </div>
 
@@ -197,22 +206,39 @@ export default function HomePage() {
         {/* CTA */}
         <section style={{ padding: "clamp(90px, 14vw, 160px) clamp(24px, 5vw, 80px)", background: "var(--cream)", textAlign: "center" }}>
           <div style={{ maxWidth: 560, margin: "0 auto" }}>
-            <h2 className="serif" style={{ fontSize: "clamp(2.2rem, 5.5vw, 4rem)", fontWeight: 700, color: "var(--forest)", lineHeight: 1.08, marginBottom: 22 }}>
-              Pronto a fare ordine<br />nel tuo frigo?
-            </h2>
-            <p style={{ color: "var(--mid)", marginBottom: 44, fontSize: "0.97rem", lineHeight: 1.75 }}>
-              Crea un account in 30 secondi e inizia a organizzare, condividere e ridurre gli sprechi.
-            </p>
-            <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-              <a href="/register" className="btn-primary" style={{ background: "var(--forest)", color: "var(--lime)", padding: "16px 40px", fontSize: "1rem" }}>
-                <UserPlus size={16} strokeWidth={1.75} /> Crea account gratuito
-              </a>
-              <a href="/login" style={{ padding: "16px 36px", borderRadius: 100, border: "1.5px solid rgba(45,74,45,0.22)", color: "var(--forest)", fontSize: "1rem", fontWeight: 400, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8, transition: "border-color 0.2s, background 0.2s" }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(45,74,45,0.05)"; e.currentTarget.style.borderColor = "var(--moss)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(45,74,45,0.22)"; }}>
-                <LogIn size={15} strokeWidth={1.75} /> Accedi
-              </a>
-            </div>
+            {user ? (
+              <>
+                <h2 className="serif" style={{ fontSize: "clamp(2.2rem, 5.5vw, 4rem)", fontWeight: 700, color: "var(--forest)", lineHeight: 1.08, marginBottom: 22 }}>
+                  Bentornato.<br />
+                  <em style={{ color: "var(--sage)", fontStyle: "italic" }}>Il tuo frigo ti aspetta.</em>
+                </h2>
+                <p style={{ color: "var(--mid)", marginBottom: 44, fontSize: "0.97rem", lineHeight: 1.75 }}>
+                  Controlla le scorte, aggiungi alimenti e tieni d&apos;occhio le scadenze.
+                </p>
+                <a href="/dashboard" className="btn-primary" style={{ background: "var(--forest)", color: "var(--lime)", padding: "16px 40px", fontSize: "1rem" }}>
+                  <Grid size={16} strokeWidth={1.75} /> Apri la dashboard
+                </a>
+              </>
+            ) : (
+              <>
+                <h2 className="serif" style={{ fontSize: "clamp(2.2rem, 5.5vw, 4rem)", fontWeight: 700, color: "var(--forest)", lineHeight: 1.08, marginBottom: 22 }}>
+                  Pronto a fare ordine<br />nel tuo frigo?
+                </h2>
+                <p style={{ color: "var(--mid)", marginBottom: 44, fontSize: "0.97rem", lineHeight: 1.75 }}>
+                  Crea un account in 30 secondi e inizia a organizzare, condividere e ridurre gli sprechi.
+                </p>
+                <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+                  <a href="/register" className="btn-primary" style={{ background: "var(--forest)", color: "var(--lime)", padding: "16px 40px", fontSize: "1rem" }}>
+                    <UserPlus size={16} strokeWidth={1.75} /> Crea account gratuito
+                  </a>
+                  <a href="/login" style={{ padding: "16px 36px", borderRadius: 100, border: "1.5px solid rgba(45,74,45,0.22)", color: "var(--forest)", fontSize: "1rem", fontWeight: 400, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8, transition: "border-color 0.2s, background 0.2s" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(45,74,45,0.05)"; e.currentTarget.style.borderColor = "var(--moss)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(45,74,45,0.22)"; }}>
+                    <LogIn size={15} strokeWidth={1.75} /> Accedi
+                  </a>
+                </div>
+              </>
+            )}
           </div>
         </section>
 

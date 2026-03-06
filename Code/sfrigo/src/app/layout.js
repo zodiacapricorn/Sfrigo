@@ -117,4 +117,7 @@ export const globalStyles = `
     display: inline-block; padding: 4px 14px; background: var(--mint); color: var(--forest);
     font-size: 0.7rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; border-radius: 100px;
   }
+    @media (max-width: 560px) {
+  .logout-text { display: none; }
+}
 `;
