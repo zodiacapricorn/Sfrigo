@@ -89,6 +89,12 @@ export const globalStyles = `
     animation: fadeIn 0.6s ease both;
   }
 
+  @media (max-width: 560px) {
+  .logout-text { display: none; }
+  .btn-create span { display: none; }
+  .dashboard-email { display: none; }
+}
+  
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: rgba(45,74,45,0.2); border-radius: 100px; }
 `;

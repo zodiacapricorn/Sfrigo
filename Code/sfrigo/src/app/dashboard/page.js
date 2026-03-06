@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link.js";
 import { Plus, LogOut, ChevronRight, Users, Crown } from "lucide-react";
 import { globalStyles } from "./layout.js";
 import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 
 // ── Mock data — sostituisci con fetch reale da Firebase ───────────────────────
-const MOCK_USER = { uid: "user_001", displayName: "Marco R." };
 
 const MOCK_FRIDGES = [
   { id: "f1", name: "Frigo di Casa", ownerUid: "user_001", ownerName: "Marco R.", members: 3 },
@@ -16,7 +18,6 @@ const MOCK_FRIDGES = [
   { id: "f4", name: "Casa al Mare", ownerUid: "user_003", ownerName: "Luca M.", members: 2 },
   { id: "f5", name: "Ufficio Milano", ownerUid: "user_004", ownerName: "Chiara V.", members: 8 },
 ];
-
 
 // ── Create Modal ──────────────────────────────────────────────────────────────
 function CreateFridgeModal({ onClose, onCreate }) {
@@ -28,6 +29,7 @@ function CreateFridgeModal({ onClose, onCreate }) {
     onCreate(name.trim());
     onClose();
   };
+
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -89,7 +91,7 @@ function FridgeCard({ fridge, isOwner, delay }) {
   return (
     <button
       className={`fridge-card scale-in ${isOwner ? "owner" : "shared"} delay-${delay}`}
-      onClick={() => router.push(`/fridge/`)}
+      onClick={() => router.push(`/dashboard/fridge/`)}
     >
       {/* Top row */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
@@ -155,9 +157,23 @@ function FridgeCard({ fridge, isOwner, delay }) {
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const currentUser = MOCK_USER;
+  const [currentUser, setCurrentUser] = useState(null);
+  const router = useRouter();
   const [fridges, setFridges] = useState(MOCK_FRIDGES);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        router.push("/login");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (!currentUser) return null;
 
   const handleCreate = (name) => {
     setFridges(prev => [{
@@ -171,6 +187,12 @@ export default function DashboardPage() {
   const ownerFridges = fridges.filter(f => f.ownerUid === currentUser.uid);
   const sharedFridges = fridges.filter(f => f.ownerUid !== currentUser.uid);
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    document.cookie = "__session=; path=/; max-age=0";
+    router.push("/");
+  };
+
   return (
     <>
       <style>{globalStyles}</style>
@@ -180,39 +202,48 @@ export default function DashboardPage() {
         position: "sticky", top: 0, zIndex: 100,
         background: "rgba(245,240,232,0.9)", backdropFilter: "blur(18px)",
         borderBottom: "1px solid rgba(45,74,45,0.08)",
-        padding: "0 clamp(20px, 5vw, 56px)", height: 64,
-        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
+        padding: "0 clamp(16px, 4vw, 56px)", height: 64,
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
       }}>
-        <div style={{
-          fontFamily: "'Playfair Display', serif",
-          fontWeight: 700, fontSize: "1.25rem",
-          color: "var(--forest)", flexShrink: 0
-        }}>Sfrigo</div>
+        <Link href="/" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: "1.35rem", color: "var(--forest)", flexShrink: 0, textDecoration: "none" }}>
+          Sfrigo
+        </Link>
 
-        <div style={{
+        {/* Email — nascosta su mobile */}
+        <div className="dashboard-email" style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: "0.95rem", fontStyle: "italic",
-          color: "var(--sage)", flex: 1, textAlign: "center"
+          color: "var(--sage)", flex: 1, textAlign: "center",
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          display: "clamp(0px, calc(100vw - 400px), 1px)" === "0px" ? "none" : "block"
         }}>
-          Ciao, {currentUser.displayName.split(" ")[0]}.
+          Ciao, {currentUser.displayName || currentUser.email}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0, }}>
-          <button className="btn-create" onClick={() => setShowModal(true)}>
-            <Plus size={15} strokeWidth={2.25} /> Nuovo frigo
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {/* "Nuovo frigo" — testo nascosto su mobile, solo icona */}
+          <button className="btn-create" onClick={() => setShowModal(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+            <Plus size={15} strokeWidth={2.25} />
+            <span style={{ display: "var(--btn-text-display, inline)" }}>Nuovo frigo</span>
           </button>
 
-          <Link href="/" title="Esci" style={{
-            width: 36, height: 36, borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "var(--mid)", border: "1.5px solid rgba(45,74,45,0.15)",
-            textDecoration: "none", transition: "border-color 0.2s, color 0.2s"
-          }}
+          {/* Logout — solo icona su mobile, icona + testo su desktop */}
+          <button
+            onClick={handleLogout}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              padding: "9px 14px", borderRadius: 100,
+              color: "var(--mid)", border: "1.5px solid rgba(45,74,45,0.15)",
+              background: "none", cursor: "pointer", fontSize: "0.88rem",
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "border-color 0.2s, color 0.2s"
+            }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--moss)"; e.currentTarget.style.color = "var(--forest)"; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(45,74,45,0.15)"; e.currentTarget.style.color = "var(--mid)"; }}
           >
             <LogOut size={14} strokeWidth={1.75} />
-          </Link>
+            <span className="logout-text">Logout</span>
+          </button>
         </div>
       </header>
 
