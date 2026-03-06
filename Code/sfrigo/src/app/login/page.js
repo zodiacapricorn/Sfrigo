@@ -13,6 +13,11 @@ import { ArrowLeft, LogIn } from "lucide-react";
 
 import { globalStyles } from "./layout.js";
 
+async function setSessionCookie(user) {
+  const token = await user.getIdToken();
+  document.cookie = `__session=${token}; path=/; max-age=3600; SameSite=Strict`;
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -25,7 +30,9 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true); setError("");
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await setSessionCookie(result.user);
+      router.refresh();              
       router.push("/dashboard");
     } catch (err) {
       if (err.code === "auth/user-not-found") setError("Utente non trovato");
@@ -39,10 +46,13 @@ export default function LoginPage() {
     setGoogleLoading(true); setError("");
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      await setSessionCookie(result.user);
+      router.refresh();              
       router.push("/dashboard");
     } catch (err) {
-      setError("Errore con Google");
+      console.error("Errore Google completo:", err.code, err.message);
+      setError("Errore con Google: " + err.code);
     }
     setGoogleLoading(false);
   };
@@ -76,9 +86,9 @@ export default function LoginPage() {
 
           {/* Floating words */}
           {[
-            { text: "scorte",  top: "18%",    left: "10%",   dur: "5s" },
-            { text: "ricette", bottom: "22%", right: "10%",  dur: "6.5s", delay: "1.2s" },
-            { text: "frigo",   top: "62%",    left: "8%",    dur: "7s",   delay: "0.5s" },
+            { text: "scorte", top: "18%", left: "10%", dur: "5s" },
+            { text: "ricette", bottom: "22%", right: "10%", dur: "6.5s", delay: "1.2s" },
+            { text: "frigo", top: "62%", left: "8%", dur: "7s", delay: "0.5s" },
           ].map(({ text, dur, delay, ...pos }, i) => (
             <div key={i} style={{
               position: "absolute", ...pos,
