@@ -209,25 +209,15 @@ export default function DashboardPage() {
           Sfrigo
         </Link>
 
-        {/* Email — nascosta su mobile */}
-        <div className="dashboard-email" style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: "0.95rem", fontStyle: "italic",
-          color: "var(--sage)", flex: 1, textAlign: "center",
-          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-          display: "clamp(0px, calc(100vw - 400px), 1px)" === "0px" ? "none" : "block"
-        }}>
-          Ciao, {currentUser.displayName || currentUser.email}
-        </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-          {/* "Nuovo frigo" — testo nascosto su mobile, solo icona */}
+          
           <button className="btn-create" onClick={() => setShowModal(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
             <Plus size={15} strokeWidth={2.25} />
             <span style={{ display: "var(--btn-text-display, inline)" }}>Nuovo frigo</span>
           </button>
 
-          {/* Logout — solo icona su mobile, icona + testo su desktop */}
+          
           <button
             onClick={handleLogout}
             style={{
@@ -253,7 +243,7 @@ export default function DashboardPage() {
         padding: "clamp(40px, 6vw, 72px) clamp(20px, 5vw, 56px)"
       }}>
         {/* Page heading */}
-        <div className="fade-up" style={{ marginBottom: "clamp(40px, 6vw, 64px)" }}>
+        <div className="fade-up" style={{ marginBottom: "clamp(32px, 5vw, 52px)" }}>
           <span style={{
             display: "inline-block", padding: "4px 14px",
             background: "var(--mint)", color: "var(--forest)",
@@ -265,7 +255,12 @@ export default function DashboardPage() {
             fontFamily: "'Playfair Display', serif",
             fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 900,
             color: "var(--forest)", lineHeight: 1.08, letterSpacing: "-0.02em"
-          }}>Cosa c&apos;è in frigo?</h1>
+          }}>
+            Bentornato,<br />
+            <em style={{ color: "var(--sage)", fontStyle: "italic" }}>
+              {currentUser.displayName?.split(" ")[0] || currentUser.email}.
+            </em>
+          </h1>
         </div>
 
         {/* Gestiti da te */}
