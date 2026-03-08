@@ -38,4 +38,6 @@ L’obiettivo è fornire uno strumento semplice, intuitivo e affidabile che cons
 **Installa dependencies e avvio**
 - Apri il terminale e inserisci `npm install`, dopodiché inserire `npm run dev`
 
-
+# Analisi Statica
+**Clonare la repo**
+Aprire il terminale e inserire `npx eslint . -f html -o eslint-reports/eslint-report.html`, creerà un file html contenente il report delle pagine `.js` controllate e i relativi problemi.
