@@ -11,9 +11,13 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
     "firebase": "^12.10.0",
     "lucide-react": "^0.576.0",
+    "mongodb": "^7.1.0",
     "next": "16.1.6",
+    "pg": "^8.20.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
@@ -31,6 +35,10 @@
   "jest": {
     "testMatch": [
       "**/__tests__/**/*.test.js"
-    ]
+    ],
+    "collectCoverageFrom": [
+      "api/**/*.js"
+    ],
+    "coverageDirectory": "coverage-reports"
   }
 }
