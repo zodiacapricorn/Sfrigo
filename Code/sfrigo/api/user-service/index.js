@@ -56,7 +56,16 @@ app.post('/users', async (req, res) => {
   }
 });
 
+/**
+ * @description Esporta l'app Express per i test con Jest/Supertest.
+ * se il index.js viene chiamata da node, si avvia il server normalmente,
+ * se invece viene chiamato da jest allora passa l'app a jest senza avviare il server.
+ */
 const PORT = process.env.PORT || 8081;
-app.listen(PORT, () => {
-  console.log(`Users Service in esecuzione e in ascolto sulla porta ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Users Service in esecuzione e in ascolto sulla porta ${PORT}`);
+  });
+}
+
+module.exports = app;

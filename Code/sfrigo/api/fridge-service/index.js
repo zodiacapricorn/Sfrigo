@@ -265,8 +265,16 @@ app.delete('/fridges/:fridgeId/items/:itemId', async (req, res) => {
   }
 });
 
-// Avvio del server
+/**
+ * @description Esporta l'app Express per i test con Jest/Supertest.
+ * se il index.js viene chiamata da node, si avvia il server normalmente,
+ * se invece viene chiamato da jest allora passa l'app a jest senza avviare il server.
+ */
 const PORT = process.env.PORT || 8082;
-app.listen(PORT, () => {
-  console.log(`Fridge Service in esecuzione sulla porta ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Fridge Service in esecuzione sulla porta ${PORT}`);
+  });
+}
+
+module.exports = app;
