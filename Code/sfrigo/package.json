@@ -16,9 +16,12 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4",
-    "eslint": "^9",
+    "eslint": "^9.39.4",
     "eslint-config-next": "16.1.6",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.4.0",
     "tailwindcss": "^4"
   }
 }
