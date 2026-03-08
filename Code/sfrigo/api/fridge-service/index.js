@@ -78,6 +78,70 @@ app.get('/fridges', async (req, res) => {
   }
 });
 
+// POST /fridges/:fridgeId/members - Aggiungi membro
+app.post('/fridges/:fridgeId/members', async (req, res) => {
+  const { fridgeId } = req.params;
+  const { userId, role } = req.body; // utente da aggiungere
+
+  if (!userId) {
+    return res.status(400).json({ error: 'userId è obbligatorio' });
+  }
+
+  try {
+
+    // verifica che sia membro
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+
+    if (!membership) {
+      return res.status(403).json({
+        error: 'Non sei membro di questo frigorifero'
+      });
+    }
+
+    /* funzione se vogliamo solo che l'admin posso aggiungere membri
+    if (membership.role !== 'ADMIN') {
+      return res.status(403).json({
+        error: 'Solo un ADMIN può aggiungere nuovi membri'
+      });
+    }*/
+
+    // controlla se l'utente è già membro
+    const existingMemberQuery = `
+      SELECT * FROM fridge_members
+      WHERE fridge_id = $1 AND user_id = $2
+    `;
+
+    const existingMember = await pgPool.query(existingMemberQuery, [fridgeId, userId]);
+
+    if (existingMember.rows.length > 0) {
+      return res.status(409).json({
+        error: 'L\'utente è già membro di questo frigorifero'
+      });
+    }
+
+    // inserimento nuovo membro
+    const insertQuery = `
+      INSERT INTO fridge_members (fridge_id, user_id, role)
+      VALUES ($1, $2, $3)
+      RETURNING fridge_id, user_id, role
+    `;
+
+    const newMember = await pgPool.query(insertQuery, [
+      fridgeId,
+      userId,
+      role || 'MEMBER'
+    ]);
+
+    res.status(201).json(newMember.rows[0]);
+
+  } catch (error) {
+    console.error('Errore aggiunta membro:', error);
+    res.status(500).json({
+      error: 'Errore durante l\'aggiunta del membro'
+    });
+  }
+});
+
 // POST /fridges - Creazione Frigorifero (Transazione SQL)
 app.post('/fridges', async (req, res) => {
   const { name } = req.body;
