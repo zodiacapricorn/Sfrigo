@@ -15,6 +15,7 @@ export default defineConfig([
       globals: {
         ...globals.browser,  // frontend Next.js
         ...globals.node,     // aggiunta process, require, ecc.
+        ...globals.jest,
       } 
     }, 
   },
