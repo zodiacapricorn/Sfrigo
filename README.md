@@ -1,43 +1,80 @@
 # Fridge Manager App
 
-## Obiettivo del progetto
+## Project Goal
 
-Il progetto prevede la realizzazione di un’applicazione mobile dedicata alla gestione e all’organizzazione degli alimenti all’interno di un frigorifero condiviso.  
-L’obiettivo è offrire uno strumento pratico per monitorare le scorte, migliorare la collaborazione tra più utenti e ridurre gli sprechi alimentari.
+The project involves the development of a mobile application dedicated to managing and organizing food items inside a shared refrigerator.  
+The goal is to provide a practical tool to monitor supplies, improve collaboration among multiple users, and reduce food waste.
 
-## Funzionalità principali
+## Main Features
 
-L’applicazione è progettata per:
+The application is designed to:
 
-- Ridurre gli sprechi alimentari attraverso un migliore controllo delle scadenze e delle quantità disponibili  
-- Facilitare la condivisione degli alimenti tra più utenti  
-- Migliorare l’organizzazione degli spazi e delle categorie di prodotti  
-- Supportare la creazione di ricette basate sugli ingredienti presenti  
+- Reduce food waste through better control of expiration dates and available quantities  
+- Facilitate food sharing among multiple users  
+- Improve the organization of spaces and product categories  
+- Support recipe creation based on available ingredients  
 
-## Contesti di utilizzo
+## Use Cases
 
-Il sistema è pensato per essere adottato in diversi contesti, tra cui:
+The system is intended to be adopted in various contexts, including:
 
-- Abitazioni condivise  
-- Nuclei familiari  
-- Residenze universitarie  
-- Ambienti di lavoro  
+- Shared housing  
+- Family households  
+- University residences  
+- Work environments  
 
-## Visione
+## Vision
 
-L’obiettivo è fornire uno strumento semplice, intuitivo e affidabile che consenta a gruppi di persone di gestire in modo collaborativo gli alimenti, ottimizzando i consumi e promuovendo una gestione più consapevole delle risorse.
+The goal is to provide a simple, intuitive and reliable tool that allows groups of people to collaboratively manage food items, optimizing consumption and promoting more conscious resource management.
 
-# Avvio programma
-**Clonare la repo**
-- Aprire terminale `git clone https://github.com/zodiacapricorn/Sfrigo.git`
-- Spostarsi nella cartella `cd Sfrigo\Code\sfrigo`
+---
 
-**Controlla che node sia installato**
-- Inserisci `node -v` nel terminale, se non viene restituita la versione di node allora bisogna installarlo. (sito: https://nodejs.org, dopodiche riavvia il terminale e riesegui il comando).
+# Getting Started
 
-**Installa dependencies e avvio**
-- Apri il terminale e inserisci `npm install`, dopodiché inserire `npm run dev`
+**Clone the repository**
+```bash
+git clone https://github.com/zodiacapricorn/Sfrigo.git
+cd Sfrigo\Code\sfrigo
+```
 
-# Analisi Statica
-**Clonare la repo**
-Aprire il terminale e inserire `npx eslint . -f html -o eslint-reports/eslint-report.html`, creerà un file html contenente il report delle pagine `.js` controllate e i relativi problemi.
+**Check that Node.js is installed**
+```bash
+node -v
+```
+
+If no version is returned, install Node.js from [nodejs.org](https://nodejs.org), then restart the terminal and run the command again.
+
+**Install dependencies and start**
+```bash
+npm install
+npm run dev
+```
+
+---
+
+# Static Analysis
+
+Open the terminal in the project root and run:
+```bash
+npx eslint . -f html -o eslint-reports/eslint-report.html
+```
+
+An HTML file will be generated in the `eslint-reports/` folder containing the report of the analyzed `.js` files and any issues found.
+
+---
+
+# Dynamic Analysis
+
+To run the automated tests, open the terminal in the project root and run:
+```bash
+npm test
+```
+
+The terminal output will show the details of each executed test, with a **PASS** or **FAIL** result for each test case, the total number of tests run, and the execution time.
+
+To generate the coverage report run:
+```bash
+npm run test:coverage
+```
+
+The report will be generated in the `coverage-reports/lcov-report/index.html` folder and will show the percentage of code covered by the tests broken down by file.
