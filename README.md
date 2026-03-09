@@ -46,7 +46,7 @@ If no version is returned, install Node.js from [nodejs.org](https://nodejs.org)
 
 **Install dependencies and start**
 ```bash
-npm install
+npm install --legacy-peer-deps
 npm run dev
 ```
 
