@@ -8,28 +8,27 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-
-// ── Mock data — sostituisci con fetch reale da Firebase ───────────────────────
-
-const MOCK_FRIDGES = [
-  { id: "f1", name: "Frigo di Casa", ownerUid: "user_001", ownerName: "Marco R.", members: 3 },
-  { id: "f2", name: "Cucina Studio", ownerUid: "user_001", ownerName: "Marco R.", members: 5 },
-  { id: "f3", name: "Frigo Coinquilini", ownerUid: "user_002", ownerName: "Sara B.", members: 4 },
-  { id: "f4", name: "Casa al Mare", ownerUid: "user_003", ownerName: "Luca M.", members: 2 },
-  { id: "f5", name: "Ufficio Milano", ownerUid: "user_004", ownerName: "Chiara V.", members: 8 },
-];
+import { apiFetch } from "@/lib/api";
 
 // ── Create Modal ──────────────────────────────────────────────────────────────
 function CreateFridgeModal({ onClose, onCreate }) {
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-    onCreate(name.trim());
-    onClose();
+    setLoading(true);
+    setError("");
+    try {
+      await onCreate(name.trim());
+      onClose();
+    } catch (err) {
+      setError(err.message || "Errore durante la creazione");
+    }
+    setLoading(false);
   };
-
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -55,6 +54,15 @@ function CreateFridgeModal({ onClose, onCreate }) {
             />
           </div>
 
+          {error && (
+            <div style={{
+              marginBottom: 16, padding: "10px 16px",
+              background: "rgba(196,98,45,0.07)",
+              border: "1px solid rgba(196,98,45,0.2)",
+              borderRadius: 10, color: "#C4622D", fontSize: "0.83rem"
+            }}>{error}</div>
+          )}
+
           <div style={{ display: "flex", gap: 12 }}>
             <button type="button" onClick={onClose} style={{
               flex: 1, padding: "13px", background: "transparent", color: "var(--mid)",
@@ -66,17 +74,18 @@ function CreateFridgeModal({ onClose, onCreate }) {
               onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(45,74,45,0.15)"}
             >Annulla</button>
 
-            <button type="submit" style={{
+            <button type="submit" disabled={loading} style={{
               flex: 2, padding: "13px", background: "var(--forest)", color: "var(--lime)",
               fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "0.92rem",
-              border: "none", borderRadius: 12, cursor: "pointer",
+              border: "none", borderRadius: 12, cursor: loading ? "not-allowed" : "pointer",
               display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              transition: "background 0.2s"
+              opacity: loading ? 0.7 : 1, transition: "background 0.2s"
             }}
-              onMouseEnter={e => e.currentTarget.style.background = "var(--moss)"}
+              onMouseEnter={e => !loading && (e.currentTarget.style.background = "var(--moss)")}
               onMouseLeave={e => e.currentTarget.style.background = "var(--forest)"}
             >
-              <Plus size={15} strokeWidth={2} /> Crea frigo
+              <Plus size={15} strokeWidth={2} />
+              {loading ? "Creazione…" : "Crea frigo"}
             </button>
           </div>
         </form>
@@ -91,7 +100,7 @@ function FridgeCard({ fridge, isOwner, delay }) {
   return (
     <button
       className={`fridge-card scale-in ${isOwner ? "owner" : "shared"} delay-${delay}`}
-      onClick={() => router.push(`/dashboard/fridge/`)}
+      onClick={() => router.push(`/dashboard/fridge/${fridge.id}`)}
     >
       {/* Top row */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
@@ -125,7 +134,7 @@ function FridgeCard({ fridge, isOwner, delay }) {
         marginBottom: 10
       }}>{fridge.name}</div>
 
-      {/* Owner + members */}
+      {/* Owner info */}
       <div style={{
         fontSize: "0.82rem",
         color: isOwner ? "var(--card-owner-sub)" : "var(--card-shared-sub)",
@@ -137,11 +146,18 @@ function FridgeCard({ fridge, isOwner, delay }) {
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           fontSize: "0.6rem", fontWeight: 700,
           color: isOwner ? "var(--mint)" : "var(--sage)", flexShrink: 0
-        }}>{fridge.ownerName.charAt(0)}</span>
-        {isOwner ? "Tu" : fridge.ownerName}
-        <span style={{ opacity: 0.4 }}>·</span>
-        <Users size={11} strokeWidth={1.75} style={{ opacity: 0.6 }} />
-        {fridge.members}
+        }}>
+          {isOwner ? "T" : (fridge.owner_id?.charAt(0)?.toUpperCase() || "?")}
+        </span>
+        {isOwner ? "Tu" : fridge.owner_id}
+        {fridge.role && (
+          <>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <span style={{ opacity: 0.7, fontSize: "0.75rem", textTransform: "capitalize" }}>
+              {fridge.role.toLowerCase()}
+            </span>
+          </>
+        )}
       </div>
 
       {/* Decorative circle */}
@@ -159,13 +175,24 @@ function FridgeCard({ fridge, isOwner, delay }) {
 export default function DashboardPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
-  const [fridges, setFridges] = useState(MOCK_FRIDGES);
+  const [fridges, setFridges] = useState([]);
+  const [loadingFridges, setLoadingFridges] = useState(true);
+  const [fetchError, setFetchError] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
+        try {
+          const data = await apiFetch("/fridges");
+          setFridges(data || []);
+        } catch (err) {
+          console.error("Errore fetch frigo:", err);
+          setFetchError("Impossibile caricare i frigoriferi. Riprova più tardi.");
+        } finally {
+          setLoadingFridges(false);
+        }
       } else {
         router.push("/login");
       }
@@ -175,17 +202,17 @@ export default function DashboardPage() {
 
   if (!currentUser) return null;
 
-  const handleCreate = (name) => {
-    setFridges(prev => [{
-      id: "f" + Date.now(), name,
-      ownerUid: currentUser.uid,
-      ownerName: currentUser.displayName,
-      members: 1,
-    }, ...prev]);
-  };
+  // L'API restituisce { id, name, owner_id, created_at, role } per ogni frigo
+  const ownerFridges = fridges.filter(f => f.owner_id === currentUser.uid);
+  const sharedFridges = fridges.filter(f => f.owner_id !== currentUser.uid);
 
-  const ownerFridges = fridges.filter(f => f.ownerUid === currentUser.uid);
-  const sharedFridges = fridges.filter(f => f.ownerUid !== currentUser.uid);
+  const handleCreate = async (name) => {
+    const newFridge = await apiFetch("/fridges", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    });
+    setFridges(prev => [newFridge, ...prev]);
+  };
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -209,15 +236,12 @@ export default function DashboardPage() {
           Sfrigo
         </Link>
 
-
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-          
           <button className="btn-create" onClick={() => setShowModal(true)} style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
             <Plus size={15} strokeWidth={2.25} />
             <span style={{ display: "var(--btn-text-display, inline)" }}>Nuovo frigo</span>
           </button>
 
-          
           <button
             onClick={handleLogout}
             style={{
@@ -263,8 +287,25 @@ export default function DashboardPage() {
           </h1>
         </div>
 
+        {/* Loading */}
+        {loadingFridges && (
+          <div style={{ color: "var(--mid)", fontSize: "0.9rem", padding: "40px 0" }}>
+            Caricamento frigoriferi…
+          </div>
+        )}
+
+        {/* Error */}
+        {fetchError && (
+          <div style={{
+            padding: "16px 20px", borderRadius: 12,
+            background: "rgba(196,98,45,0.07)",
+            border: "1px solid rgba(196,98,45,0.2)",
+            color: "#C4622D", fontSize: "0.88rem", marginBottom: 32
+          }}>{fetchError}</div>
+        )}
+
         {/* Gestiti da te */}
-        {ownerFridges.length > 0 && (
+        {!loadingFridges && ownerFridges.length > 0 && (
           <section style={{ marginBottom: "clamp(48px, 7vw, 72px)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
               <h2 style={{
@@ -291,7 +332,7 @@ export default function DashboardPage() {
         )}
 
         {/* Condivisi con te */}
-        {sharedFridges.length > 0 && (
+        {!loadingFridges && sharedFridges.length > 0 && (
           <section>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
               <h2 style={{
@@ -318,7 +359,7 @@ export default function DashboardPage() {
         )}
 
         {/* Empty state */}
-        {fridges.length === 0 && (
+        {!loadingFridges && !fetchError && fridges.length === 0 && (
           <div className="empty-state">
             <div style={{
               fontFamily: "'Playfair Display', serif",
