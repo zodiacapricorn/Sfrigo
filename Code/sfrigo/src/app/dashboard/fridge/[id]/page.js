@@ -3,7 +3,7 @@
 import { use } from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -158,6 +158,7 @@ function DeleteModal({ ingredient, onClose, onConfirm }) {
   );
 }
 
+// FIX: modal puro — riceve solo fridgeName, onClose, onConfirm dall'esterno
 function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -184,7 +185,89 @@ function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
   );
 }
 
-function MembersList({ members }) {
+// ── Modal Invito ─────────────────────────────────────────────────────────────
+function InviteModal({ fridgeId, onClose }) {
+  const [inviteLink, setInviteLink] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
+
+  const generateLink = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await apiFetch(`/fridges/${fridgeId}/invites`, { method: "POST" });
+      setInviteLink(`${BASE_URL}/invite/${data.token}`);
+    } catch (err) {
+      setError("Errore nella generazione del link. Riprova.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyLink = async () => {
+    if (!inviteLink) return;
+    await navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box" style={{ maxWidth: 420 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.5rem", fontWeight: 700, color: "var(--forest)" }}>Invita al Frigorifero</h3>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}><X size={17} strokeWidth={1.75} /></button>
+        </div>
+
+        <p style={{ color: "var(--mid)", fontSize: "0.86rem", lineHeight: 1.65, marginBottom: 20 }}>
+          Genera un link di invito da condividere. Chiunque lo apra verrà aggiunto al frigorifero come membro. Il link è valido per <strong style={{ color: "var(--forest)" }}>24 ore</strong>.
+        </p>
+
+        {!inviteLink ? (
+          <button
+            onClick={generateLink}
+            disabled={loading}
+            style={{ width: "100%", padding: "12px", background: "var(--forest)", color: "var(--lime)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.9rem", border: "none", borderRadius: 10, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, opacity: loading ? 0.7 : 1, transition: "background 0.2s" }}
+            onMouseEnter={e => { if (!loading) e.currentTarget.style.background = "var(--moss)"; }}
+            onMouseLeave={e => e.currentTarget.style.background = "var(--forest)"}
+          >
+            <Link2 size={15} strokeWidth={2} />
+            {loading ? "Generazione in corso…" : "Genera Link di Invito"}
+          </button>
+        ) : (
+          <div>
+            <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>Link generato</div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div style={{ flex: 1, padding: "10px 13px", background: "rgba(45,74,45,0.05)", border: "1.5px solid rgba(45,74,45,0.12)", borderRadius: 10, fontSize: "0.78rem", color: "var(--forest)", fontFamily: "monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {inviteLink}
+              </div>
+              <button
+                onClick={copyLink}
+                style={{ flexShrink: 0, padding: "10px 14px", background: copied ? "rgba(200,224,110,0.25)" : "var(--forest)", color: copied ? "var(--forest)" : "var(--lime)", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, transition: "all 0.2s" }}
+              >
+                {copied ? <><Check size={13} strokeWidth={2.5} /> Copiato</> : <><Copy size={13} strokeWidth={2} /> Copia</>}
+              </button>
+            </div>
+            <p style={{ color: "var(--mid)", fontSize: "0.75rem", marginTop: 10, lineHeight: 1.5 }}>
+              Puoi generare un nuovo link in qualsiasi momento — ogni link è indipendente.
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 9, background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", color: "#C4622D", fontSize: "0.83rem" }}>
+            {error}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MembersList({ members, isOwner, onInvite }) {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16 }}>
@@ -204,6 +287,8 @@ function MembersList({ members }) {
           </div>
         ))}
       </div>
+
+      {/* Legenda scadenza */}
       <div style={{ marginTop: 22, paddingTop: 14, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
         <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 9 }}>Legenda scadenza</div>
         {[{ color: "#b43c3c", label: "Scaduto" }, { color: "#C4622D", label: "≤ 2 giorni" }, { color: "#7a6010", label: "≤ 5 giorni" }, { color: "#2D4A2D", label: "Ok" }].map(({ color, label }) => (
@@ -213,12 +298,31 @@ function MembersList({ members }) {
           </div>
         ))}
       </div>
+
+      {/* Sezione invito — visibile solo al proprietario */}
+      {isOwner && (
+        <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
+          <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Invita</div>
+          <p style={{ fontSize: "0.75rem", color: "var(--mid)", lineHeight: 1.55, marginBottom: 11 }}>
+            Genera un link per aggiungere nuovi membri al frigorifero.
+          </p>
+          <button
+            onClick={onInvite}
+            style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 14px", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", borderRadius: 10, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, cursor: "pointer", transition: "background 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+          >
+            <UserPlus size={13} strokeWidth={2} /> Genera link di invito
+          </button>
+        </div>
+      )}
     </>
   );
 }
 
 function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
   const cat = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
+  // FIX: risolve uid → nome leggibile
   const ownerName = members.find(m => m.uid === ing.owner)?.name || ing.owner;
   const details = [
     { label: "Alimento",     val: ing.name },
@@ -294,7 +398,8 @@ export default function FridgePage({ params }) {
   const [openId, setOpenId] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [toDelete, setToDelete] = useState(null);
-  const [showDeleteFridge, setShowDeleteFridge] = useState(false); 
+  const [showDeleteFridge, setShowDeleteFridge] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
 
   useEffect(() => {
@@ -351,6 +456,7 @@ export default function FridgePage({ params }) {
     setToDelete(null);
   };
 
+  // FIX: handleDeleteFridge nel componente principale — ha accesso a id e router
   const handleDeleteFridge = async () => {
     await apiFetch(`/fridges/${id}`, { method: "DELETE" });
     router.push("/dashboard");
@@ -412,7 +518,7 @@ export default function FridgePage({ params }) {
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
-          <MembersList members={members} />
+          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} />
         </aside>
 
         <section>
@@ -437,7 +543,7 @@ export default function FridgePage({ params }) {
               </button>
               {mobMembersOpen && (
                 <div style={{ padding: "4px 16px 16px" }}>
-                  <MembersList members={members} />
+                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} />
                 </div>
               )}
             </div>
@@ -466,6 +572,7 @@ export default function FridgePage({ params }) {
         </section>
       </div>
 
+      {showInvite && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
       {showAdd && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
       {toDelete && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
       {showDeleteFridge && (

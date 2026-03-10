@@ -284,3 +284,33 @@ paths:
       responses:
         '204':
           description: Alimento rimosso con successo
+  
+  /invites/{token}/accept:
+  post:
+    tags:
+      - Members
+    summary: Accetta invito al frigorifero
+    parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Utente aggiunto al frigorifero
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fridge_id:
+                  type: string
+                  format: uuid
+                already_member:
+                  type: boolean
+      '404':
+        description: Invito non trovato
+      '410':
+        description: Invito scaduto

@@ -31,3 +31,12 @@ CREATE TABLE fridge_invitations (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (inviter_id, invitee_id, fridge_id)
 );
+
+-- 5. Fridge invitation
+CREATE TABLE fridge_invitations (
+  token       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  fridge_id   UUID NOT NULL REFERENCES fridges(id) ON DELETE CASCADE,
+  created_by  VARCHAR NOT NULL REFERENCES users(id),
+  created_at  TIMESTAMP DEFAULT NOW(),
+  expires_at  TIMESTAMP DEFAULT NOW() + INTERVAL '24 hours'
+);

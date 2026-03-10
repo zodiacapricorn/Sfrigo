@@ -175,6 +175,7 @@ app.post('/fridges', async (req, res) => {
   }
 });
 
+// GET /fridges/:fridgeId - Id Frigorifero
 app.get('/fridges/:fridgeId', async (req, res) => {
   const { fridgeId } = req.params;
   try {
@@ -191,6 +192,99 @@ app.get('/fridges/:fridgeId', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Errore nel recupero del frigorifero' });
+  }
+});
+
+// DELETE /fridges/:fridgeId - Elimina frigorifero
+app.delete('/fridges/:fridgeId', async (req, res) => {
+  const { fridgeId } = req.params;
+  const client = await pgPool.connect();
+  try {
+    // Verifica che sia il proprietario
+    const ownerCheck = await pgPool.query(
+      'SELECT owner_id FROM fridges WHERE id = $1',
+      [fridgeId]
+    );
+    if (ownerCheck.rows.length === 0)
+      return res.status(404).json({ error: 'Frigorifero non trovato' });
+    if (ownerCheck.rows[0].owner_id !== req.userId)
+      return res.status(403).json({ error: 'Solo il proprietario può eliminare il frigorifero' });
+
+    await client.query('BEGIN');
+    // fridge_members ha ON DELETE CASCADE, si elimina da solo
+    await client.query('DELETE FROM fridges WHERE id = $1', [fridgeId]);
+    await client.query('COMMIT');
+
+    res.status(204).send();
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Errore eliminazione frigo:', error);
+    res.status(500).json({ error: 'Errore durante l\'eliminazione del frigorifero' });
+  } finally {
+    client.release();
+  }
+});
+
+// POST /fridges/:fridgeId/invites — genera token invite
+app.post('/fridges/:fridgeId/invites', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership || membership.role !== 'ADMIN')
+      return res.status(403).json({ error: 'Solo un ADMIN può generare inviti' });
+
+    const result = await pgPool.query(
+      `INSERT INTO fridge_invitations (fridge_id, created_by)
+       VALUES ($1, $2)
+       RETURNING token, expires_at`,
+      [fridgeId, req.userId]
+    );
+
+    const { token, expires_at } = result.rows[0];
+    res.status(201).json({ token, expires_at });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nella generazione dell\'invito' });
+  }
+});
+
+// POST /invites/:token/accept — accetta invito e aggiunge al frigo
+app.post('/invites/:token/accept', async (req, res) => {
+  const { token } = req.params;
+  const client = await pgPool.connect();
+  try {
+    const inviteResult = await pgPool.query(
+      `SELECT fridge_id, expires_at FROM fridge_invitations
+       WHERE token = $1`,
+      [token]
+    );
+
+    if (inviteResult.rows.length === 0)
+      return res.status(404).json({ error: 'Invito non trovato' });
+
+    const invite = inviteResult.rows[0];
+
+    if (new Date() > new Date(invite.expires_at))
+      return res.status(410).json({ error: 'Invito scaduto' });
+
+    const existing = await checkFridgeMembership(invite.fridge_id, req.userId);
+    if (existing)
+      return res.status(200).json({ fridge_id: invite.fridge_id, already_member: true });
+
+    await client.query('BEGIN');
+    await client.query(
+      `INSERT INTO fridge_members (fridge_id, user_id, role) VALUES ($1, $2, 'MEMBER')`,
+      [invite.fridge_id, req.userId]
+    );
+    await client.query('COMMIT');
+
+    res.status(200).json({ fridge_id: invite.fridge_id });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error(error);
+    res.status(500).json({ error: 'Errore nell\'accettazione dell\'invito' });
+  } finally {
+    client.release();
   }
 });
 
