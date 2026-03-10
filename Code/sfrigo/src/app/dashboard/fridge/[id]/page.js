@@ -8,18 +8,19 @@ import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 const CATEGORIES = ["Latticini", "Verdura", "Frutta", "Carne", "Pesce", "Bevande", "Condimenti", "Avanzi", "Altro"];
 const CATEGORY_COLORS = {
-  "Latticini": { bg: "rgba(200,224,110,0.18)", text: "#2D4A2D", dot: "#C8E06E" },
-  "Verdura": { bg: "rgba(107,140,107,0.18)", text: "#1A3320", dot: "#6B8C6B" },
-  "Frutta": { bg: "rgba(196,98,45,0.14)", text: "#7a3010", dot: "#C4622D" },
-  "Carne": { bg: "rgba(180,60,60,0.13)", text: "#7a2020", dot: "#b43c3c" },
-  "Pesce": { bg: "rgba(80,140,180,0.14)", text: "#1a4060", dot: "#508cb4" },
-  "Bevande": { bg: "rgba(45,74,45,0.12)", text: "#1A3320", dot: "#2D4A2D" },
+  "Latticini":  { bg: "rgba(200,224,110,0.18)", text: "#2D4A2D", dot: "#C8E06E" },
+  "Verdura":    { bg: "rgba(107,140,107,0.18)", text: "#1A3320", dot: "#6B8C6B" },
+  "Frutta":     { bg: "rgba(196,98,45,0.14)",   text: "#7a3010", dot: "#C4622D" },
+  "Carne":      { bg: "rgba(180,60,60,0.13)",   text: "#7a2020", dot: "#b43c3c" },
+  "Pesce":      { bg: "rgba(80,140,180,0.14)",  text: "#1a4060", dot: "#508cb4" },
+  "Bevande":    { bg: "rgba(45,74,45,0.12)",    text: "#1A3320", dot: "#2D4A2D" },
   "Condimenti": { bg: "rgba(168,197,168,0.22)", text: "#2D4A2D", dot: "#A8C5A8" },
-  "Avanzi": { bg: "rgba(90,90,82,0.12)", text: "#3a3a34", dot: "#5A5A52" },
-  "Altro": { bg: "rgba(214,208,196,0.35)", text: "#5A5A52", dot: "#D6D0C4" },
+  "Avanzi":     { bg: "rgba(90,90,82,0.12)",    text: "#3a3a34", dot: "#5A5A52" },
+  "Altro":      { bg: "rgba(214,208,196,0.35)", text: "#5A5A52", dot: "#D6D0C4" },
 };
 
 function daysUntilExpiry(d) {
@@ -27,10 +28,10 @@ function daysUntilExpiry(d) {
   return Math.ceil((new Date(d) - t) / 86400000);
 }
 function expiryStyle(days) {
-  if (days < 0) return { bg: "rgba(180,60,60,0.13)", color: "#b43c3c", label: "Scaduto" };
-  if (days <= 2) return { bg: "rgba(196,98,45,0.15)", color: "#C4622D", label: `${days}g` };
+  if (days < 0)  return { bg: "rgba(180,60,60,0.13)",  color: "#b43c3c", label: "Scaduto" };
+  if (days <= 2) return { bg: "rgba(196,98,45,0.15)",  color: "#C4622D", label: `${days}g` };
   if (days <= 5) return { bg: "rgba(200,180,60,0.15)", color: "#7a6010", label: `${days}g` };
-  return { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D", label: `${days}g` };
+  return           { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D", label: `${days}g` };
 }
 function ExpiryBadge({ dateStr }) {
   const s = expiryStyle(daysUntilExpiry(dateStr));
@@ -41,24 +42,25 @@ function ExpiryBadge({ dateStr }) {
   );
 }
 
-// ── Normalizza un alimento dall'API al formato usato nel componente ────────────
+// ── Normalizza un alimento dall'API al formato usato nel componente ─────────
 function normalizeItem(item) {
-  // MongoDB restituisce _id come stringa o come oggetto { $oid: "..." }
   const id = item._id?.$oid || item._id?.toString() || item._id || item.id;
   return {
     id,
-    name: item.name,
-    owner: item.owner_id || item.owner || "",
+    name:     item.name,
+    owner:    item.owner_id || item.owner || "",
     category: item.category || "Altro",
-    qty: item.quantity != null
-      ? `${item.quantity} ${item.unit || ""}`.trim()
-      : (item.qty || ""),
-    expiry: item.expiration_date
-      ? new Date(item.expiration_date).toISOString().split("T")[0]
-      : (item.expiry || ""),
-    notes: item.notes || "",
+    qty:      item.quantity != null
+                ? `${item.quantity} ${item.unit || ""}`.trim()
+                : (item.qty || ""),
+    expiry:   item.expiration_date
+                ? new Date(item.expiration_date).toISOString().split("T")[0]
+                : (item.expiry || ""),
+    notes:    item.notes || "",
   };
 }
+
+// ── Modals ──────────────────────────────────────────────────────────────────
 
 function AddModal({ members, onClose, onAdd }) {
   const [f, setF] = useState({
@@ -156,6 +158,32 @@ function DeleteModal({ ingredient, onClose, onConfirm }) {
   );
 }
 
+function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box" style={{ maxWidth: 390 }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(180,60,60,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+            <Trash2 size={20} color="#b43c3c" strokeWidth={1.75} />
+          </div>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.3rem", fontWeight: 700, color: "var(--forest)", marginBottom: 9 }}>Elimina Frigorifero</h3>
+          <p style={{ color: "var(--mid)", fontSize: "0.86rem", lineHeight: 1.65 }}>
+            Sei sicuro di voler eliminare <strong style={{ color: "var(--forest)" }}>{fridgeName}</strong>?<br />
+            Tutti gli alimenti verranno rimossi. L&apos;operazione non può essere annullata.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 9, marginTop: 24 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "11px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
+          <button onClick={onConfirm} style={{ flex: 1, padding: "11px", background: "#b43c3c", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.9rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}
+            onMouseEnter={e => e.currentTarget.style.background = "#8a2a2a"}
+            onMouseLeave={e => e.currentTarget.style.background = "#b43c3c"}
+          ><Trash2 size={13} strokeWidth={2} /> Elimina</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MembersList({ members }) {
   return (
     <>
@@ -189,14 +217,15 @@ function MembersList({ members }) {
   );
 }
 
-function IngRow({ ing, delay, isOpen, onToggle, onDelete }) {
+function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
   const cat = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
+  const ownerName = members.find(m => m.uid === ing.owner)?.name || ing.owner;
   const details = [
-    { label: "Alimento", val: ing.name },
-    { label: "Proprietario", val: ing.owner },
-    { label: "Categoria", val: ing.category },
-    { label: "Quantità", val: ing.qty },
-    { label: "Scadenza", val: ing.expiry },
+    { label: "Alimento",     val: ing.name },
+    { label: "Proprietario", val: ownerName },
+    { label: "Categoria",    val: ing.category },
+    { label: "Quantità",     val: ing.qty },
+    { label: "Scadenza",     val: ing.expiry },
   ];
   return (
     <div className={`ing-wrapper scale-in delay-${delay}${isOpen ? " open" : ""}`}>
@@ -250,9 +279,10 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete }) {
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+// ── Main Page ────────────────────────────────────────────────────────────────
 export default function FridgePage({ params }) {
   const { id } = use(params);
+  const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState(null);
   const [fridge, setFridge] = useState(null);
@@ -264,6 +294,7 @@ export default function FridgePage({ params }) {
   const [openId, setOpenId] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [toDelete, setToDelete] = useState(null);
+  const [showDeleteFridge, setShowDeleteFridge] = useState(false); 
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
 
   useEffect(() => {
@@ -271,7 +302,6 @@ export default function FridgePage({ params }) {
       if (!user) return;
       setCurrentUser(user);
       try {
-        // Fetch dettagli frigo e alimenti in parallelo
         const [fridgeData, items] = await Promise.all([
           apiFetch(`/fridges/${id}`).catch(() => ({ id, name: "Frigorifero" })),
           apiFetch(`/fridges/${id}/items`),
@@ -280,8 +310,6 @@ export default function FridgePage({ params }) {
         setFridge(fridgeData);
         setIngredients((items || []).map(normalizeItem));
 
-        // Membri: per ora usiamo l'utente corrente come unico membro visibile
-        // (le API dei membri non sono ancora esposte nel gateway)
         setMembers([{
           uid: user.uid,
           name: user.displayName || user.email,
@@ -298,19 +326,19 @@ export default function FridgePage({ params }) {
     return () => unsubscribe();
   }, [id]);
 
-  const toggle = (id) => setOpenId(p => p === id ? null : id);
+  const toggle = (itemId) => setOpenId(p => p === itemId ? null : itemId);
 
   const handleAdd = async (formData) => {
     const newItem = await apiFetch(`/fridges/${id}/items`, {
       method: "POST",
       body: JSON.stringify({
-        name: formData.name,
-        owner_id: formData.owner,
-        category: formData.category,
-        quantity: Number(formData.quantity),
-        unit: formData.unit,
+        name:            formData.name,
+        owner_id:        formData.owner,
+        category:        formData.category,
+        quantity:        Number(formData.quantity),
+        unit:            formData.unit,
         expiration_date: formData.expiration_date,
-        notes: formData.notes,
+        notes:           formData.notes,
       }),
     });
     setIngredients(p => [normalizeItem(newItem), ...p]);
@@ -323,30 +351,57 @@ export default function FridgePage({ params }) {
     setToDelete(null);
   };
 
+  const handleDeleteFridge = async () => {
+    await apiFetch(`/fridges/${id}`, { method: "DELETE" });
+    router.push("/dashboard");
+  };
+
   if (loading) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--mid)", fontFamily: "'DM Sans', sans-serif" }}>
       Caricamento…
     </div>
   );
 
+  const isOwner = fridge?.owner_id === currentUser?.uid;
+
   return (
     <>
       <style>{globalStyles}</style>
 
       <header style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(245,240,232,0.92)", backdropFilter: "blur(18px)", borderBottom: "1px solid rgba(45,74,45,0.08)", padding: "0 clamp(14px,4vw,44px)", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+
+        {/* Sinistra: back + logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
           <Link href="/dashboard" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: "50%", border: "1.5px solid rgba(45,74,45,0.15)", color: "var(--mid)", textDecoration: "none", transition: "border-color 0.2s, color 0.2s", flexShrink: 0 }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--moss)"; e.currentTarget.style.color = "var(--forest)"; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(45,74,45,0.15)"; e.currentTarget.style.color = "var(--mid)"; }}
           ><ArrowLeft size={14} strokeWidth={1.75} /></Link>
           <span style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: "1.25rem", color: "var(--forest)" }}>Sfrigo</span>
         </div>
+
+        {/* Centro: nome frigo */}
         <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", color: "var(--forest)", fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, textAlign: "center" }}>
           {fridge?.name || "Frigorifero"}
         </div>
-        <button className="btn-primary" onClick={() => setShowAdd(true)}>
-          <Plus size={14} strokeWidth={2.25} /> Aggiungi Alimento
-        </button>
+
+        {/* Destra: pulsanti — FIX: un solo blocco, nessun duplicato */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {isOwner && (
+            <button
+              onClick={() => setShowDeleteFridge(true)}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 100, background: "rgba(180,60,60,0.1)", color: "#b43c3c", border: "1px solid rgba(180,60,60,0.25)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", cursor: "pointer", transition: "background 0.2s" }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(180,60,60,0.2)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(180,60,60,0.1)"}
+            >
+              <Trash2 size={13} strokeWidth={1.75} />
+              <span className="logout-text">Elimina frigo</span>
+            </button>
+          )}
+          <button className="btn-primary" onClick={() => setShowAdd(true)}>
+            <Plus size={14} strokeWidth={2.25} />
+            <span className="logout-text">Aggiungi Alimento</span>
+          </button>
+        </div>
       </header>
 
       {error && (
@@ -404,7 +459,7 @@ export default function FridgePage({ params }) {
               </div>
             ) : (
               ingredients.map((ing, i) => (
-                <IngRow key={ing.id} ing={ing} delay={Math.min(i + 1, 8)} isOpen={openId === ing.id} onToggle={() => toggle(ing.id)} onDelete={setToDelete} />
+                <IngRow key={ing.id} ing={ing} delay={Math.min(i + 1, 8)} isOpen={openId === ing.id} onToggle={() => toggle(ing.id)} onDelete={setToDelete} members={members} />
               ))
             )}
           </div>
@@ -413,6 +468,13 @@ export default function FridgePage({ params }) {
 
       {showAdd && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
       {toDelete && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
+      {showDeleteFridge && (
+        <DeleteFridgeModal
+          fridgeName={fridge?.name}
+          onClose={() => setShowDeleteFridge(false)}
+          onConfirm={handleDeleteFridge}
+        />
+      )}
     </>
   );
 }
