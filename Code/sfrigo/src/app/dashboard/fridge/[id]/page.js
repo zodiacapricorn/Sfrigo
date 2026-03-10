@@ -1,26 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users } from "lucide-react";
-
 import { globalStyles } from "./layout";
-const MOCK_FRIDGE = { id: "f1", name: "Frigo di Casa", ownerUid: "user_001" };
-const MOCK_MEMBERS = [
-  { uid: "user_001", name: "Marco R.", role: "owner", initial: "M" },
-  { uid: "user_002", name: "Sara B.", role: "member", initial: "S" },
-  { uid: "user_003", name: "Luca M.", role: "member", initial: "L" },
-];
+import { apiFetch } from "@/lib/api";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
 const CATEGORIES = ["Latticini", "Verdura", "Frutta", "Carne", "Pesce", "Bevande", "Condimenti", "Avanzi", "Altro"];
-const MOCK_INGREDIENTS = [
-  { id: "i1", name: "Mozzarella", owner: "Marco R.", category: "Latticini", qty: "2 pz", expiry: "2025-06-10", notes: "Fresca, da usare subito" },
-  { id: "i2", name: "Spinaci", owner: "Sara B.", category: "Verdura", qty: "300 g", expiry: "2025-06-08", notes: "" },
-  { id: "i3", name: "Latte", owner: "Marco R.", category: "Latticini", qty: "1 L", expiry: "2025-06-15", notes: "Parzialmente scremato" },
-  { id: "i4", name: "Pollo", owner: "Luca M.", category: "Carne", qty: "500 g", expiry: "2025-06-07", notes: "Già marinato" },
-  { id: "i5", name: "Yogurt", owner: "Sara B.", category: "Latticini", qty: "4 pz", expiry: "2025-06-20", notes: "" },
-  { id: "i6", name: "Carote", owner: "Marco R.", category: "Verdura", qty: "6 pz", expiry: "2025-06-25", notes: "" },
-  { id: "i7", name: "Succo Arancia", owner: "Luca M.", category: "Bevande", qty: "500 ml", expiry: "2025-06-12", notes: "Senza zuccheri aggiunti" },
-];
 const CATEGORY_COLORS = {
   "Latticini": { bg: "rgba(200,224,110,0.18)", text: "#2D4A2D", dot: "#C8E06E" },
   "Verdura": { bg: "rgba(107,140,107,0.18)", text: "#1A3320", dot: "#6B8C6B" },
@@ -46,25 +35,45 @@ function expiryStyle(days) {
 function ExpiryBadge({ dateStr }) {
   const s = expiryStyle(daysUntilExpiry(dateStr));
   return (
-    <span style={{
-      display: "inline-block", padding: "3px 10px", borderRadius: 100,
-      fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.04em",
-      background: s.bg, color: s.color, whiteSpace: "nowrap"
-    }}>
+    <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 100, fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.04em", background: s.bg, color: s.color, whiteSpace: "nowrap" }}>
       {s.label}
     </span>
   );
 }
 
+// ── Normalizza un alimento dall'API al formato usato nel componente ────────────
+function normalizeItem(item) {
+  // MongoDB restituisce _id come stringa o come oggetto { $oid: "..." }
+  const id = item._id?.$oid || item._id?.toString() || item._id || item.id;
+  return {
+    id,
+    name: item.name,
+    owner: item.owner_id || item.owner || "",
+    category: item.category || "Altro",
+    qty: item.quantity != null
+      ? `${item.quantity} ${item.unit || ""}`.trim()
+      : (item.qty || ""),
+    expiry: item.expiration_date
+      ? new Date(item.expiration_date).toISOString().split("T")[0]
+      : (item.expiry || ""),
+    notes: item.notes || "",
+  };
+}
+
 function AddModal({ members, onClose, onAdd }) {
-  const [f, setF] = useState({ name: "", owner: members[0].name, category: CATEGORIES[0], qty: "", expiry: "", notes: "" });
+  const [f, setF] = useState({
+    name: "", owner: members[0]?.uid || "", category: CATEGORIES[0],
+    quantity: "", unit: "pz", expiration_date: "", notes: ""
+  });
   const s = (k, v) => setF(p => ({ ...p, [k]: v }));
-  const submit = (e) => {
+
+  const submit = async (e) => {
     e.preventDefault();
-    if (!f.name.trim() || !f.qty.trim() || !f.expiry) return;
-    onAdd({ ...f, id: "i" + Date.now() });
+    if (!f.name.trim() || !f.quantity || !f.expiration_date) return;
+    await onAdd(f);
     onClose();
   };
+
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-box">
@@ -81,7 +90,7 @@ function AddModal({ members, onClose, onAdd }) {
             <div>
               <label>Proprietario</label>
               <select className="input-field" value={f.owner} onChange={e => s("owner", e.target.value)}>
-                {members.map(m => <option key={m.uid}>{m.name}</option>)}
+                {members.map(m => <option key={m.uid} value={m.uid}>{m.name}</option>)}
               </select>
             </div>
             <div>
@@ -92,11 +101,17 @@ function AddModal({ members, onClose, onAdd }) {
             </div>
             <div>
               <label>Quantità *</label>
-              <input className="input-field" type="text" required placeholder="es. 200 g" value={f.qty} onChange={e => s("qty", e.target.value)} />
+              <input className="input-field" type="number" required placeholder="es. 200" value={f.quantity} onChange={e => s("quantity", e.target.value)} />
+            </div>
+            <div>
+              <label>Unità</label>
+              <select className="input-field" value={f.unit} onChange={e => s("unit", e.target.value)}>
+                {["pz", "g", "kg", "ml", "L", "fette"].map(u => <option key={u}>{u}</option>)}
+              </select>
             </div>
             <div>
               <label>Data scadenza *</label>
-              <input className="input-field" type="date" required value={f.expiry} onChange={e => s("expiry", e.target.value)} />
+              <input className="input-field" type="date" required value={f.expiration_date} onChange={e => s("expiration_date", e.target.value)} />
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
               <label>Note</label>
@@ -151,10 +166,12 @@ function MembersList({ members }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
         {members.map(m => (
           <div key={m.uid} className="member-pill">
-            <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "owner" ? "var(--forest)" : "rgba(107,140,107,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, color: m.role === "owner" ? "var(--lime)" : "var(--sage)" }}>{m.initial}</div>
+            <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "owner" || m.role === "ADMIN" ? "var(--forest)" : "rgba(107,140,107,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, color: m.role === "owner" || m.role === "ADMIN" ? "var(--lime)" : "var(--sage)" }}>{m.initial || m.name?.charAt(0)}</div>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: "0.84rem", color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</div>
-              <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{m.role === "owner" ? "Proprietario" : "Membro"}</div>
+              <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                {m.role === "ADMIN" || m.role === "owner" ? "Proprietario" : "Membro"}
+              </div>
             </div>
           </div>
         ))}
@@ -184,7 +201,6 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete }) {
   return (
     <div className={`ing-wrapper scale-in delay-${delay}${isOpen ? " open" : ""}`}>
       <button className="ing-row" onClick={onToggle}>
-        {/* Name + category */}
         <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: cat.dot, flexShrink: 0 }} />
           <div style={{ minWidth: 0 }}>
@@ -192,25 +208,16 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete }) {
             <span style={{ fontSize: "0.63rem", fontWeight: 500, letterSpacing: "0.05em", padding: "2px 7px", borderRadius: 100, background: cat.bg, color: cat.text, display: "inline-block", marginTop: 2 }}>{ing.category}</span>
           </div>
         </div>
-
-        {/* Qty — desktop */}
         <div className="col-qty-desk" style={{ fontSize: "0.83rem", color: "var(--ink)", fontWeight: 500, textAlign: "right" }}>{ing.qty}</div>
-
-        {/* Expiry badge — desktop */}
         <div className="col-exp-desk" style={{ display: "flex", justifyContent: "flex-end" }}><ExpiryBadge dateStr={ing.expiry} /></div>
-
-        {/* Qty + expiry stacked — mobile */}
         <div className="col-mob-stack" style={{ flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
           <span style={{ fontSize: "0.8rem", color: "var(--ink)", fontWeight: 500 }}>{ing.qty}</span>
           <ExpiryBadge dateStr={ing.expiry} />
         </div>
-
-        {/* Chevron */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <ChevronDown size={15} strokeWidth={2} className="chevron" />
         </div>
       </button>
-
       {isOpen && (
         <div className="ing-detail">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: "11px 18px", marginBottom: ing.notes ? 12 : 0 }}>
@@ -243,22 +250,84 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete }) {
   );
 }
 
-export default function FridgePage() {
-  const fridge = MOCK_FRIDGE;
-  const [members] = useState(MOCK_MEMBERS);
-  const [ingredients, setIngredients] = useState(MOCK_INGREDIENTS);
+// ── Main Page ─────────────────────────────────────────────────────────────────
+export default function FridgePage({ params }) {
+  const { id } = use(params);
+
+  const [currentUser, setCurrentUser] = useState(null);
+  const [fridge, setFridge] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [openId, setOpenId] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [toDelete, setToDelete] = useState(null);
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      setCurrentUser(user);
+      try {
+        // Fetch dettagli frigo e alimenti in parallelo
+        const [fridgeData, items] = await Promise.all([
+          apiFetch(`/fridges/${id}`).catch(() => ({ id, name: "Frigorifero" })),
+          apiFetch(`/fridges/${id}/items`),
+        ]);
+
+        setFridge(fridgeData);
+        setIngredients((items || []).map(normalizeItem));
+
+        // Membri: per ora usiamo l'utente corrente come unico membro visibile
+        // (le API dei membri non sono ancora esposte nel gateway)
+        setMembers([{
+          uid: user.uid,
+          name: user.displayName || user.email,
+          role: "ADMIN",
+          initial: (user.displayName || user.email).charAt(0).toUpperCase()
+        }]);
+      } catch (err) {
+        console.error("Errore fetch frigo:", err);
+        setError("Impossibile caricare i dati. Riprova più tardi.");
+      } finally {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [id]);
+
   const toggle = (id) => setOpenId(p => p === id ? null : id);
-  const handleAdd = (item) => setIngredients(p => [item, ...p]);
-  const handleDelete = () => {
+
+  const handleAdd = async (formData) => {
+    const newItem = await apiFetch(`/fridges/${id}/items`, {
+      method: "POST",
+      body: JSON.stringify({
+        name: formData.name,
+        owner_id: formData.owner,
+        category: formData.category,
+        quantity: Number(formData.quantity),
+        unit: formData.unit,
+        expiration_date: formData.expiration_date,
+        notes: formData.notes,
+      }),
+    });
+    setIngredients(p => [normalizeItem(newItem), ...p]);
+  };
+
+  const handleDelete = async () => {
+    await apiFetch(`/fridges/${id}/items/${toDelete.id}`, { method: "DELETE" });
     setIngredients(p => p.filter(i => i.id !== toDelete.id));
     if (openId === toDelete.id) setOpenId(null);
     setToDelete(null);
   };
+
+  if (loading) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--mid)", fontFamily: "'DM Sans', sans-serif" }}>
+      Caricamento…
+    </div>
+  );
 
   return (
     <>
@@ -272,11 +341,19 @@ export default function FridgePage() {
           ><ArrowLeft size={14} strokeWidth={1.75} /></Link>
           <span style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: "1.25rem", color: "var(--forest)" }}>Sfrigo</span>
         </div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", color: "var(--forest)", fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, textAlign: "center" }}>{fridge.name}</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", color: "var(--forest)", fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, textAlign: "center" }}>
+          {fridge?.name || "Frigorifero"}
+        </div>
         <button className="btn-primary" onClick={() => setShowAdd(true)}>
           <Plus size={14} strokeWidth={2.25} /> Aggiungi Alimento
         </button>
       </header>
+
+      {error && (
+        <div style={{ margin: "20px clamp(14px,4vw,44px)", padding: "14px 18px", borderRadius: 12, background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", color: "#C4622D", fontSize: "0.88rem" }}>
+          {error}
+        </div>
+      )}
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
@@ -285,8 +362,12 @@ export default function FridgePage() {
 
         <section>
           <div className="fade-up" style={{ marginBottom: 20 }}>
-            <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(1.65rem,4vw,2.4rem)", fontWeight: 900, color: "var(--forest)", lineHeight: 1.06, letterSpacing: "-0.02em" }}>{fridge.name}</h1>
-            <p style={{ color: "var(--mid)", fontSize: "0.82rem", marginTop: 4 }}>{ingredients.length} {ingredients.length === 1 ? "Alimento" : "alimenti"} · clicca per i dettagli</p>
+            <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(1.65rem,4vw,2.4rem)", fontWeight: 900, color: "var(--forest)", lineHeight: 1.06, letterSpacing: "-0.02em" }}>
+              {fridge?.name || "Frigorifero"}
+            </h1>
+            <p style={{ color: "var(--mid)", fontSize: "0.82rem", marginTop: 4 }}>
+              {ingredients.length} {ingredients.length === 1 ? "alimento" : "alimenti"} · clicca per i dettagli
+            </p>
           </div>
 
           {/* Mobile members drawer */}
@@ -307,7 +388,7 @@ export default function FridgePage() {
             </div>
           </div>
 
-          {/* Column headers — desktop */}
+          {/* Column headers */}
           <div className="col-headers-row" style={{ marginBottom: 7 }}>
             {["Alimento", "Quantità", "Scadenza", ""].map((h, i) => (
               <div key={i} style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.08em", textTransform: "uppercase", textAlign: i > 0 ? "right" : "left" }}>{h}</div>
@@ -318,7 +399,7 @@ export default function FridgePage() {
             {ingredients.length === 0 ? (
               <div style={{ padding: "52px 24px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.18)", borderRadius: 14 }}>
                 <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.15rem", color: "var(--forest)", marginBottom: 7 }}>Frigo vuoto</div>
-                <p style={{ color: "var(--mid)", fontSize: "0.83rem", marginBottom: 16 }}>Aggiungi il primo Alimento per iniziare.</p>
+                <p style={{ color: "var(--mid)", fontSize: "0.83rem", marginBottom: 16 }}>Aggiungi il primo alimento per iniziare.</p>
                 <button className="btn-primary" onClick={() => setShowAdd(true)}><Plus size={13} strokeWidth={2} /> Aggiungi Alimento</button>
               </div>
             ) : (
