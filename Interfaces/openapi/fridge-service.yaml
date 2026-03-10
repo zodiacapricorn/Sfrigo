@@ -111,6 +111,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fridge'
 
+  /fridges/{fridgeId}:
+    get:
+      summary: Dettaglio frigorifero
+      description: Restituisce i dettagli di un frigorifero specifico. Richiede di essere membro.
+      parameters:
+        - $ref: '#/components/parameters/XUserIdHeader'
+        - name: fridgeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fridge'
+        '403':
+          description: Non sei membro di questo frigorifero
+        '404':
+          description: Frigorifero non trovato
+
   /fridges/{fridgeId}/invites:
     post:
       summary: Invita utente al frigorifero

@@ -175,6 +175,25 @@ app.post('/fridges', async (req, res) => {
   }
 });
 
+app.get('/fridges/:fridgeId', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership) return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
+
+    const result = await pgPool.query(
+      'SELECT id, name, owner_id, created_at FROM fridges WHERE id = $1',
+      [fridgeId]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Frigorifero non trovato' });
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel recupero del frigorifero' });
+  }
+});
+
 // ==========================================
 // ROTTE MONGODB (Gestione Inventario)
 // ==========================================

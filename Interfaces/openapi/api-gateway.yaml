@@ -149,6 +149,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fridge'
 
+  /fridges/{fridgeId}:
+  get:
+    tags:
+      - Fridges
+    summary: Dettaglio frigorifero
+    parameters:
+      - name: fridgeId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Dettagli del frigorifero
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fridge'
+      '403':
+        description: Non sei membro di questo frigorifero
+      '404':
+        description: Frigorifero non trovato
+
   /fridges/{fridgeId}/invites:
     post:
       tags:
