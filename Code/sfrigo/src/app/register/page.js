@@ -11,13 +11,8 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, UserPlus } from "lucide-react";
-
 import { globalStyles } from "./layout.js";
-
-async function setSessionCookie(user) {
-  const token = await user.getIdToken();
-  document.cookie = `__session=${token}; path=/; max-age=3600; SameSite=Strict`;
-}
+import { setSessionCookie, syncUserToDb } from "@/lib/authHelpers";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -45,9 +40,14 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+
       if (name.trim()) {
         await updateProfile(result.user, { displayName: name.trim() });
       }
+
+      // Salva utente in PostgreSQL
+      await syncUserToDb(result.user, name.trim() || email.split("@")[0]);
+
       await setSessionCookie(result.user);
       router.refresh();
       router.push("/dashboard");
@@ -65,6 +65,10 @@ export default function RegisterPage() {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
+
+      // Salva/aggiorna utente in PostgreSQL (upsert — sicuro anche se già esiste)
+      await syncUserToDb(result.user);
+
       await setSessionCookie(result.user);
       router.refresh();
       router.push("/dashboard");
@@ -91,7 +95,6 @@ export default function RegisterPage() {
             padding: "clamp(40px, 5vw, 72px)",
           }}
         >
-          {/* Rings */}
           {[380, 620, 860].map((s, i) => (
             <div key={i} style={{
               position: "absolute", width: s, height: s, borderRadius: "50%",
@@ -101,7 +104,6 @@ export default function RegisterPage() {
             }} />
           ))}
 
-          {/* Floating words */}
           {[
             { text: "scorte",  top: "18%",    left: "10%",  dur: "5s" },
             { text: "ricette", bottom: "22%", right: "10%", dur: "6.5s", delay: "1.2s" },
@@ -141,18 +143,12 @@ export default function RegisterPage() {
               e ricevi suggerimenti di ricette basati su ciò che hai già.
             </p>
 
-            <Link
-              href="/"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                color: "var(--sage)", fontSize: "0.8rem", textDecoration: "none",
-                letterSpacing: "0.02em", transition: "color 0.2s"
-              }}
+            <Link href="/"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--sage)", fontSize: "0.8rem", textDecoration: "none", letterSpacing: "0.02em", transition: "color 0.2s" }}
               onMouseEnter={e => e.currentTarget.style.color = "var(--mint)"}
               onMouseLeave={e => e.currentTarget.style.color = "var(--sage)"}
             >
-              <ArrowLeft size={13} strokeWidth={1.75} />
-              Torna alla home
+              <ArrowLeft size={13} strokeWidth={1.75} /> Torna alla home
             </Link>
           </div>
         </div>
@@ -166,127 +162,66 @@ export default function RegisterPage() {
         }}>
           <div style={{ width: "100%", maxWidth: 400 }}>
 
-            {/* Mobile back link */}
             <div style={{ marginBottom: 32 }}>
-              <Link href="/" style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                color: "var(--sage)", fontSize: "0.8rem", textDecoration: "none"
-              }}>
+              <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--sage)", fontSize: "0.8rem", textDecoration: "none" }}>
                 <ArrowLeft size={13} strokeWidth={1.75} /> Home
               </Link>
             </div>
 
-            {/* Heading */}
             <div className="fade-up" style={{ marginBottom: 40 }}>
-              <h2 style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(2rem, 4vw, 2.8rem)",
-                fontWeight: 700, color: "var(--forest)",
-                lineHeight: 1.1, marginBottom: 10
-              }}>Crea account.</h2>
-              <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.6 }}>
-                Unisciti a Sfrigo e inizia a gestire il tuo frigorifero.
-              </p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700, color: "var(--forest)", lineHeight: 1.1, marginBottom: 10 }}>Crea account.</h2>
+              <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.6 }}>Unisciti a Sfrigo e inizia a gestire il tuo frigorifero.</p>
             </div>
 
-            {/* Register form */}
             <form onSubmit={handleRegister}>
               <div className="fade-up delay-1" style={{ marginBottom: 18 }}>
                 <label htmlFor="name">Nome</label>
-                <input
-                  id="name" type="text"
-                  placeholder="Il tuo nome"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="input-field"
-                />
+                <input id="name" type="text" placeholder="Il tuo nome" value={name} onChange={e => setName(e.target.value)} className="input-field" />
               </div>
 
               <div className="fade-up delay-2" style={{ marginBottom: 18 }}>
                 <label htmlFor="email">Email</label>
-                <input
-                  id="email" type="email" required
-                  placeholder="nome@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="input-field"
-                />
+                <input id="email" type="email" required placeholder="nome@email.com" value={email} onChange={e => setEmail(e.target.value)} className="input-field" />
               </div>
 
               <div className="fade-up delay-3" style={{ marginBottom: 18 }}>
                 <label htmlFor="password">Password</label>
-                <input
-                  id="password" type="password" required
-                  placeholder="Minimo 6 caratteri"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="input-field"
-                />
+                <input id="password" type="password" required placeholder="Minimo 6 caratteri" value={password} onChange={e => setPassword(e.target.value)} className="input-field" />
               </div>
 
               <div className="fade-up delay-4" style={{ marginBottom: 6 }}>
                 <label htmlFor="confirm">Conferma password</label>
-                <input
-                  id="confirm" type="password" required
-                  placeholder="••••••••"
-                  value={confirm}
-                  onChange={e => setConfirm(e.target.value)}
-                  className="input-field"
-                />
+                <input id="confirm" type="password" required placeholder="••••••••" value={confirm} onChange={e => setConfirm(e.target.value)} className="input-field" />
               </div>
 
               {error && (
-                <div style={{
-                  margin: "14px 0", padding: "10px 16px",
-                  background: "rgba(196,98,45,0.07)",
-                  border: "1px solid rgba(196,98,45,0.2)",
-                  borderRadius: 10, color: "#C4622D",
-                  fontSize: "0.83rem", textAlign: "center"
-                }}>{error}</div>
+                <div style={{ margin: "14px 0", padding: "10px 16px", background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", borderRadius: 10, color: "#C4622D", fontSize: "0.83rem", textAlign: "center" }}>{error}</div>
               )}
 
               <div className="fade-up delay-5" style={{ marginTop: 26 }}>
                 <button type="submit" disabled={loading} className="btn-submit">
-                  {loading
-                    ? "Registrazione in corso…"
-                    : <><UserPlus size={15} strokeWidth={1.75} /> Crea account</>}
+                  {loading ? "Registrazione in corso…" : <><UserPlus size={15} strokeWidth={1.75} /> Crea account</>}
                 </button>
               </div>
             </form>
 
-            {/* Divider */}
-            <div className="fade-up" style={{
-              display: "flex", alignItems: "center", gap: 14, margin: "26px 0"
-            }}>
+            <div className="fade-up" style={{ display: "flex", alignItems: "center", gap: 14, margin: "26px 0" }}>
               <div style={{ flex: 1, height: 1, background: "rgba(45,74,45,0.12)" }} />
               <span style={{ color: "var(--mid)", fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>oppure</span>
               <div style={{ flex: 1, height: 1, background: "rgba(45,74,45,0.12)" }} />
             </div>
 
-            {/* Google */}
             <div className="fade-up">
               <button onClick={handleGoogleRegister} disabled={googleLoading} className="btn-google">
-                <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="Google" width={18} height={18}
-                />
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={18} height={18} />
                 {googleLoading ? "Registrazione in corso…" : "Continua con Google"}
               </button>
             </div>
 
-            {/* Login link */}
-            <p style={{
-              textAlign: "center", marginTop: 32,
-              fontSize: "0.85rem", color: "var(--mid)"
-            }}>
+            <p style={{ textAlign: "center", marginTop: 32, fontSize: "0.85rem", color: "var(--mid)" }}>
               Hai già un account?{" "}
-              <Link
-                href="/login"
-                style={{
-                  color: "var(--forest)", fontWeight: 500, textDecoration: "none",
-                  borderBottom: "1px solid rgba(45,74,45,0.3)", paddingBottom: 1,
-                  transition: "border-color 0.2s"
-                }}
+              <Link href="/login"
+                style={{ color: "var(--forest)", fontWeight: 500, textDecoration: "none", borderBottom: "1px solid rgba(45,74,45,0.3)", paddingBottom: 1, transition: "border-color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.borderColor = "var(--forest)"}
                 onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(45,74,45,0.3)"}
               >Accedi</Link>
@@ -294,7 +229,6 @@ export default function RegisterPage() {
 
           </div>
         </div>
-
       </div>
     </>
   );
