@@ -31,26 +31,61 @@ The goal is to provide a simple, intuitive and reliable tool that allows groups 
 
 # Getting Started
 
-**Clone the repository**
+## Prerequisites
+
+Make sure **Node.js** is installed on your machine:
+
+```bash
+node -v
+```
+
+If no version is returned, download and install Node.js from [nodejs.org](https://nodejs.org), restart your terminal, then run the command again.
+
+---
+
+## Installation
+
+**1. Clone the repository**
+
 ```bash
 git clone https://github.com/zodiacapricorn/Sfrigo.git
 cd Sfrigo\Code\sfrigo
 ```
 
-**Check that Node.js is installed**
+**2. Start the services**
+
+Each service runs in its own terminal. Open four terminal windows and run the following commands — one per terminal.
+
+**Fridge Service** — port 8082
 ```bash
-node -v
+cd api\fridge-service
+npm install
+npm start
 ```
 
-If no version is returned, install Node.js from [nodejs.org](https://nodejs.org), then restart the terminal and run the command again.
+**API Gateway** — port 8080
+```bash
+cd api\gateway
+npm install
+npm start
+```
 
-**Install dependencies and start**
+**User Service** — port 8081
+```bash
+cd api\user-service
+npm install
+npm start
+```
+
+**Next.js App** — port 3000
 ```bash
 npm install --legacy-peer-deps
 npm run dev
 ```
 
----
+**3. Open the app**
+
+Once all services are running, open [http://localhost:3000](http://localhost:3000) in your browser.
 
 # Static Analysis
 
