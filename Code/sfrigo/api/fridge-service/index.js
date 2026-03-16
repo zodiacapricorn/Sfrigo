@@ -78,6 +78,30 @@ app.get('/fridges', async (req, res) => {
   }
 });
 
+// GET /fridges/:fridgeId/members - Lista dei membri di un frigorifero
+app.get('/fridges/:fridgeId/members', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
+
+    const result = await pgPool.query(
+      `SELECT u.id, u.username, fm.role, fm.joined_at
+       FROM fridge_members fm
+       JOIN users u ON fm.user_id = u.id
+       WHERE fm.fridge_id = $1
+       ORDER BY fm.joined_at ASC`,
+      [fridgeId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel recupero dei membri' });
+  }
+});
+
 // POST /fridges/:fridgeId/members - Aggiungi membro
 app.post('/fridges/:fridgeId/members', async (req, res) => {
   const { fridgeId } = req.params;

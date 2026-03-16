@@ -167,6 +167,39 @@ paths:
         '404':
           description: Not Found - Utente da invitare o frigorifero non trovato
 
+  /fridges/{fridgeId}/members:
+  get:
+    tags:
+      - Members
+    summary: Lista membri del frigorifero
+    parameters:
+      - $ref: '#/components/parameters/XUserIdHeader'
+      - name: fridgeId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Lista membri con username e ruolo
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  role:
+                    type: string
+                  joined_at:
+                    type: string
+                    format: date-time
+  
   /fridges/{fridgeId}/items:
     get:
       summary: Visualizzazione Inventario

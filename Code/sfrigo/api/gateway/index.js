@@ -74,6 +74,10 @@ apiRouter.post('/invites/:token/accept', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
+apiRouter.get('/fridges/:fridgeId/members', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
 // --- INVENTORY (ITEMS) ---
 apiRouter.get('/fridges/:fridgeId/items', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
