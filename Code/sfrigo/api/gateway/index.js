@@ -57,12 +57,24 @@ apiRouter.post('/fridges', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
+apiRouter.delete('/fridges/:fridgeId', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
 apiRouter.get('/fridges/:fridgeId', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
 // --- MEMBERS / INVITES ---
 apiRouter.post('/fridges/:fridgeId/invites', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.post('/invites/:token/accept', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.get('/fridges/:fridgeId/members', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
@@ -78,6 +90,8 @@ apiRouter.post('/fridges/:fridgeId/items', (req, res) => {
 apiRouter.delete('/fridges/:fridgeId/items/:itemId', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
+
+
 
 app.use('/api/v1', apiRouter);
 

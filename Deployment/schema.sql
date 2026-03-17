@@ -11,6 +11,7 @@ CREATE TABLE fridges (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     owner_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    owner_username VARCHAR(50) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -25,9 +26,9 @@ CREATE TABLE fridge_members (
 
 -- 4. FRIDGE_INVITATIONS Table
 CREATE TABLE fridge_invitations (
-    inviter_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    invitee_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    fridge_id UUID NOT NULL REFERENCES fridges(id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (inviter_id, invitee_id, fridge_id)
+  token       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  fridge_id   UUID NOT NULL REFERENCES fridges(id) ON DELETE CASCADE,
+  created_by  VARCHAR NOT NULL REFERENCES users(id),
+  created_at  TIMESTAMP DEFAULT NOW(),
+  expires_at  TIMESTAMP DEFAULT NOW() + INTERVAL '24 hours'
 );

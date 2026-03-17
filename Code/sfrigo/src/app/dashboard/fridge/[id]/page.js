@@ -3,7 +3,7 @@
 import { use } from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -36,7 +36,7 @@ function expiryStyle(days) {
 function ExpiryBadge({ dateStr }) {
   const s = expiryStyle(daysUntilExpiry(dateStr));
   return (
-    <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 100, fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.04em", background: s.bg, color: s.color, whiteSpace: "nowrap" }}>
+    <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: 100, fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.04em", background: s.bg, color: s.color, whiteSpace: "nowrap" }}>
       {s.label}
     </span>
   );
@@ -80,7 +80,7 @@ function AddModal({ members, onClose, onAdd }) {
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-box">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.75rem", fontWeight: 700, color: "var(--forest)" }}>Aggiungi Alimento</h3>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.9rem", fontWeight: 700, color: "var(--forest)" }}>Aggiungi Alimento</h3>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}><X size={17} strokeWidth={1.75} /></button>
         </div>
         <form onSubmit={submit}>
@@ -121,11 +121,11 @@ function AddModal({ members, onClose, onAdd }) {
             </div>
           </div>
           <div style={{ display: "flex", gap: 9, marginTop: 20 }}>
-            <button type="button" onClick={onClose} style={{ flex: 1, padding: "11px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
-            <button type="submit" style={{ flex: 2, padding: "11px", background: "var(--forest)", color: "var(--lime)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.9rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, transition: "background 0.2s" }}
+            <button type="button" onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.92rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
+            <button type="submit" style={{ flex: 2, padding: "13px", background: "var(--forest)", color: "var(--lime)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.95rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, transition: "background 0.2s" }}
               onMouseEnter={e => e.currentTarget.style.background = "var(--moss)"}
               onMouseLeave={e => e.currentTarget.style.background = "var(--forest)"}
-            ><Plus size={14} strokeWidth={2} /> Aggiungi</button>
+            ><Plus size={14} strokeWidth={2} /> Aggiungi Alimento</button>
           </div>
         </form>
       </div>
@@ -141,23 +141,24 @@ function DeleteModal({ ingredient, onClose, onConfirm }) {
           <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(180,60,60,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
             <Trash2 size={20} color="#b43c3c" strokeWidth={1.75} />
           </div>
-          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.3rem", fontWeight: 700, color: "var(--forest)", marginBottom: 9 }}>Elimina Alimento</h3>
-          <p style={{ color: "var(--mid)", fontSize: "0.86rem", lineHeight: 1.65 }}>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.45rem", fontWeight: 700, color: "var(--forest)", marginBottom: 11 }}>Elimina Alimento</h3>
+          <p style={{ color: "var(--mid)", fontSize: "0.92rem", lineHeight: 1.65 }}>
             Sei sicuro di voler eliminare <strong style={{ color: "var(--forest)" }}>{ingredient.name}</strong>? L&apos;operazione non può essere annullata.
           </p>
         </div>
         <div style={{ display: "flex", gap: 9, marginTop: 24 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "11px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
-          <button onClick={onConfirm} style={{ flex: 1, padding: "11px", background: "#b43c3c", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.9rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, transition: "background 0.2s" }}
+          <button onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.92rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
+          <button onClick={onConfirm} style={{ flex: 1, padding: "13px", background: "#b43c3c", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.95rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, transition: "background 0.2s" }}
             onMouseEnter={e => e.currentTarget.style.background = "#8a2a2a"}
             onMouseLeave={e => e.currentTarget.style.background = "#b43c3c"}
-          ><Trash2 size={13} strokeWidth={2} /> Elimina</button>
+          ><Trash2 size={14} strokeWidth={2} /> Elimina</button>
         </div>
       </div>
     </div>
   );
 }
 
+// FIX: modal puro — riceve solo fridgeName, onClose, onConfirm dall'esterno
 function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -166,15 +167,15 @@ function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
           <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(180,60,60,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
             <Trash2 size={20} color="#b43c3c" strokeWidth={1.75} />
           </div>
-          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.3rem", fontWeight: 700, color: "var(--forest)", marginBottom: 9 }}>Elimina Frigorifero</h3>
-          <p style={{ color: "var(--mid)", fontSize: "0.86rem", lineHeight: 1.65 }}>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.45rem", fontWeight: 700, color: "var(--forest)", marginBottom: 11 }}>Elimina Frigorifero</h3>
+          <p style={{ color: "var(--mid)", fontSize: "0.92rem", lineHeight: 1.65 }}>
             Sei sicuro di voler eliminare <strong style={{ color: "var(--forest)" }}>{fridgeName}</strong>?<br />
             Tutti gli alimenti verranno rimossi. L&apos;operazione non può essere annullata.
           </p>
         </div>
         <div style={{ display: "flex", gap: 9, marginTop: 24 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "11px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
-          <button onClick={onConfirm} style={{ flex: 1, padding: "11px", background: "#b43c3c", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.9rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}
+          <button onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.92rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
+          <button onClick={onConfirm} style={{ flex: 1, padding: "13px", background: "#b43c3c", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.95rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}
             onMouseEnter={e => e.currentTarget.style.background = "#8a2a2a"}
             onMouseLeave={e => e.currentTarget.style.background = "#b43c3c"}
           ><Trash2 size={13} strokeWidth={2} /> Elimina</button>
@@ -184,13 +185,97 @@ function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
   );
 }
 
-function MembersList({ members }) {
+// ── Modal Invito ─────────────────────────────────────────────────────────────
+function InviteModal({ fridgeId, onClose }) {
+  const [inviteLink, setInviteLink] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
+
+  const generateLink = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await apiFetch(`/fridges/${fridgeId}/invites`, { method: "POST" });
+      setInviteLink(`${BASE_URL}/invite/${data.token}`);
+    } catch (err) {
+      setError("Errore nella generazione del link. Riprova.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyLink = async () => {
+    if (!inviteLink) return;
+    await navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box" style={{ maxWidth: 420 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.5rem", fontWeight: 700, color: "var(--forest)" }}>Invita al Frigorifero</h3>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}><X size={17} strokeWidth={1.75} /></button>
+        </div>
+
+        <p style={{ color: "var(--mid)", fontSize: "0.86rem", lineHeight: 1.65, marginBottom: 20 }}>
+          Genera un link di invito da condividere. Chiunque lo apra verrà aggiunto al frigorifero come membro. Il link è valido per <strong style={{ color: "var(--forest)" }}>24 ore</strong>.
+        </p>
+
+        {!inviteLink ? (
+          <button
+            onClick={generateLink}
+            disabled={loading}
+            style={{ width: "100%", padding: "12px", background: "var(--forest)", color: "var(--lime)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.9rem", border: "none", borderRadius: 10, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, opacity: loading ? 0.7 : 1, transition: "background 0.2s" }}
+            onMouseEnter={e => { if (!loading) e.currentTarget.style.background = "var(--moss)"; }}
+            onMouseLeave={e => e.currentTarget.style.background = "var(--forest)"}
+          >
+            <Link2 size={15} strokeWidth={2} />
+            {loading ? "Generazione in corso…" : "Genera Link di Invito"}
+          </button>
+        ) : (
+          <div>
+            <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>Link generato</div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div style={{ flex: 1, padding: "10px 13px", background: "rgba(45,74,45,0.05)", border: "1.5px solid rgba(45,74,45,0.12)", borderRadius: 10, fontSize: "0.78rem", color: "var(--forest)", fontFamily: "monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {inviteLink}
+              </div>
+              <button
+                onClick={copyLink}
+                style={{ flexShrink: 0, padding: "10px 14px", background: copied ? "rgba(200,224,110,0.25)" : "var(--forest)", color: copied ? "var(--forest)" : "var(--lime)", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, transition: "all 0.2s" }}
+              >
+                {copied ? <><Check size={13} strokeWidth={2.5} /> Copiato</> : <><Copy size={13} strokeWidth={2} /> Copia</>}
+              </button>
+            </div>
+            <p style={{ color: "var(--mid)", fontSize: "0.75rem", marginTop: 10, lineHeight: 1.5 }}>
+              Puoi generare un nuovo link in qualsiasi momento — ogni link è indipendente.
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 9, background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", color: "#C4622D", fontSize: "0.83rem" }}>
+            {error}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MembersList({ members, isOwner, onInvite, hideTitle }) {
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16 }}>
-        <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.4rem", fontWeight: 700, color: "var(--forest)" }}>Membri</h2>
-        <span style={{ padding: "2px 9px", borderRadius: 100, background: "rgba(45,74,45,0.08)", color: "var(--moss)", fontSize: "0.9rem", fontWeight: 500 }}>{members.length}</span>
-      </div>
+      {!hideTitle && (
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16 }}>
+          <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.4rem", fontWeight: 700, color: "var(--forest)" }}>Membri</h2>
+          <span style={{ padding: "2px 9px", borderRadius: 100, background: "rgba(45,74,45,0.08)", color: "var(--moss)", fontSize: "0.9rem", fontWeight: 500 }}>{members.length}</span>
+        </div>
+      )}
       <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
         {members.map(m => (
           <div key={m.uid} className="member-pill">
@@ -204,6 +289,8 @@ function MembersList({ members }) {
           </div>
         ))}
       </div>
+
+      {/* Legenda scadenza */}
       <div style={{ marginTop: 22, paddingTop: 14, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
         <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 9 }}>Legenda scadenza</div>
         {[{ color: "#b43c3c", label: "Scaduto" }, { color: "#C4622D", label: "≤ 2 giorni" }, { color: "#7a6010", label: "≤ 5 giorni" }, { color: "#2D4A2D", label: "Ok" }].map(({ color, label }) => (
@@ -213,12 +300,31 @@ function MembersList({ members }) {
           </div>
         ))}
       </div>
+
+      {/* Sezione invito — visibile solo al proprietario */}
+      {isOwner && (
+        <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
+          <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Invita</div>
+          <p style={{ fontSize: "0.75rem", color: "var(--mid)", lineHeight: 1.55, marginBottom: 11 }}>
+            Genera un link per aggiungere nuovi membri al frigorifero.
+          </p>
+          <button
+            onClick={onInvite}
+            style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 14px", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", borderRadius: 10, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, cursor: "pointer", transition: "background 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+          >
+            <UserPlus size={13} strokeWidth={2} /> Genera link di invito
+          </button>
+        </div>
+      )}
     </>
   );
 }
 
 function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
   const cat = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
+  // FIX: risolve uid → nome leggibile
   const ownerName = members.find(m => m.uid === ing.owner)?.name || ing.owner;
   const details = [
     { label: "Alimento",     val: ing.name },
@@ -233,14 +339,14 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
         <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: cat.dot, flexShrink: 0 }} />
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "0.94rem", fontWeight: 700, color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ing.name}</div>
-            <span style={{ fontSize: "0.63rem", fontWeight: 500, letterSpacing: "0.05em", padding: "2px 7px", borderRadius: 100, background: cat.bg, color: cat.text, display: "inline-block", marginTop: 2 }}>{ing.category}</span>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", fontWeight: 700, color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ing.name}</div>
+            <span style={{ fontSize: "0.7rem", fontWeight: 500, letterSpacing: "0.05em", padding: "2px 8px", borderRadius: 100, background: cat.bg, color: cat.text, display: "inline-block", marginTop: 3 }}>{ing.category}</span>
           </div>
         </div>
-        <div className="col-qty-desk" style={{ fontSize: "0.83rem", color: "var(--ink)", fontWeight: 500, textAlign: "right" }}>{ing.qty}</div>
+        <div className="col-qty-desk" style={{ fontSize: "0.92rem", color: "var(--ink)", fontWeight: 500, textAlign: "right" }}>{ing.qty}</div>
         <div className="col-exp-desk" style={{ display: "flex", justifyContent: "flex-end" }}><ExpiryBadge dateStr={ing.expiry} /></div>
         <div className="col-mob-stack" style={{ flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
-          <span style={{ fontSize: "0.8rem", color: "var(--ink)", fontWeight: 500 }}>{ing.qty}</span>
+          <span style={{ fontSize: "0.88rem", color: "var(--ink)", fontWeight: 500 }}>{ing.qty}</span>
           <ExpiryBadge dateStr={ing.expiry} />
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -252,21 +358,21 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: "11px 18px", marginBottom: ing.notes ? 12 : 0 }}>
             {details.map(({ label, val }) => (
               <div key={label}>
-                <div style={{ fontSize: "0.6rem", color: "var(--mint)", letterSpacing: "0.09em", textTransform: "uppercase", marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: "0.86rem", color: "var(--cream)", lineHeight: 1.4 }}>{val}</div>
+                <div style={{ fontSize: "0.67rem", color: "var(--mint)", letterSpacing: "0.09em", textTransform: "uppercase", marginBottom: 3 }}>{label}</div>
+                <div style={{ fontSize: "0.95rem", color: "var(--cream)", lineHeight: 1.4 }}>{val}</div>
               </div>
             ))}
           </div>
           {ing.notes && (
             <div style={{ paddingTop: 11, borderTop: "1px solid rgba(168,197,168,0.15)" }}>
-              <div style={{ fontSize: "0.6rem", color: "var(--mint)", letterSpacing: "0.09em", textTransform: "uppercase", marginBottom: 3 }}>Note</div>
-              <div style={{ fontSize: "0.83rem", color: "rgba(245,240,232,0.72)", fontStyle: "italic", lineHeight: 1.55 }}>{ing.notes}</div>
+              <div style={{ fontSize: "0.67rem", color: "var(--mint)", letterSpacing: "0.09em", textTransform: "uppercase", marginBottom: 4 }}>Note</div>
+              <div style={{ fontSize: "0.9rem", color: "rgba(245,240,232,0.72)", fontStyle: "italic", lineHeight: 1.6 }}>{ing.notes}</div>
             </div>
           )}
           <div style={{ marginTop: 14, display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={e => { e.stopPropagation(); onDelete(ing); }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 15px", background: "rgba(180,60,60,0.16)", color: "#ef9090", fontFamily: "'DM Sans',sans-serif", fontSize: "0.81rem", fontWeight: 500, border: "1px solid rgba(180,60,60,0.26)", borderRadius: 100, cursor: "pointer", transition: "background 0.18s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "rgba(180,60,60,0.16)", color: "#ef9090", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", fontWeight: 500, border: "1px solid rgba(180,60,60,0.26)", borderRadius: 100, cursor: "pointer", transition: "background 0.18s" }}
               onMouseEnter={e => { e.currentTarget.style.background = "rgba(180,60,60,0.3)"; e.currentTarget.style.color = "#fca5a5"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "rgba(180,60,60,0.16)"; e.currentTarget.style.color = "#ef9090"; }}
             >
@@ -294,7 +400,8 @@ export default function FridgePage({ params }) {
   const [openId, setOpenId] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [toDelete, setToDelete] = useState(null);
-  const [showDeleteFridge, setShowDeleteFridge] = useState(false); 
+  const [showDeleteFridge, setShowDeleteFridge] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
 
   useEffect(() => {
@@ -302,20 +409,22 @@ export default function FridgePage({ params }) {
       if (!user) return;
       setCurrentUser(user);
       try {
-        const [fridgeData, items] = await Promise.all([
+        const [fridgeData, items, membersData] = await Promise.all([
           apiFetch(`/fridges/${id}`).catch(() => ({ id, name: "Frigorifero" })),
           apiFetch(`/fridges/${id}/items`),
+          apiFetch(`/fridges/${id}/members`).catch(() => []),
         ]);
 
         setFridge(fridgeData);
         setIngredients((items || []).map(normalizeItem));
 
-        setMembers([{
-          uid: user.uid,
-          name: user.displayName || user.email,
-          role: "ADMIN",
-          initial: (user.displayName || user.email).charAt(0).toUpperCase()
-        }]);
+        // Membri reali dal DB con username e ruolo
+        setMembers((membersData || []).map(m => ({
+          uid:     m.id,
+          name:    m.username,
+          role:    m.role,
+          initial: m.username.charAt(0).toUpperCase(),
+        })));
       } catch (err) {
         console.error("Errore fetch frigo:", err);
         setError("Impossibile caricare i dati. Riprova più tardi.");
@@ -351,6 +460,7 @@ export default function FridgePage({ params }) {
     setToDelete(null);
   };
 
+  // FIX: handleDeleteFridge nel componente principale — ha accesso a id e router
   const handleDeleteFridge = async () => {
     await apiFetch(`/fridges/${id}`, { method: "DELETE" });
     router.push("/dashboard");
@@ -367,6 +477,11 @@ export default function FridgePage({ params }) {
   return (
     <>
       <style>{globalStyles}</style>
+      <style>{`
+        @media (max-width: 520px) {
+          .logout-text { display: none !important; }
+        }
+      `}</style>
 
       <header style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(245,240,232,0.92)", backdropFilter: "blur(18px)", borderBottom: "1px solid rgba(45,74,45,0.08)", padding: "0 clamp(14px,4vw,44px)", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
 
@@ -384,12 +499,13 @@ export default function FridgePage({ params }) {
           {fridge?.name || "Frigorifero"}
         </div>
 
-        {/* Destra: pulsanti — FIX: un solo blocco, nessun duplicato */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        {/* Destra: pulsanti — solo icone su mobile, testo su desktop */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
           {isOwner && (
             <button
               onClick={() => setShowDeleteFridge(true)}
-              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 100, background: "rgba(180,60,60,0.1)", color: "#b43c3c", border: "1px solid rgba(180,60,60,0.25)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", cursor: "pointer", transition: "background 0.2s" }}
+              title="Elimina frigo"
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 100, background: "rgba(180,60,60,0.1)", color: "#b43c3c", border: "1px solid rgba(180,60,60,0.25)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(180,60,60,0.2)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(180,60,60,0.1)"}
             >
@@ -397,7 +513,12 @@ export default function FridgePage({ params }) {
               <span className="logout-text">Elimina frigo</span>
             </button>
           )}
-          <button className="btn-primary" onClick={() => setShowAdd(true)}>
+          <button
+            className="btn-primary"
+            onClick={() => setShowAdd(true)}
+            title="Aggiungi Alimento"
+            style={{ whiteSpace: "nowrap" }}
+          >
             <Plus size={14} strokeWidth={2.25} />
             <span className="logout-text">Aggiungi Alimento</span>
           </button>
@@ -412,15 +533,15 @@ export default function FridgePage({ params }) {
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
-          <MembersList members={members} />
+          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} />
         </aside>
 
         <section>
           <div className="fade-up" style={{ marginBottom: 20 }}>
-            <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(1.65rem,4vw,2.4rem)", fontWeight: 900, color: "var(--forest)", lineHeight: 1.06, letterSpacing: "-0.02em" }}>
+            <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(2rem,5vw,3rem)", fontWeight: 900, color: "var(--forest)", lineHeight: 1.06, letterSpacing: "-0.02em" }}>
               {fridge?.name || "Frigorifero"}
             </h1>
-            <p style={{ color: "var(--mid)", fontSize: "0.82rem", marginTop: 4 }}>
+            <p style={{ color: "var(--mid)", fontSize: "0.92rem", marginTop: 6 }}>
               {ingredients.length} {ingredients.length === 1 ? "alimento" : "alimenti"} · clicca per i dettagli
             </p>
           </div>
@@ -437,7 +558,7 @@ export default function FridgePage({ params }) {
               </button>
               {mobMembersOpen && (
                 <div style={{ padding: "4px 16px 16px" }}>
-                  <MembersList members={members} />
+                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} hideTitle />
                 </div>
               )}
             </div>
@@ -446,15 +567,15 @@ export default function FridgePage({ params }) {
           {/* Column headers */}
           <div className="col-headers-row" style={{ marginBottom: 7 }}>
             {["Alimento", "Quantità", "Scadenza", ""].map((h, i) => (
-              <div key={i} style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.08em", textTransform: "uppercase", textAlign: i > 0 ? "right" : "left" }}>{h}</div>
+              <div key={i} style={{ fontSize: "0.72rem", color: "var(--mid)", letterSpacing: "0.08em", textTransform: "uppercase", textAlign: i > 0 ? "right" : "left" }}>{h}</div>
             ))}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {ingredients.length === 0 ? (
-              <div style={{ padding: "52px 24px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.18)", borderRadius: 14 }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.15rem", color: "var(--forest)", marginBottom: 7 }}>Frigo vuoto</div>
-                <p style={{ color: "var(--mid)", fontSize: "0.83rem", marginBottom: 16 }}>Aggiungi il primo alimento per iniziare.</p>
+              <div style={{ padding: "60px 24px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.18)", borderRadius: 14 }}>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.35rem", color: "var(--forest)", marginBottom: 9 }}>Frigo vuoto</div>
+                <p style={{ color: "var(--mid)", fontSize: "0.92rem", marginBottom: 20 }}>Aggiungi il primo alimento per iniziare.</p>
                 <button className="btn-primary" onClick={() => setShowAdd(true)}><Plus size={13} strokeWidth={2} /> Aggiungi Alimento</button>
               </div>
             ) : (
@@ -466,6 +587,7 @@ export default function FridgePage({ params }) {
         </section>
       </div>
 
+      {showInvite && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
       {showAdd && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
       {toDelete && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
       {showDeleteFridge && (

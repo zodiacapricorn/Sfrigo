@@ -7,7 +7,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, LogIn } from "lucide-react";
 import { globalStyles } from "./layout.js";
@@ -15,6 +15,9 @@ import { setSessionCookie, syncUserToDb } from "@/lib/authHelpers";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,13 +29,10 @@ export default function LoginPage() {
     setLoading(true); setError("");
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-
-      // Upsert utente in PostgreSQL (aggiorna email se cambiata, non crea duplicati)
       await syncUserToDb(result.user);
-
       await setSessionCookie(result.user);
       router.refresh();
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err) {
       if (err.code === "auth/user-not-found") setError("Utente non trovato");
       else if (err.code === "auth/wrong-password") setError("Password non corretta");
@@ -47,13 +47,10 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-
-      // Upsert utente in PostgreSQL (crea se primo accesso Google, aggiorna se già esiste)
       await syncUserToDb(result.user);
-
       await setSessionCookie(result.user);
       router.refresh();
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err) {
       console.error("Errore Google completo:", err.code, err.message);
       setError("Errore con Google: " + err.code);
