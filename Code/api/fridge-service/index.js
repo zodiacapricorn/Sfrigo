@@ -166,6 +166,27 @@ app.post('/fridges/:fridgeId/members', async (req, res) => {
   }
 });
 
+// DELETE /fridges/:fridgeId/members/me — lascia il frigorifero
+app.delete('/fridges/:fridgeId/members/me', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(404).json({ error: 'Non sei membro di questo frigorifero' });
+    if (membership.role === 'ADMIN')
+      return res.status(403).json({ error: 'Il proprietario non può lasciare il frigorifero. Eliminalo invece.' });
+
+    await pgPool.query(
+      'DELETE FROM fridge_members WHERE fridge_id = $1 AND user_id = $2',
+      [fridgeId, req.userId]
+    );
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante l\'uscita dal frigorifero' });
+  }
+});
+
 // POST /fridges - Creazione Frigorifero (Transazione SQL)
 app.post('/fridges', async (req, res) => {
   const { name } = req.body;

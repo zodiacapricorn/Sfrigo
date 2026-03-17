@@ -3,7 +3,7 @@
 import { use } from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -125,7 +125,7 @@ function AddModal({ members, onClose, onAdd }) {
             <button type="submit" style={{ flex: 2, padding: "13px", background: "var(--forest)", color: "var(--lime)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.95rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, transition: "background 0.2s" }}
               onMouseEnter={e => e.currentTarget.style.background = "var(--moss)"}
               onMouseLeave={e => e.currentTarget.style.background = "var(--forest)"}
-            ><Plus size={14} strokeWidth={2} /> Aggiungi Alimento</button>
+            ><Plus size={14} strokeWidth={2} /> Aggiungi</button>
           </div>
         </form>
       </div>
@@ -185,7 +185,34 @@ function DeleteFridgeModal({ fridgeName, onClose, onConfirm }) {
   );
 }
 
-// ── Modal Invito ─────────────────────────────────────────────────────────────
+// ── Modal Lascia Frigo ───────────────────────────────────────────────────────
+function LeaveFridgeModal({ fridgeName, onClose, onConfirm }) {
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box" style={{ maxWidth: 390 }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(45,74,45,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+            <LogOut size={20} color="var(--forest)" strokeWidth={1.75} />
+          </div>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.45rem", fontWeight: 700, color: "var(--forest)", marginBottom: 11 }}>Lascia il frigorifero</h3>
+          <p style={{ color: "var(--mid)", fontSize: "0.92rem", lineHeight: 1.65 }}>
+            Sei sicuro di voler lasciare <strong style={{ color: "var(--forest)" }}>{fridgeName}</strong>?<br />
+            Potrai rientrare solo con un nuovo invito.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 9, marginTop: 24 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.92rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
+          <button onClick={onConfirm} style={{ flex: 1, padding: "13px", background: "var(--forest)", color: "var(--lime)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.95rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}
+            onMouseEnter={e => e.currentTarget.style.background = "var(--moss)"}
+            onMouseLeave={e => e.currentTarget.style.background = "var(--forest)"}
+          ><LogOut size={14} strokeWidth={2} /> Lascia</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function InviteModal({ fridgeId, onClose }) {
   const [inviteLink, setInviteLink] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -402,6 +429,7 @@ export default function FridgePage({ params }) {
   const [toDelete, setToDelete] = useState(null);
   const [showDeleteFridge, setShowDeleteFridge] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
+  const [showLeaveFridge, setShowLeaveFridge] = useState(false);
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
 
   useEffect(() => {
@@ -466,6 +494,11 @@ export default function FridgePage({ params }) {
     router.push("/dashboard");
   };
 
+  const handleLeaveFridge = async () => {
+    await apiFetch(`/fridges/${id}/members/me`, { method: "DELETE" });
+    router.push("/dashboard");
+  };
+
   if (loading) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--mid)", fontFamily: "'DM Sans', sans-serif" }}>
       Caricamento…
@@ -513,6 +546,18 @@ export default function FridgePage({ params }) {
               <span className="logout-text">Elimina frigo</span>
             </button>
           )}
+          {!isOwner && (
+            <button
+              onClick={() => setShowLeaveFridge(true)}
+              title="Lascia frigo"
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 100, background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1px solid rgba(45,74,45,0.15)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", cursor: "pointer", transition: "background 0.2s", whiteSpace: "nowrap" }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+            >
+              <LogOut size={13} strokeWidth={1.75} />
+              <span className="logout-text">Lascia frigo</span>
+            </button>
+          )}
           <button
             className="btn-primary"
             onClick={() => setShowAdd(true)}
@@ -520,7 +565,7 @@ export default function FridgePage({ params }) {
             style={{ whiteSpace: "nowrap" }}
           >
             <Plus size={14} strokeWidth={2.25} />
-            <span className="logout-text">Aggiungi Alimento</span>
+            <span className="logout-text">Aggiungi</span>
           </button>
         </div>
       </header>
@@ -590,6 +635,13 @@ export default function FridgePage({ params }) {
       {showInvite && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
       {showAdd && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
       {toDelete && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
+      {showLeaveFridge && (
+        <LeaveFridgeModal
+          fridgeName={fridge?.name}
+          onClose={() => setShowLeaveFridge(false)}
+          onConfirm={handleLeaveFridge}
+        />
+      )}
       {showDeleteFridge && (
         <DeleteFridgeModal
           fridgeName={fridge?.name}
