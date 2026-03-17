@@ -11,6 +11,7 @@ CREATE TABLE fridges (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     owner_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    owner_username VARCHAR(50) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

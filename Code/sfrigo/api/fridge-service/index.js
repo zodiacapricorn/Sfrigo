@@ -65,7 +65,7 @@ async function checkFridgeMembership(fridgeId, userId) {
 app.get('/fridges', async (req, res) => {
   try {
     const query = `
-      SELECT f.id, f.name, f.owner_id, f.created_at, fm.role 
+      SELECT f.id, f.name, f.owner_id, f.owner_username, f.created_at, fm.role 
       FROM fridges f
       JOIN fridge_members fm ON f.id = fm.fridge_id
       WHERE fm.user_id = $1
@@ -173,20 +173,30 @@ app.post('/fridges', async (req, res) => {
 
   const client = await pgPool.connect();
   try {
-    await client.query('BEGIN'); // Inizio Transazione
+    await client.query('BEGIN');
 
-    const insertFridgeQuery = `
-      INSERT INTO fridges (name, owner_id) 
-      VALUES ($1, $2) RETURNING id, name, owner_id, created_at
-    `;
-    const fridgeResult = await client.query(insertFridgeQuery, [name, req.userId]);
+    // Recupera username del proprietario
+    const userResult = await client.query(
+      'SELECT username FROM users WHERE id = $1',
+      [req.userId]
+    );
+    if (userResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Utente non trovato' });
+    }
+    const ownerUsername = userResult.rows[0].username;
+
+    const fridgeResult = await client.query(
+      `INSERT INTO fridges (name, owner_id, owner_username)
+       VALUES ($1, $2, $3) RETURNING id, name, owner_id, owner_username, created_at`,
+      [name, req.userId, ownerUsername]
+    );
     const newFridge = fridgeResult.rows[0];
 
-    const insertMemberQuery = `
-      INSERT INTO fridge_members (fridge_id, user_id, role) 
-      VALUES ($1, $2, 'ADMIN')
-    `;
-    await client.query(insertMemberQuery, [newFridge.id, req.userId]);
+    await client.query(
+      `INSERT INTO fridge_members (fridge_id, user_id, role) VALUES ($1, $2, 'ADMIN')`,
+      [newFridge.id, req.userId]
+    );
 
     await client.query('COMMIT');
     res.status(201).json(newFridge);
@@ -207,7 +217,7 @@ app.get('/fridges/:fridgeId', async (req, res) => {
     if (!membership) return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
 
     const result = await pgPool.query(
-      'SELECT id, name, owner_id, created_at FROM fridges WHERE id = $1',
+      'SELECT id, name, owner_id, owner_username, created_at FROM fridges WHERE id = $1',
       [fridgeId]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Frigorifero non trovato' });
