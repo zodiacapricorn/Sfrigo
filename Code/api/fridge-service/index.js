@@ -187,6 +187,30 @@ app.delete('/fridges/:fridgeId/members/me', async (req, res) => {
   }
 });
 
+// DELETE /fridges/:fridgeId/members/:userId — espelli membro
+app.delete('/fridges/:fridgeId/members/:userId', async (req, res) => {
+  const { fridgeId, userId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership || membership.role !== 'ADMIN')
+      return res.status(403).json({ error: 'Solo il proprietario può espellere membri' });
+    if (userId === req.userId)
+      return res.status(400).json({ error: 'Non puoi espellere te stesso' });
+
+    const result = await pgPool.query(
+      'DELETE FROM fridge_members WHERE fridge_id = $1 AND user_id = $2 RETURNING user_id',
+      [fridgeId, userId]
+    );
+    if (result.rowCount === 0)
+      return res.status(404).json({ error: 'Membro non trovato' });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante l\'espulsione del membro' });
+  }
+});
+
 // POST /fridges - Creazione Frigorifero (Transazione SQL)
 app.post('/fridges', async (req, res) => {
   const { name } = req.body;

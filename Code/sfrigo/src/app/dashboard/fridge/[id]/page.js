@@ -3,7 +3,7 @@
 import { use } from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -213,6 +213,33 @@ function LeaveFridgeModal({ fridgeName, onClose, onConfirm }) {
 }
 
 
+// ── Modal Espelli Membro ─────────────────────────────────────────────────────
+function KickMemberModal({ memberName, onClose, onConfirm }) {
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box" style={{ maxWidth: 390 }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(180,60,60,0.09)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+            <UserMinus size={20} color="#b43c3c" strokeWidth={1.75} />
+          </div>
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.45rem", fontWeight: 700, color: "var(--forest)", marginBottom: 11 }}>Espelli membro</h3>
+          <p style={{ color: "var(--mid)", fontSize: "0.92rem", lineHeight: 1.65 }}>
+            Sei sicuro di voler rimuovere <strong style={{ color: "var(--forest)" }}>{memberName}</strong> dal frigorifero?<br />
+            Potrà rientrare solo con un nuovo invito.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 9, marginTop: 24 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.92rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>Annulla</button>
+          <button onClick={onConfirm} style={{ flex: 1, padding: "13px", background: "#b43c3c", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.95rem", border: "none", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}
+            onMouseEnter={e => e.currentTarget.style.background = "#8a2a2a"}
+            onMouseLeave={e => e.currentTarget.style.background = "#b43c3c"}
+          ><UserMinus size={14} strokeWidth={2} /> Espelli</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function InviteModal({ fridgeId, onClose }) {
   const [inviteLink, setInviteLink] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -294,7 +321,7 @@ function InviteModal({ fridgeId, onClose }) {
   );
 }
 
-function MembersList({ members, isOwner, onInvite, hideTitle }) {
+function MembersList({ members, isOwner, onInvite, onKick, hideTitle }) {
   return (
     <>
       {!hideTitle && (
@@ -305,14 +332,28 @@ function MembersList({ members, isOwner, onInvite, hideTitle }) {
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
         {members.map(m => (
-          <div key={m.uid} className="member-pill">
-            <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "owner" || m.role === "ADMIN" ? "var(--forest)" : "rgba(107,140,107,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, color: m.role === "owner" || m.role === "ADMIN" ? "var(--lime)" : "var(--sage)" }}>{m.initial || m.name?.charAt(0)}</div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: "0.84rem", color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</div>
-              <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                {m.role === "ADMIN" || m.role === "owner" ? "Proprietario" : "Membro"}
+          <div key={m.uid} className="member-pill" style={{ display: "flex", alignItems: "center", gap: 9, justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
+              <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "owner" || m.role === "ADMIN" ? "var(--forest)" : "rgba(107,140,107,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, color: m.role === "owner" || m.role === "ADMIN" ? "var(--lime)" : "var(--sage)" }}>{m.initial || m.name?.charAt(0)}</div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: "0.84rem", color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</div>
+                <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  {m.role === "ADMIN" || m.role === "owner" ? "Proprietario" : "Membro"}
+                </div>
               </div>
             </div>
+            {/* Pulsante espelli — visibile solo al proprietario, non su se stesso */}
+            {isOwner && m.role !== "ADMIN" && m.role !== "owner" && (
+              <button
+                onClick={() => onKick(m)}
+                title={`Espelli ${m.name}`}
+                style={{ flexShrink: 0, width: 26, height: 26, borderRadius: "50%", background: "transparent", border: "1px solid rgba(180,60,60,0.2)", color: "#b43c3c", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "background 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(180,60,60,0.1)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+              >
+                <UserMinus size={12} strokeWidth={1.75} />
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -430,38 +471,51 @@ export default function FridgePage({ params }) {
   const [showDeleteFridge, setShowDeleteFridge] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showLeaveFridge, setShowLeaveFridge] = useState(false);
+  const [toKick, setToKick] = useState(null);
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
+
+  const fetchData = async (user) => {
+    try {
+      const [fridgeData, items, membersData] = await Promise.all([
+        apiFetch(`/fridges/${id}`).catch(() => ({ id, name: "Frigorifero" })),
+        apiFetch(`/fridges/${id}/items`),
+        apiFetch(`/fridges/${id}/members`).catch(() => []),
+      ]);
+
+      setFridge(fridgeData);
+      setIngredients((items || []).map(normalizeItem));
+      setMembers((membersData || []).map(m => ({
+        uid:     m.id,
+        name:    m.username,
+        role:    m.role,
+        initial: m.username.charAt(0).toUpperCase(),
+      })));
+    } catch (err) {
+      console.error("Errore fetch frigo:", err);
+      if (err.message?.includes("403") || err.message?.includes("Non hai accesso") || err.message?.includes("404")) {
+        router.replace("/dashboard");
+        return;
+      }
+      setError("Impossibile caricare i dati. Riprova più tardi.");
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) return;
       setCurrentUser(user);
-      try {
-        const [fridgeData, items, membersData] = await Promise.all([
-          apiFetch(`/fridges/${id}`).catch(() => ({ id, name: "Frigorifero" })),
-          apiFetch(`/fridges/${id}/items`),
-          apiFetch(`/fridges/${id}/members`).catch(() => []),
-        ]);
-
-        setFridge(fridgeData);
-        setIngredients((items || []).map(normalizeItem));
-
-        // Membri reali dal DB con username e ruolo
-        setMembers((membersData || []).map(m => ({
-          uid:     m.id,
-          name:    m.username,
-          role:    m.role,
-          initial: m.username.charAt(0).toUpperCase(),
-        })));
-      } catch (err) {
-        console.error("Errore fetch frigo:", err);
-        setError("Impossibile caricare i dati. Riprova più tardi.");
-      } finally {
-        setLoading(false);
-      }
+      await fetchData(user);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [id]);
+
+  // Polling ogni 30 secondi — aggiorna ingredienti e membri in background
+  useEffect(() => {
+    if (!currentUser) return;
+    const interval = setInterval(() => fetchData(currentUser), 30000);
+    return () => clearInterval(interval);
+  }, [currentUser, id]);
 
   const toggle = (itemId) => setOpenId(p => p === itemId ? null : itemId);
 
@@ -497,6 +551,12 @@ export default function FridgePage({ params }) {
   const handleLeaveFridge = async () => {
     await apiFetch(`/fridges/${id}/members/me`, { method: "DELETE" });
     router.push("/dashboard");
+  };
+
+  const handleKickMember = async () => {
+    await apiFetch(`/fridges/${id}/members/${toKick.uid}`, { method: "DELETE" });
+    setMembers(p => p.filter(m => m.uid !== toKick.uid));
+    setToKick(null);
   };
 
   if (loading) return (
@@ -578,7 +638,7 @@ export default function FridgePage({ params }) {
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
-          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} />
+          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} />
         </aside>
 
         <section>
@@ -603,7 +663,7 @@ export default function FridgePage({ params }) {
               </button>
               {mobMembersOpen && (
                 <div style={{ padding: "4px 16px 16px" }}>
-                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} hideTitle />
+                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} hideTitle />
                 </div>
               )}
             </div>
@@ -635,6 +695,20 @@ export default function FridgePage({ params }) {
       {showInvite && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
       {showAdd && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
       {toDelete && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
+      {toKick && (
+        <KickMemberModal
+          memberName={toKick.name}
+          onClose={() => setToKick(null)}
+          onConfirm={handleKickMember}
+        />
+      )}
+      {toKick && (
+        <KickMemberModal
+          member={toKick}
+          onClose={() => setToKick(null)}
+          onConfirm={handleKickMember}
+        />
+      )}
       {showLeaveFridge && (
         <LeaveFridgeModal
           fridgeName={fridge?.name}

@@ -78,6 +78,10 @@ apiRouter.get('/fridges/:fridgeId/members', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
+apiRouter.delete('/fridges/:fridgeId/members/:userId', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
 apiRouter.delete('/fridges/:fridgeId/members/me', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
