@@ -1,1 +1,50 @@
 
+services:
+  gateway:
+    build:
+      context: ./api/gateway
+      dockerfile: Dockerfile
+    image: ${REGISTRY:-ghcr.io/your-org}/gateway:${TAG:-latest}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - fridge-service
+      - user-service
+    networks:
+      - app-net
+
+  fridge-service:
+    build:
+      context: ./api/fridge-service
+      dockerfile: Dockerfile
+    image: ${REGISTRY:-ghcr.io/your-org}/fridge-service:${TAG:-latest}
+    ports:
+      - "3001:3000"
+    networks:
+      - app-net
+
+  user-service:
+    build:
+      context: ./api/user-service
+      dockerfile: Dockerfile
+    image: ${REGISTRY:-ghcr.io/your-org}/user-service:${TAG:-latest}
+    ports:
+      - "3002:3000"
+    networks:
+      - app-net
+
+  sfrigo:
+    build:
+      context: ./sfrigo
+      dockerfile: Dockerfile
+    image: ${REGISTRY:-ghcr.io/your-org}/sfrigo:${TAG:-latest}
+    ports:
+      - "8080:3000"
+    depends_on:
+      - gateway
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
