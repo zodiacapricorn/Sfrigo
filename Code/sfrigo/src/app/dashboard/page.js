@@ -149,12 +149,12 @@ function FridgeCard({ fridge, isOwner, delay }) {
         }}>
           {isOwner ? "T" : (fridge.owner_username?.charAt(0)?.toUpperCase() || "?")}
         </span>
-        {isOwner ? "Tu" : fridge.owner_username}
+        {isOwner ? "Tu" : (fridge.owner_username || "Utente sconosciuto")}
         {fridge.role && (
           <>
             <span style={{ opacity: 0.4 }}>·</span>
             <span style={{ opacity: 0.7, fontSize: "0.75rem", textTransform: "capitalize" }}>
-              {fridge.role.toLowerCase()}
+              {"Proprietario"}
             </span>
           </>
         )}
