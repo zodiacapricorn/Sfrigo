@@ -49,7 +49,7 @@ If no version is returned, download and install Node.js from [nodejs.org](https:
 
 ```bash
 git clone https://github.com/zodiacapricorn/Sfrigo.git
-cd Sfrigo\Code\sfrigo
+cd Sfrigo\Code
 ```
 
 **2. Start the services**
@@ -79,6 +79,7 @@ npm start
 
 **Next.js App** — port 3000
 ```bash
+cd ..\sfrigo
 npm install --legacy-peer-deps
 npm run dev
 ```
