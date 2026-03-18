@@ -47,16 +47,17 @@ function normalizeItem(item) {
   const id = item._id?.$oid || item._id?.toString() || item._id || item.id;
   return {
     id,
-    name:     item.name,
-    owner:    item.owner_id || item.owner || "",
-    category: item.category || "Altro",
-    qty:      item.quantity != null
-                ? `${item.quantity} ${item.unit || ""}`.trim()
-                : (item.qty || ""),
-    expiry:   item.expiration_date
-                ? new Date(item.expiration_date).toISOString().split("T")[0]
-                : (item.expiry || ""),
-    notes:    item.notes || "",
+    name:          item.name,
+    owner:         item.owner_id || item.owner || "",
+    category:      item.category || "Altro",
+    qty:           item.quantity != null
+                     ? `${item.quantity} ${item.unit || ""}`.trim()
+                     : (item.qty || ""),
+    expiry:        item.expiration_date
+                     ? new Date(item.expiration_date).toISOString().split("T")[0]
+                     : (item.expiry || ""),
+    notes:         item.notes || "",
+    is_common_use: item.sharing_status?.is_common_use || false,
   };
 }
 
@@ -65,7 +66,8 @@ function normalizeItem(item) {
 function AddModal({ members, onClose, onAdd }) {
   const [f, setF] = useState({
     name: "", owner: members[0]?.uid || "", category: CATEGORIES[0],
-    quantity: "", unit: "pz", expiration_date: "", notes: ""
+    quantity: "", unit: "pz", expiration_date: "", notes: "",
+    is_common_use: false,
   });
   const s = (k, v) => setF(p => ({ ...p, [k]: v }));
 
@@ -118,6 +120,22 @@ function AddModal({ members, onClose, onAdd }) {
             <div style={{ gridColumn: "1 / -1" }}>
               <label>Note</label>
               <textarea className="input-field" rows={2} placeholder="Facoltativo…" value={f.notes} onChange={e => s("notes", e.target.value)} style={{ resize: "vertical", minHeight: 54 }} />
+            </div>
+            <div style={{ gridColumn: "1 / -1" }}>
+              <label
+                style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${f.is_common_use ? "rgba(45,74,45,0.3)" : "rgba(45,74,45,0.12)"}`, background: f.is_common_use ? "rgba(200,224,110,0.12)" : "transparent", transition: "all 0.2s" }}
+              >
+                <div
+                  onClick={() => s("is_common_use", !f.is_common_use)}
+                  style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${f.is_common_use ? "var(--forest)" : "rgba(45,74,45,0.3)"}`, background: f.is_common_use ? "var(--forest)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s", cursor: "pointer" }}
+                >
+                  {f.is_common_use && <Check size={11} strokeWidth={3} color="var(--lime)" />}
+                </div>
+                <div onClick={() => s("is_common_use", !f.is_common_use)}>
+                  <div style={{ fontSize: "0.88rem", color: "var(--forest)", fontWeight: 500 }}>Alimento condiviso</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--mid)", marginTop: 1 }}>Accessibile a tutti i membri del frigorifero</div>
+                </div>
+              </label>
             </div>
           </div>
           <div style={{ display: "flex", gap: 9, marginTop: 20 }}>
@@ -321,6 +339,7 @@ function InviteModal({ fridgeId, onClose }) {
   );
 }
 
+
 function MembersList({ members, isOwner, onInvite, onKick, hideTitle }) {
   return (
     <>
@@ -408,7 +427,12 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: cat.dot, flexShrink: 0 }} />
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", fontWeight: 700, color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ing.name}</div>
-            <span style={{ fontSize: "0.7rem", fontWeight: 500, letterSpacing: "0.05em", padding: "2px 8px", borderRadius: 100, background: cat.bg, color: cat.text, display: "inline-block", marginTop: 3 }}>{ing.category}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap", marginTop: 3 }}>
+              <span style={{ fontSize: "0.7rem", fontWeight: 500, letterSpacing: "0.05em", padding: "2px 8px", borderRadius: 100, background: cat.bg, color: cat.text, display: "inline-block" }}>{ing.category}</span>
+              {ing.is_common_use && (
+                <span style={{ fontSize: "0.7rem", fontWeight: 500, letterSpacing: "0.05em", padding: "2px 8px", borderRadius: 100, background: "rgba(200,224,110,0.22)", color: "#2D4A2D", display: "inline-block" }}>Condiviso</span>
+              )}
+            </div>
           </div>
         </div>
         <div className="col-qty-desk" style={{ fontSize: "0.92rem", color: "var(--ink)", fontWeight: 500, textAlign: "right" }}>{ing.qty}</div>
@@ -530,6 +554,10 @@ export default function FridgePage({ params }) {
         unit:            formData.unit,
         expiration_date: formData.expiration_date,
         notes:           formData.notes,
+        sharing_status: {
+          is_common_use: formData.is_common_use || false,
+          is_available_for_loan: false,
+        },
       }),
     });
     setIngredients(p => [normalizeItem(newItem), ...p]);
@@ -698,13 +726,6 @@ export default function FridgePage({ params }) {
       {toKick && (
         <KickMemberModal
           memberName={toKick.name}
-          onClose={() => setToKick(null)}
-          onConfirm={handleKickMember}
-        />
-      )}
-      {toKick && (
-        <KickMemberModal
-          member={toKick}
           onClose={() => setToKick(null)}
           onConfirm={handleKickMember}
         />
