@@ -4,7 +4,7 @@ import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus, ChefHat, UserRound, ArrowUpDown } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -58,7 +58,64 @@ function normalizeItem(item) {
   };
 }
 
-// ── Componenti UI riutilizzabili ──────────────────────────────────────────────
+// ── Sorting ───────────────────────────────────────────────────────────────────
+
+// Peso per categoria — più alto = più urgente (usato nell'algoritmo urgenza)
+const CATEGORY_URGENCY = {
+  "Carne":      1.0,
+  "Pesce":      1.0,
+  "Latticini":  0.8,
+  "Verdura":    0.6,
+  "Frutta":     0.6,
+  "Avanzi":     0.7,
+  "Bevande":    0.3,
+  "Condimenti": 0.2,
+  "Altro":      0.4,
+};
+
+function sortIngredients(list, mode, members) {
+  const copy = [...list];
+  switch (mode) {
+    case "name_asc":
+      return copy.sort((a, b) => a.name.localeCompare(b.name));
+    case "name_desc":
+      return copy.sort((a, b) => b.name.localeCompare(a.name));
+    case "expiry":
+      return copy.sort((a, b) => {
+        if (!a.expiry) return 1;
+        if (!b.expiry) return -1;
+        return new Date(a.expiry) - new Date(b.expiry);
+      });
+    case "category":
+      return copy.sort((a, b) => a.category.localeCompare(b.category));
+    case "owner":
+      return copy.sort((a, b) => {
+        const nameA = members.find(m => m.uid === a.owner)?.name || a.owner;
+        const nameB = members.find(m => m.uid === b.owner)?.name || b.owner;
+        return nameA.localeCompare(nameB);
+      });
+    case "urgency": {
+      // Score composito: 70% scadenza + 30% categoria
+      // Più basso il punteggio = più urgente
+      const MAX_DAYS = 30;
+      return copy.sort((a, b) => {
+        const daysA = a.expiry ? daysUntilExpiry(a.expiry) : MAX_DAYS;
+        const daysB = b.expiry ? daysUntilExpiry(b.expiry) : MAX_DAYS;
+        const expiryScoreA = Math.min(Math.max(daysA, 0), MAX_DAYS) / MAX_DAYS;
+        const expiryScoreB = Math.min(Math.max(daysB, 0), MAX_DAYS) / MAX_DAYS;
+        const catWeightA   = CATEGORY_URGENCY[a.category] ?? 0.4;
+        const catWeightB   = CATEGORY_URGENCY[b.category] ?? 0.4;
+        const scoreA = expiryScoreA * 0.7 + (1 - catWeightA) * 0.3;
+        const scoreB = expiryScoreB * 0.7 + (1 - catWeightB) * 0.3;
+        return scoreA - scoreB;
+      });
+    }
+    default:
+      return copy;
+  }
+}
+
+
 
 function ExpiryBadge({ dateStr }) {
   const s = expiryStyle(daysUntilExpiry(dateStr));
@@ -339,9 +396,315 @@ function InviteModal({ fridgeId, onClose }) {
   );
 }
 
+// ── Modal Ricetta ─────────────────────────────────────────────────────────────
+
+function RecipeModal({ ingredients, currentUserId, onClose }) {
+  const [mode,     setMode]     = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [loading,  setLoading]  = useState(false);
+  const [recipes,  setRecipes]  = useState(null);  // array di oggetti ricetta
+  const [error,    setError]    = useState("");
+
+  const personalItems = ingredients.filter(i => i.owner === currentUserId);
+  const sharedItems   = ingredients.filter(i => i.owner === currentUserId || i.is_common_use);
+  const list          = mode === "personal" ? personalItems : sharedItems;
+
+  const toggleItem = (id) =>
+    setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+
+  const selectedItems = list.filter(i => selected.includes(i.id));
+  const canSearch     = selected.length >= 2;
+
+  const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:8080";
+
+  const handleSearch = async () => {
+    setLoading(true);
+    setError("");
+    setRecipes(null);
+    try {
+      const ingredientList = selectedItems
+        .map(i => `- ${i.name}${i.qty ? ` (${i.qty})` : ""}`)
+        .join("\n");
+
+      const prompt = `Sei un assistente culinario.
+Suggerisci esattamente 3 ricette che utilizzano PRINCIPALMENTE questi ingredienti:
+${ingredientList}
+
+Puoi assumere che siano sempre disponibili in cucina:
+- Condimenti: sale, pepe nero, pepe bianco, olio d'oliva, olio di semi, aceto
+- Aromi secchi: aglio in polvere, origano, rosmarino, basilico secco, paprika, peperoncino
+- Ingredienti secchi: pasta, riso, farina, pane, pangrattato, zucchero
+- Altro: uova, dado da brodo, concentrato di pomodoro
+
+REGOLE IMPORTANTI:
+- Ogni ricetta deve usare almeno 2 degli ingredienti forniti
+- Non inventare ingredienti freschi o da frigo non presenti nella lista
+- Rispondi SOLO con un JSON valido, senza markdown, senza testo aggiuntivo
+
+Formato JSON richiesto:
+{
+  "recipes": [
+    {
+      "name": "Nome Ricetta",
+      "difficulty": "Facile",
+      "time": "X min",
+      "description": "Descrizione breve in 2-3 frasi",
+      "ingredients_used": ["ingrediente1", "ingrediente2"],
+      "tips": "Un consiglio utile"
+    }
+  ]
+}`;
+
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch(`${GATEWAY}/api/v1/recipes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+
+      const data = await res.json();
+      const text = data.choices?.[0]?.message?.content || "";
+      if (!text) throw new Error("Risposta vuota");
+
+      // Pulizia e parsing JSON
+      const clean = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(clean);
+      setRecipes(parsed.recipes || []);
+    } catch {
+      setError("Errore nella generazione delle ricette. Riprova.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    setMode(null);
+    setSelected([]);
+    setRecipes(null);
+    setError("");
+  };
+
+  const difficultyColor = {
+    "Facile":   { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D" },
+    "Media":    { bg: "rgba(200,180,60,0.15)",  color: "#7a6010" },
+    "Difficile":{ bg: "rgba(196,98,45,0.15)",   color: "#C4622D" },
+  };
+
+  return (
+    <ModalBase onClose={onClose} maxWidth={500}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {mode && (
+            <button
+              onClick={handleBack}
+              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 2, transition: "color 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.color = "var(--forest)"}
+              onMouseLeave={e => e.currentTarget.style.color = "var(--mid)"}
+            >
+              <ChevronDown size={16} strokeWidth={2} style={{ transform: "rotate(90deg)" }} />
+            </button>
+          )}
+          <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.6rem", fontWeight: 700, color: "var(--forest)" }}>Ricetta</h3>
+        </div>
+        <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}>
+          <X size={17} strokeWidth={1.75} />
+        </button>
+      </div>
+
+      {/* Step 1 — selezione tipo */}
+      {!mode && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.65, marginBottom: 6 }}>
+            Scegli su quali alimenti basare la ricetta.
+          </p>
+          {[
+            { key: "personal", label: "Ricetta Personale", desc: "Usa solo i tuoi alimenti",          icon: <UserRound size={18} color="var(--forest)" strokeWidth={1.75} /> },
+            { key: "shared",   label: "Ricetta Condivisa", desc: "Usa gli alimenti condivisi del frigo", icon: <Users size={18} color="var(--forest)" strokeWidth={1.75} /> },
+          ].map(({ key, label, desc, icon }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setMode(key)}
+              style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", background: "rgba(45,74,45,0.04)", border: "1.5px solid rgba(45,74,45,0.12)", borderRadius: 12, cursor: "pointer", textAlign: "left", transition: "all 0.18s", width: "100%" }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(45,74,45,0.09)"; e.currentTarget.style.borderColor = "rgba(45,74,45,0.25)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(45,74,45,0.04)"; e.currentTarget.style.borderColor = "rgba(45,74,45,0.12)"; }}
+            >
+              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(200,224,110,0.18)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                {icon}
+              </div>
+              <div>
+                <div style={{ fontSize: "0.92rem", fontWeight: 600, color: "var(--forest)", fontFamily: "'DM Sans',sans-serif" }}>{label}</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--mid)", marginTop: 2 }}>{desc}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Step 2 — lista alimenti selezionabili */}
+      {mode && !recipes && (
+        <>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <span style={{ fontSize: "0.75rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase" }}>
+              {mode === "personal" ? "I tuoi alimenti" : "Alimenti condivisi"}
+            </span>
+            <span style={{ padding: "1px 8px", borderRadius: 100, background: "rgba(45,74,45,0.08)", color: "var(--moss)", fontSize: "0.78rem", fontWeight: 500 }}>
+              {list.length}
+            </span>
+            {selected.length > 0 && (
+              <span style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--sage)" }}>
+                {selected.length} selezionati
+              </span>
+            )}
+          </div>
+
+          {list.length === 0 ? (
+            <div style={{ padding: "32px 16px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.15)", borderRadius: 12 }}>
+              <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.65 }}>
+                {mode === "personal"
+                  ? "Non hai alimenti intestati a te in questo frigo."
+                  : "Non ci sono alimenti condivisi in questo frigo."}
+              </p>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: "flex", flexDirection: "column", gap: 7, maxHeight: 280, overflowY: "auto", marginBottom: 16 }}>
+                {list.map(ing => {
+                  const cat        = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
+                  const isSelected = selected.includes(ing.id);
+                  return (
+                    <button
+                      key={ing.id}
+                      type="button"
+                      onClick={() => toggleItem(ing.id)}
+                      style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: `1.5px solid ${isSelected ? "var(--forest)" : "rgba(45,74,45,0.09)"}`, borderRadius: 10, background: isSelected ? "rgba(200,224,110,0.12)" : "#fff", cursor: "pointer", textAlign: "left", transition: "all 0.15s", width: "100%" }}
+                    >
+                      <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${isSelected ? "var(--forest)" : "rgba(45,74,45,0.25)"}`, background: isSelected ? "var(--forest)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
+                        {isSelected && <Check size={11} strokeWidth={3} color="var(--lime)" />}
+                      </div>
+                      <span style={{ width: 7, height: 7, borderRadius: "50%", background: cat.dot, flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ing.name}</div>
+                        <div style={{ fontSize: "0.72rem", color: "var(--mid)", marginTop: 1 }}>{ing.qty}</div>
+                      </div>
+                      {ing.expiry && <ExpiryBadge dateStr={ing.expiry} />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {!canSearch && (
+                <p style={{ fontSize: "0.75rem", color: "var(--mid)", textAlign: "center", marginBottom: 10 }}>
+                  Seleziona almeno 2 alimenti per cercare ricette
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={handleSearch}
+                disabled={!canSearch || loading}
+                style={{ width: "100%", padding: "12px", background: canSearch ? "var(--forest)" : "rgba(45,74,45,0.15)", color: canSearch ? "var(--lime)" : "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.92rem", border: "none", borderRadius: 10, cursor: canSearch ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s" }}
+                onMouseEnter={e => { if (canSearch) e.currentTarget.style.background = "var(--moss)"; }}
+                onMouseLeave={e => { if (canSearch) e.currentTarget.style.background = "var(--forest)"; }}
+              >
+                <ChefHat size={15} strokeWidth={2} />
+                {loading ? "Generazione in corso…" : `Cerca ricette (${selected.length})`}
+              </button>
+            </>
+          )}
+        </>
+      )}
+
+      {/* Step 3 — card ricette */}
+      {recipes && (
+        <>
+          <div style={{ fontSize: "0.72rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 14 }}>
+            Ricette suggerite · {selectedItems.length} ingredienti
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 3000, overflowY: "auto" }}>
+            {recipes.map((r, i) => {
+              const diff = difficultyColor[r.difficulty] || difficultyColor["Facile"];
+              const searchUrl = `https://www.giallozafferano.it/ricerca-ricette/${encodeURIComponent(r.name)}`;
+              return (
+                <div key={i} style={{ border: "1.5px solid rgba(45,74,45,0.1)", borderRadius: 14, overflow: "hidden" }}>
+                  {/* Card header */}
+                  <div style={{ padding: "14px 16px 10px", background: "rgba(45,74,45,0.03)" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
+                      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", fontWeight: 700, color: "var(--forest)", lineHeight: 1.2 }}>{r.name}</div>
+                      <a
+                        href={searchUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{ flexShrink: 0, fontSize: "0.72rem", color: "var(--sage)", textDecoration: "none", border: "1px solid rgba(45,74,45,0.2)", borderRadius: 100, padding: "3px 10px", whiteSpace: "nowrap", transition: "all 0.15s" }}
+                        onMouseEnter={e => { e.currentTarget.style.background = "rgba(45,74,45,0.07)"; e.currentTarget.style.color = "var(--forest)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--sage)"; }}
+                      >
+                        Cerca ricetta ↗
+                      </a>
+                    </div>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <span style={{ fontSize: "0.7rem", fontWeight: 500, padding: "2px 9px", borderRadius: 100, background: diff.bg, color: diff.color }}>{r.difficulty}</span>
+                      <span style={{ fontSize: "0.7rem", fontWeight: 500, padding: "2px 9px", borderRadius: 100, background: "rgba(45,74,45,0.07)", color: "var(--mid)" }}>⏱ {r.time}</span>
+                    </div>
+                  </div>
+
+                  {/* Card body */}
+                  <div style={{ padding: "10px 16px 14px" }}>
+                    <p style={{ fontSize: "0.84rem", color: "var(--mid)", lineHeight: 1.65, marginBottom: 10 }}>{r.description}</p>
+
+                    {/* Ingredienti usati */}
+                    {r.ingredients_used?.length > 0 && (
+                      <div style={{ marginBottom: 10 }}>
+                        <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 6 }}>Ingredienti usati</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                          {r.ingredients_used.map((ing, j) => (
+                            <span key={j} style={{ fontSize: "0.72rem", padding: "2px 9px", borderRadius: 100, background: "rgba(200,224,110,0.18)", color: "#2D4A2D", fontWeight: 500 }}>{ing}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tips */}
+                    {r.tips && (
+                      <div style={{ padding: "8px 12px", background: "rgba(200,224,110,0.1)", borderRadius: 8, borderLeft: "3px solid rgba(200,224,110,0.6)" }}>
+                        <span style={{ fontSize: "0.75rem", color: "var(--forest)", lineHeight: 1.55 }}>💡 {r.tips}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => { setRecipes(null); setSelected([]); }}
+            style={{ marginTop: 16, width: "100%", padding: "11px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}
+          >
+            Cerca di nuovo
+          </button>
+        </>
+      )}
+
+      {error && (
+        <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 9, background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", color: "#C4622D", fontSize: "0.83rem" }}>
+          {error}
+        </div>
+      )}
+    </ModalBase>
+  );
+}
+
 // ── Sidebar membri ────────────────────────────────────────────────────────────
 
-function MembersList({ members, isOwner, onInvite, onKick, hideTitle }) {
+function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle }) {
   return (
     <>
       {!hideTitle && (
@@ -395,9 +758,22 @@ function MembersList({ members, isOwner, onInvite, onKick, hideTitle }) {
         ))}
       </div>
 
+      {true && (
+        <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
+          <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Ricetta</div>
+          <button
+            onClick={onRecipe}
+            style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 14px", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", borderRadius: 10, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, cursor: "pointer", transition: "background 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+          >
+            <ChefHat size={13} strokeWidth={2} /> Genera Ricetta
+          </button>
+        </div>
+      )}
+
       {isOwner && (
         <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
-          <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Invita</div>
           <p style={{ fontSize: "0.75rem", color: "var(--mid)", lineHeight: 1.55, marginBottom: 11 }}>
             Genera un link per aggiungere nuovi membri al frigorifero.
           </p>
@@ -507,7 +883,9 @@ export default function FridgePage({ params }) {
   const [showInvite,      setShowInvite]      = useState(false);
   const [showDeleteFridge,setShowDeleteFridge]= useState(false);
   const [showLeaveFridge, setShowLeaveFridge] = useState(false);
+  const [showRecipe,      setShowRecipe]      = useState(false);
   const [mobMembersOpen,  setMobMembersOpen]  = useState(false);
+  const [sortMode,        setSortMode]        = useState("urgency");
 
   // ── Data fetching ───────────────────────────────────────────────────────────
 
@@ -663,7 +1041,7 @@ export default function FridgePage({ params }) {
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
-          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} />
+          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} />
         </aside>
 
         <section>
@@ -688,7 +1066,7 @@ export default function FridgePage({ params }) {
               </button>
               {mobMembersOpen && (
                 <div style={{ padding: "4px 16px 16px" }}>
-                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} hideTitle />
+                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} hideTitle />
                 </div>
               )}
             </div>
@@ -700,6 +1078,30 @@ export default function FridgePage({ params }) {
             ))}
           </div>
 
+          {/* Barra filtri sorting */}
+          {ingredients.length > 1 && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+              <ArrowUpDown size={12} strokeWidth={1.75} color="var(--mid)" style={{ flexShrink: 0 }} />
+              {[
+                { key: "urgency",   label: "Urgenza" },
+                { key: "expiry",    label: "Scadenza" },
+                { key: "name_asc",  label: "A→Z" },
+                { key: "name_desc", label: "Z→A" },
+                { key: "category",  label: "Categoria" },
+                { key: "owner",     label: "Proprietario" },
+              ].map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setSortMode(key)}
+                  style={{ padding: "4px 11px", borderRadius: 100, fontSize: "0.72rem", fontWeight: 500, fontFamily: "'DM Sans',sans-serif", cursor: "pointer", transition: "all 0.15s", border: sortMode === key ? "1.5px solid var(--forest)" : "1.5px solid rgba(45,74,45,0.15)", background: sortMode === key ? "var(--forest)" : "transparent", color: sortMode === key ? "var(--lime)" : "var(--mid)" }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {ingredients.length === 0 ? (
               <div style={{ padding: "60px 24px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.18)", borderRadius: 14 }}>
@@ -708,7 +1110,7 @@ export default function FridgePage({ params }) {
                 <button className="btn-primary" onClick={() => setShowAdd(true)}><Plus size={13} strokeWidth={2} /> Aggiungi Alimento</button>
               </div>
             ) : (
-              ingredients.map((ing, i) => (
+              sortIngredients(ingredients, sortMode, members).map((ing, i) => (
                 <IngRow key={ing.id} ing={ing} delay={Math.min(i + 1, 8)} isOpen={openId === ing.id} onToggle={() => toggle(ing.id)} onDelete={setToDelete} members={members} />
               ))
             )}
@@ -717,6 +1119,7 @@ export default function FridgePage({ params }) {
       </div>
 
       {/* Modals */}
+      {showRecipe      && <RecipeModal ingredients={ingredients} currentUserId={currentUser?.uid} onClose={() => setShowRecipe(false)} />}
       {showAdd         && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
       {showInvite      && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
       {toDelete        && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}

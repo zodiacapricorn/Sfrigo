@@ -57,6 +57,28 @@ apiRouter.post('/fridges', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
+apiRouter.post('/recipes', async (req, res) => {
+  try {
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: "gpt-4o-mini",  // economico e capace, puoi usare "gpt-4o" se vuoi più qualità
+        max_tokens: 1000,
+        messages: req.body.messages,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json(error.response?.data || { error: 'Errore LLM' });
+  }
+});
+
 apiRouter.delete('/fridges/:fridgeId', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
