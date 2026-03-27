@@ -70,6 +70,14 @@ apiRouter.get('/fridges/:fridgeId', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
+apiRouter.post('/fridges/:fridgeId/recipe', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.get('/fridges/:fridgeId/recipe', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
 // --- MEMBERS / INVITES ---
 apiRouter.post('/fridges/:fridgeId/invites', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);

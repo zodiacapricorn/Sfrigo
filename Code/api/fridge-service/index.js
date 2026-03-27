@@ -430,6 +430,64 @@ app.get('/fridges/:fridgeId/items', async (req, res) => {
   }
 });
 
+// POST /fridges/:fridgeId/recipe - Usa ricetta e aggiorna inventario
+app.post('/fridges/:fridgeId/recipe', async (req, res) => {
+  const { fridgeId } = req.params;
+  const { recipe_name, ingredients_used, item_ids, mode } = req.body;
+
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
+
+    const itemsCollection      = mongoDb.collection('items');
+    const recipeUsesCollection = mongoDb.collection('recipes');
+
+    // Salva storico solo per ricette condivise
+    if (mode === "shared") {
+      await recipeUsesCollection.insertOne({
+        fridge_id:    fridgeId,
+        recipe_name,
+        requested_by: req.userId,
+        used_at:      new Date(),
+        ingredients:  ingredients_used,
+      });
+    }
+
+    await itemsCollection.deleteMany({
+      _id:       { $in: item_ids.map(id => new ObjectId(id)) },
+      fridge_id: fridgeId,
+    });
+
+    res.status(200).json({ deleted: item_ids.length });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante l\'utilizzo della ricetta' });
+  }
+});
+
+// GET /fridges/:fridgeId/recipe — storico utilizzi ricette
+app.get('/fridges/:fridgeId/recipe', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
+
+    const recipeUsesCollection = mongoDb.collection('recipes');
+    const uses = await recipeUsesCollection
+      .find({ fridge_id: fridgeId })
+      .sort({ used_at: -1 })
+      .limit(50)
+      .toArray();
+
+    res.json(uses);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel recupero dello storico ricette' });
+  }
+});
+
 // DELETE /fridges/:fridgeId/items/:itemId - Rimuovi alimento
 app.delete('/fridges/:fridgeId/items/:itemId', async (req, res) => {
   const { fridgeId, itemId } = req.params;
