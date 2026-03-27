@@ -35,9 +35,9 @@ function daysUntilExpiry(d) {
 
 function expiryStyle(days) {
   if (days < 0) return { bg: "rgba(180,60,60,0.13)", color: "#b43c3c", label: "Scaduto" };
-  if (days <= 2) return { bg: "rgba(196,98,45,0.15)", color: "#C4622D", label: `${days}g` };
-  if (days <= 5) return { bg: "rgba(200,180,60,0.15)", color: "#7a6010", label: `${days}g` };
-  return { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D", label: `${days}g` };
+  if (days <= 2) return { bg: "rgba(196,98,45,0.15)", color: "#C4622D", label: `${days}d` };
+  if (days <= 5) return { bg: "rgba(200,180,60,0.15)", color: "#7a6010", label: `${days}d` };
+  return { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D", label: `${days}d` };
 }
 
 function normalizeItem(item) {
