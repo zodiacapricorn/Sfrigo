@@ -443,14 +443,29 @@ app.post('/fridges/:fridgeId/recipe', async (req, res) => {
     const itemsCollection      = mongoDb.collection('items');
     const recipeUsesCollection = mongoDb.collection('recipes');
 
-    // Salva storico solo per ricette condivise
     if (mode === "shared") {
+      
+      const membersResult = await pgPool.query(
+        `SELECT fm.user_id, fm.role, u.username
+         FROM fridge_members fm
+         JOIN users u ON fm.user_id = u.id
+         WHERE fm.fridge_id = $1`,
+        [fridgeId]
+      );
+
+      const members_snapshot = membersResult.rows.map(m => ({
+        user_id:  m.user_id,
+        username: m.username,
+        role:     m.role,
+      }));
+
       await recipeUsesCollection.insertOne({
-        fridge_id:    fridgeId,
+        fridge_id:        fridgeId,
         recipe_name,
-        requested_by: req.userId,
-        used_at:      new Date(),
-        ingredients:  ingredients_used,
+        requested_by:     req.userId,
+        used_at:          new Date(),
+        ingredients:      ingredients_used,
+        members_snapshot, 
       });
     }
 
@@ -487,6 +502,8 @@ app.get('/fridges/:fridgeId/recipe', async (req, res) => {
     res.status(500).json({ error: 'Errore nel recupero dello storico ricette' });
   }
 });
+
+
 
 // DELETE /fridges/:fridgeId/items/:itemId - Rimuovi alimento
 app.delete('/fridges/:fridgeId/items/:itemId', async (req, res) => {
