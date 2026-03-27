@@ -4,7 +4,7 @@ import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus, ChefHat, UserRound, ArrowUpDown } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus, ChefHat, UserRound, ArrowUpDown, BookOpen } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -14,15 +14,15 @@ import { auth } from "@/lib/firebase";
 const CATEGORIES = ["Latticini", "Verdura", "Frutta", "Carne", "Pesce", "Bevande", "Condimenti", "Avanzi", "Altro"];
 
 const CATEGORY_COLORS = {
-  "Latticini":  { bg: "rgba(200,224,110,0.18)", text: "#2D4A2D", dot: "#C8E06E" },
-  "Verdura":    { bg: "rgba(107,140,107,0.18)", text: "#1A3320", dot: "#6B8C6B" },
-  "Frutta":     { bg: "rgba(196,98,45,0.14)",   text: "#7a3010", dot: "#C4622D" },
-  "Carne":      { bg: "rgba(180,60,60,0.13)",   text: "#7a2020", dot: "#b43c3c" },
-  "Pesce":      { bg: "rgba(80,140,180,0.14)",  text: "#1a4060", dot: "#508cb4" },
-  "Bevande":    { bg: "rgba(45,74,45,0.12)",    text: "#1A3320", dot: "#2D4A2D" },
+  "Latticini": { bg: "rgba(200,224,110,0.18)", text: "#2D4A2D", dot: "#C8E06E" },
+  "Verdura": { bg: "rgba(107,140,107,0.18)", text: "#1A3320", dot: "#6B8C6B" },
+  "Frutta": { bg: "rgba(196,98,45,0.14)", text: "#7a3010", dot: "#C4622D" },
+  "Carne": { bg: "rgba(180,60,60,0.13)", text: "#7a2020", dot: "#b43c3c" },
+  "Pesce": { bg: "rgba(80,140,180,0.14)", text: "#1a4060", dot: "#508cb4" },
+  "Bevande": { bg: "rgba(45,74,45,0.12)", text: "#1A3320", dot: "#2D4A2D" },
   "Condimenti": { bg: "rgba(168,197,168,0.22)", text: "#2D4A2D", dot: "#A8C5A8" },
-  "Avanzi":     { bg: "rgba(90,90,82,0.12)",    text: "#3a3a34", dot: "#5A5A52" },
-  "Altro":      { bg: "rgba(214,208,196,0.35)", text: "#5A5A52", dot: "#D6D0C4" },
+  "Avanzi": { bg: "rgba(90,90,82,0.12)", text: "#3a3a34", dot: "#5A5A52" },
+  "Altro": { bg: "rgba(214,208,196,0.35)", text: "#5A5A52", dot: "#D6D0C4" },
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -34,26 +34,26 @@ function daysUntilExpiry(d) {
 }
 
 function expiryStyle(days) {
-  if (days < 0)  return { bg: "rgba(180,60,60,0.13)",  color: "#b43c3c", label: "Scaduto" };
-  if (days <= 2) return { bg: "rgba(196,98,45,0.15)",  color: "#C4622D", label: `${days}g` };
+  if (days < 0) return { bg: "rgba(180,60,60,0.13)", color: "#b43c3c", label: "Scaduto" };
+  if (days <= 2) return { bg: "rgba(196,98,45,0.15)", color: "#C4622D", label: `${days}g` };
   if (days <= 5) return { bg: "rgba(200,180,60,0.15)", color: "#7a6010", label: `${days}g` };
-  return           { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D", label: `${days}g` };
+  return { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D", label: `${days}g` };
 }
 
 function normalizeItem(item) {
   const id = item._id?.$oid || item._id?.toString() || item._id || item.id;
   return {
     id,
-    name:          item.name,
-    owner:         item.owner_id || item.owner || "",
-    category:      item.category || "Altro",
-    qty:           item.quantity != null
-                     ? `${item.quantity} ${item.unit || ""}`.trim()
-                     : (item.qty || ""),
-    expiry:        item.expiration_date
-                     ? new Date(item.expiration_date).toISOString().split("T")[0]
-                     : (item.expiry || ""),
-    notes:         item.notes || "",
+    name: item.name,
+    owner: item.owner_id || item.owner || "",
+    category: item.category || "Altro",
+    qty: item.quantity != null
+      ? `${item.quantity} ${item.unit || ""}`.trim()
+      : (item.qty || ""),
+    expiry: item.expiration_date
+      ? new Date(item.expiration_date).toISOString().split("T")[0]
+      : (item.expiry || ""),
+    notes: item.notes || "",
     is_common_use: item.sharing_status?.is_common_use || false,
   };
 }
@@ -62,15 +62,15 @@ function normalizeItem(item) {
 
 // Peso per categoria — più alto = più urgente (usato nell'algoritmo urgenza)
 const CATEGORY_URGENCY = {
-  "Carne":      1.0,
-  "Pesce":      1.0,
-  "Latticini":  0.8,
-  "Verdura":    0.6,
-  "Frutta":     0.6,
-  "Avanzi":     0.7,
-  "Bevande":    0.3,
+  "Carne": 1.0,
+  "Pesce": 1.0,
+  "Latticini": 0.8,
+  "Verdura": 0.6,
+  "Frutta": 0.6,
+  "Avanzi": 0.7,
+  "Bevande": 0.3,
   "Condimenti": 0.2,
-  "Altro":      0.4,
+  "Altro": 0.4,
 };
 
 function sortIngredients(list, mode, members) {
@@ -103,8 +103,8 @@ function sortIngredients(list, mode, members) {
         const daysB = b.expiry ? daysUntilExpiry(b.expiry) : MAX_DAYS;
         const expiryScoreA = Math.min(Math.max(daysA, 0), MAX_DAYS) / MAX_DAYS;
         const expiryScoreB = Math.min(Math.max(daysB, 0), MAX_DAYS) / MAX_DAYS;
-        const catWeightA   = CATEGORY_URGENCY[a.category] ?? 0.4;
-        const catWeightB   = CATEGORY_URGENCY[b.category] ?? 0.4;
+        const catWeightA = CATEGORY_URGENCY[a.category] ?? 0.4;
+        const catWeightB = CATEGORY_URGENCY[b.category] ?? 0.4;
         const scoreA = expiryScoreA * 0.7 + (1 - catWeightA) * 0.3;
         const scoreB = expiryScoreB * 0.7 + (1 - catWeightB) * 0.3;
         return scoreA - scoreB;
@@ -138,9 +138,9 @@ function ModalBase({ onClose, children, maxWidth = 420 }) {
 
 // Pulsanti Annulla/Conferma riutilizzabili nei modal di conferma
 function ConfirmButtons({ onClose, onConfirm, confirmLabel, confirmIcon, danger = false }) {
-  const bg      = danger ? "#b43c3c"       : "var(--forest)";
-  const bgHover = danger ? "#8a2a2a"       : "var(--moss)";
-  const color   = danger ? "#fff"          : "var(--lime)";
+  const bg = danger ? "#b43c3c" : "var(--forest)";
+  const bgHover = danger ? "#8a2a2a" : "var(--moss)";
+  const color = danger ? "#fff" : "var(--lime)";
   return (
     <div style={{ display: "flex", gap: 9, marginTop: 24 }}>
       <button onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.92rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}>
@@ -167,9 +167,9 @@ function ModalIcon({ icon, bg }) {
 
 // ── Modals ────────────────────────────────────────────────────────────────────
 
-function AddModal({ members, onClose, onAdd }) {
+function AddModal({ members, currentUserId, onClose, onAdd }) {
   const [f, setF] = useState({
-    name: "", owner: members[0]?.uid || "", category: CATEGORIES[0],
+    name: "", owner: currentUserId || members[0]?.uid || "", category: CATEGORIES[0],
     quantity: "", unit: "pz", expiration_date: "", notes: "",
     is_common_use: false,
   });
@@ -198,9 +198,12 @@ function AddModal({ members, onClose, onAdd }) {
           </div>
           <div>
             <label>Proprietario</label>
-            <select className="input-field" value={f.owner} onChange={e => set("owner", e.target.value)}>
-              {members.map(m => <option key={m.uid} value={m.uid}>{m.name}</option>)}
-            </select>
+            <div className="input-field" style={{ color: "var(--mid)", pointerEvents: "none", display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ width: 20, height: 20, borderRadius: "50%", background: "var(--forest)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, color: "var(--lime)", flexShrink: 0 }}>
+                {members.find(m => m.uid === f.owner)?.initial || "?"}
+              </span>
+              {members.find(m => m.uid === f.owner)?.name || "Tu"}
+            </div>
           </div>
           <div>
             <label>Categoria</label>
@@ -320,9 +323,9 @@ function KickMemberModal({ memberName, onClose, onConfirm }) {
 
 function InviteModal({ fridgeId, onClose }) {
   const [inviteLink, setInviteLink] = useState(null);
-  const [loading, setLoading]       = useState(false);
-  const [error, setError]           = useState("");
-  const [copied, setCopied]         = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -396,26 +399,73 @@ function InviteModal({ fridgeId, onClose }) {
   );
 }
 
+
+
 // ── Modal Ricetta ─────────────────────────────────────────────────────────────
 
-function RecipeModal({ ingredients, currentUserId, onClose }) {
-  const [mode,     setMode]     = useState(null);
+function RecipeModal({ ingredients, currentUserId, fridgeId, onClose, onIngredientsUsed }) {
+  const [mode, setMode] = useState(null);
   const [selected, setSelected] = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [recipes,  setRecipes]  = useState(null);  // array di oggetti ricetta
-  const [error,    setError]    = useState("");
+  const [loading, setLoading] = useState(false);
+  const [recipes, setRecipes] = useState(null);
+  const [error, setError] = useState("");
+  const [usingIdx, setUsingIdx] = useState(null);
+  const [usedIdx, setUsedIdx] = useState(null);
+
+  const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:8080";
 
   const personalItems = ingredients.filter(i => i.owner === currentUserId);
-  const sharedItems   = ingredients.filter(i => i.owner === currentUserId || i.is_common_use);
-  const list          = mode === "personal" ? personalItems : sharedItems;
+  const sharedItems = ingredients.filter(i => i.is_common_use || i.owner === currentUserId);
+  const list = mode === "personal" ? personalItems : sharedItems;
 
   const toggleItem = (id) =>
     setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
 
   const selectedItems = list.filter(i => selected.includes(i.id));
-  const canSearch     = selected.length >= 2;
+  const canSearch = selected.length >= 2;
 
-  const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:8080";
+  const handleUseRecipe = async (recipe, idx) => {
+    setUsingIdx(idx);
+    setError("");
+    try {
+      const matchedItems = selectedItems.filter(item =>
+        recipe.ingredients_used.some(name =>
+          name.toLowerCase() === item.name.toLowerCase()
+        )
+      );
+
+      if (matchedItems.length === 0) {
+        setError("Nessun alimento corrisponde agli ingredienti della ricetta.");
+        return;
+      }
+
+      await apiFetch(`/fridges/${fridgeId}/recipe`, {
+        method: "POST",
+        body: JSON.stringify({
+          recipe_name: recipe.name,
+          mode,
+          item_ids: matchedItems.map(i => i.id),
+          ingredients_used: matchedItems.map(i => ({
+            name: i.name,
+            owner_id: i.owner,
+            quantity: i.qty,
+            unit: "",
+            item_id: i.id,
+          })),
+        }),
+      });
+
+      setUsedIdx(idx);
+      const usedIds = new Set(matchedItems.map(i => i.id));
+      onIngredientsUsed(usedIds);
+      setTimeout(() => onClose(), 2000);
+    } catch (err) {
+      console.error(err);
+      setError("Errore durante l'utilizzo della ricetta. Riprova.");
+    } finally {
+      setUsingIdx(null);
+    }
+  };
 
   const handleSearch = async () => {
     setLoading(true);
@@ -440,6 +490,7 @@ REGOLE IMPORTANTI:
 - Ogni ricetta deve usare almeno 2 degli ingredienti forniti
 - Non inventare ingredienti freschi o da frigo non presenti nella lista
 - Rispondi SOLO con un JSON valido, senza markdown, senza testo aggiuntivo
+- In ingredients_used inserisci SOLO i nomi degli ingredienti presenti in ${ingredientList}, non ingredienti inventati o generici (es. "carne", "verdura", ecc.)
 
 Formato JSON richiesto:
 {
@@ -487,12 +538,14 @@ Formato JSON richiesto:
     setSelected([]);
     setRecipes(null);
     setError("");
+    setUsingIdx(null);
+    setUsedIdx(null);
   };
 
   const difficultyColor = {
-    "Facile":   { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D" },
-    "Media":    { bg: "rgba(200,180,60,0.15)",  color: "#7a6010" },
-    "Difficile":{ bg: "rgba(196,98,45,0.15)",   color: "#C4622D" },
+    "Facile": { bg: "rgba(107,140,107,0.15)", color: "#2D4A2D" },
+    "Media": { bg: "rgba(200,180,60,0.15)", color: "#7a6010" },
+    "Difficile": { bg: "rgba(196,98,45,0.15)", color: "#C4622D" },
   };
 
   return (
@@ -524,8 +577,8 @@ Formato JSON richiesto:
             Scegli su quali alimenti basare la ricetta.
           </p>
           {[
-            { key: "personal", label: "Ricetta Personale", desc: "Usa solo i tuoi alimenti",          icon: <UserRound size={18} color="var(--forest)" strokeWidth={1.75} /> },
-            { key: "shared",   label: "Ricetta Condivisa", desc: "Usa gli alimenti condivisi del frigo", icon: <Users size={18} color="var(--forest)" strokeWidth={1.75} /> },
+            { key: "personal", label: "Ricetta Personale", desc: "Usa solo i tuoi alimenti", icon: <UserRound size={18} color="var(--forest)" strokeWidth={1.75} /> },
+            { key: "shared", label: "Ricetta Condivisa", desc: "Usa i tuoi alimenti e quelli condivisi del frigo", icon: <Users size={18} color="var(--forest)" strokeWidth={1.75} /> },
           ].map(({ key, label, desc, icon }) => (
             <button
               key={key}
@@ -576,7 +629,7 @@ Formato JSON richiesto:
             <>
               <div style={{ display: "flex", flexDirection: "column", gap: 7, maxHeight: 280, overflowY: "auto", marginBottom: 16 }}>
                 {list.map(ing => {
-                  const cat        = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
+                  const cat = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
                   const isSelected = selected.includes(ing.id);
                   return (
                     <button
@@ -627,12 +680,12 @@ Formato JSON richiesto:
             Ricette suggerite · {selectedItems.length} ingredienti
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 3000, overflowY: "auto" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 540, overflowY: "auto" }}>
             {recipes.map((r, i) => {
               const diff = difficultyColor[r.difficulty] || difficultyColor["Facile"];
               const searchUrl = `https://www.giallozafferano.it/ricerca-ricette/${encodeURIComponent(r.name)}`;
               return (
-                <div key={i} style={{ border: "1.5px solid rgba(45,74,45,0.1)", borderRadius: 14, overflow: "hidden" }}>
+                <div key={i} style={{ border: "1.5px solid rgba(45,74,45,0.1)", borderRadius: 14, overflow: "hidden", flexShrink: 0 }}>
                   {/* Card header */}
                   <div style={{ padding: "14px 16px 10px", background: "rgba(45,74,45,0.03)" }}>
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
@@ -649,9 +702,9 @@ Formato JSON richiesto:
                         Cerca ricetta ↗
                       </a>
                     </div>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <span style={{ fontSize: "0.7rem", fontWeight: 500, padding: "2px 9px", borderRadius: 100, background: diff.bg, color: diff.color }}>{r.difficulty}</span>
-                      <span style={{ fontSize: "0.7rem", fontWeight: 500, padding: "2px 9px", borderRadius: 100, background: "rgba(45,74,45,0.07)", color: "var(--mid)" }}>⏱ {r.time}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "0.7rem", fontWeight: 500, padding: "4px 9px", borderRadius: 100, background: diff.bg, color: diff.color }}>{r.difficulty}</span>
+                      <span style={{ fontSize: "0.7rem", fontWeight: 500, padding: "4px 9px", borderRadius: 100, background: "rgba(45,74,45,0.07)", color: "var(--mid)" }}>⏱ {r.time}</span>
                     </div>
                   </div>
 
@@ -677,6 +730,29 @@ Formato JSON richiesto:
                         <span style={{ fontSize: "0.75rem", color: "var(--forest)", lineHeight: 1.55 }}>💡 {r.tips}</span>
                       </div>
                     )}
+
+                    {/* Pulsante usa ricetta */}
+
+                    <div style={{ marginTop: 20, display: "flex", justifyContent: "center" }}>
+                      {usedIdx === i ? (
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", background: "rgba(200,224,110,0.2)", borderRadius: 100, color: "#2D4A2D", fontSize: "0.75rem", fontWeight: 500 }}>
+                          <Check size={12} strokeWidth={2.5} /> Ingredienti rimossi
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleUseRecipe(r, i)}
+                          disabled={usingIdx === i || usedIdx !== null}
+                          className="btn-secondary"
+                          style={{ opacity: usedIdx !== null && usedIdx !== i ? 0.4 : 1, cursor: usingIdx === i || usedIdx !== null ? "not-allowed" : "pointer" }}
+                        >
+                          <ChefHat size={13} strokeWidth={2} />
+                          {usingIdx === i ? "In corso…" : "Usa questa ricetta"}
+                        </button>
+                      )}
+                    </div>
+
+
                   </div>
                 </div>
               );
@@ -686,9 +762,12 @@ Formato JSON richiesto:
           <button
             type="button"
             onClick={() => { setRecipes(null); setSelected([]); }}
-            style={{ marginTop: 16, width: "100%", padding: "11px", background: "transparent", color: "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.88rem", border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 10, cursor: "pointer" }}
+            style={{ marginTop: 16, width: "100%", padding: "11px", background: "transparent", color: "var(--sage)", fontFamily: "'DM Sans',sans-serif", fontSize: "0.85rem", fontWeight: 500, border: "1.5px solid rgba(45,74,45,0.15)", borderRadius: 100, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, letterSpacing: "0.02em", transition: "all 0.2s" }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--moss)"; e.currentTarget.style.color = "var(--forest)"; e.currentTarget.style.background = "rgba(45,74,45,0.05)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(45,74,45,0.15)"; e.currentTarget.style.color = "var(--forest)"; e.currentTarget.style.background = "transparent"; }}
           >
-            Cerca di nuovo
+            <ChevronDown size={14} strokeWidth={2} style={{ transform: "rotate(90deg)" }} />
+            Seleziona altri ingredienti
           </button>
         </>
       )}
@@ -702,9 +781,87 @@ Formato JSON richiesto:
   );
 }
 
+// ── Cronologia Ricette ─────────────────────────────────────────────────────────────
+function RecipeHistoryModal({ fridgeId, members, onClose }) {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    apiFetch(`/fridges/${fridgeId}/recipe`)
+      .then(data => setHistory(data || []))
+      .catch(() => setError("Errore nel caricamento dello storico."))
+      .finally(() => setLoading(false));
+  }, [fridgeId]);
+
+  return (
+    <ModalBase onClose={onClose} maxWidth={500} overflowY="auto">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.6rem", fontWeight: 700, color: "var(--forest)" }}>Storico Ricette</h3>
+        <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}>
+          <X size={17} strokeWidth={1.75} />
+        </button>
+      </div>
+
+      {loading && (
+        <div style={{ textAlign: "center", padding: "32px 0", color: "var(--mid)", fontSize: "0.88rem" }}>
+          Caricamento…
+        </div>
+      )}
+
+      {error && (
+        <div style={{ padding: "10px 14px", borderRadius: 9, background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", color: "#C4622D", fontSize: "0.83rem" }}>
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && history.length === 0 && (
+        <div style={{ padding: "40px 16px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.15)", borderRadius: 12 }}>
+          <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.65 }}>
+            Nessuna ricetta condivisa utilizzata ancora.
+          </p>
+        </div>
+      )}
+
+      {!loading && history.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: 440, overflowY: "auto" }}>
+          {history.map((entry, i) => {
+            const requestedBy = members.find(m => m.uid === entry.requested_by)?.name || entry.requested_by;
+            const date = new Date(entry.used_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" });
+            return (
+              <div key={i} style={{ border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 12, overflow: "hidden", flexShrink : 0 }}>
+                {/* Header */}
+                <div style={{ padding: "12px 14px 8px", background: "rgba(45,74,45,0.03)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                  <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1rem", fontWeight: 700, color: "var(--forest)" }}>{entry.recipe_name}</div>
+                  <span style={{ fontSize: "0.7rem", color: "var(--mid)", whiteSpace: "nowrap", flexShrink: 0 }}>{date}</span>
+                </div>
+
+                {/* Body */}
+                <div style={{ padding: "8px 14px 12px" }}>
+                  <div style={{ fontSize: "0.72rem", color: "var(--mid)", marginBottom: 7 }}>
+                    Richiesta da <strong style={{ color: "var(--forest)" }}>{requestedBy}</strong>
+                  </div>
+                  {entry.ingredients?.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                      {entry.ingredients.map((ing, j) => (
+                        <span key={j} style={{ fontSize: "0.71rem", padding: "2px 9px", borderRadius: 100, background: "rgba(200,224,110,0.18)", color: "#2D4A2D", fontWeight: 500 }}>
+                          {ing.name}{ing.quantity ? ` · ${ing.quantity}` : ""}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </ModalBase>
+  );
+}
 // ── Sidebar membri ────────────────────────────────────────────────────────────
 
-function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle }) {
+function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle, onRecipeHistory }) {
   return (
     <>
       {!hideTitle && (
@@ -758,19 +915,31 @@ function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle }
         ))}
       </div>
 
-      {true && (
-        <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
-          <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Ricetta</div>
+
+      <div style={{ borderTop: "1px solid rgba(45,74,45,0.08)", marginTop: 22, paddingTop: 14}}>
+        <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Ricetta</div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
             onClick={onRecipe}
-            style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 14px", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", borderRadius: 10, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, cursor: "pointer", transition: "background 0.2s" }}
+            style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 14px", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", borderRadius: 10, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, cursor: "pointer", transition: "background 0.2s" }}
             onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
             onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
           >
-            <ChefHat size={13} strokeWidth={2} /> Genera Ricetta
+            <ChefHat size={13} strokeWidth={2} /> Ricetta AI
+          </button>
+          <button
+            onClick={onRecipeHistory}
+            title="Storico ricette"
+            style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "background 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+          >
+            <BookOpen size={14} strokeWidth={1.75} />
           </button>
         </div>
-      )}
+      </div>
+
+
 
       {isOwner && (
         <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(45,74,45,0.08)" }}>
@@ -798,11 +967,11 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
   const ownerName = members.find(m => m.uid === ing.owner)?.name || ing.owner;
 
   const details = [
-    { label: "Alimento",     val: ing.name },
+    { label: "Alimento", val: ing.name },
     { label: "Proprietario", val: ownerName },
-    { label: "Categoria",    val: ing.category },
-    { label: "Quantità",     val: ing.qty },
-    { label: "Scadenza",     val: ing.expiry },
+    { label: "Categoria", val: ing.category },
+    { label: "Quantità", val: ing.qty },
+    { label: "Scadenza", val: ing.expiry },
   ];
 
   return (
@@ -866,26 +1035,27 @@ function IngRow({ ing, delay, isOpen, onToggle, onDelete, members }) {
 // ── Pagina principale ─────────────────────────────────────────────────────────
 
 export default function FridgePage({ params }) {
-  const { id }  = use(params);
-  const router  = useRouter();
+  const { id } = use(params);
+  const router = useRouter();
 
-  const [currentUser,  setCurrentUser]  = useState(null);
-  const [fridge,       setFridge]       = useState(null);
-  const [members,      setMembers]      = useState([]);
-  const [ingredients,  setIngredients]  = useState([]);
-  const [loading,      setLoading]      = useState(true);
-  const [error,        setError]        = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [fridge, setFridge] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const [openId,          setOpenId]          = useState(null);
-  const [showAdd,         setShowAdd]         = useState(false);
-  const [toDelete,        setToDelete]        = useState(null);
-  const [toKick,          setToKick]          = useState(null);
-  const [showInvite,      setShowInvite]      = useState(false);
-  const [showDeleteFridge,setShowDeleteFridge]= useState(false);
+  const [openId, setOpenId] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [toDelete, setToDelete] = useState(null);
+  const [toKick, setToKick] = useState(null);
+  const [showInvite, setShowInvite] = useState(false);
+  const [showDeleteFridge, setShowDeleteFridge] = useState(false);
   const [showLeaveFridge, setShowLeaveFridge] = useState(false);
-  const [showRecipe,      setShowRecipe]      = useState(false);
-  const [mobMembersOpen,  setMobMembersOpen]  = useState(false);
-  const [sortMode,        setSortMode]        = useState("urgency");
+  const [showRecipe, setShowRecipe] = useState(false);
+  const [showRecipeHistory, setShowRecipeHistory] = useState(false);
+  const [mobMembersOpen, setMobMembersOpen] = useState(false);
+  const [sortMode, setSortMode] = useState("urgency");
 
   // ── Data fetching ───────────────────────────────────────────────────────────
 
@@ -899,9 +1069,9 @@ export default function FridgePage({ params }) {
       setFridge(fridgeData);
       setIngredients((items || []).map(normalizeItem));
       setMembers((membersData || []).map(m => ({
-        uid:     m.id,
-        name:    m.username,
-        role:    m.role,
+        uid: m.id,
+        name: m.username,
+        role: m.role,
         initial: m.username.charAt(0).toUpperCase(),
       })));
     } catch (err) {
@@ -939,15 +1109,15 @@ export default function FridgePage({ params }) {
     const newItem = await apiFetch(`/fridges/${id}/items`, {
       method: "POST",
       body: JSON.stringify({
-        name:            formData.name,
-        owner_id:        formData.owner,
-        category:        formData.category,
-        quantity:        Number(formData.quantity),
-        unit:            formData.unit,
+        name: formData.name,
+        owner_id: formData.owner,
+        category: formData.category,
+        quantity: Number(formData.quantity),
+        unit: formData.unit,
         expiration_date: formData.expiration_date,
-        notes:           formData.notes,
+        notes: formData.notes,
         sharing_status: {
-          is_common_use:        formData.is_common_use || false,
+          is_common_use: formData.is_common_use || false,
           is_available_for_loan: false,
         },
       }),
@@ -1041,7 +1211,7 @@ export default function FridgePage({ params }) {
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
-          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} />
+          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} onRecipeHistory={() => setShowRecipeHistory(true)} />
         </aside>
 
         <section>
@@ -1066,7 +1236,7 @@ export default function FridgePage({ params }) {
               </button>
               {mobMembersOpen && (
                 <div style={{ padding: "4px 16px 16px" }}>
-                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} hideTitle />
+                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} onRecipeHistory={() => setShowRecipeHistory(true)} hideTitle />
                 </div>
               )}
             </div>
@@ -1083,12 +1253,12 @@ export default function FridgePage({ params }) {
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
               <ArrowUpDown size={12} strokeWidth={1.75} color="var(--mid)" style={{ flexShrink: 0 }} />
               {[
-                { key: "urgency",   label: "Urgenza" },
-                { key: "expiry",    label: "Scadenza" },
-                { key: "name_asc",  label: "A→Z" },
+                { key: "urgency", label: "Urgenza" },
+                { key: "expiry", label: "Scadenza" },
+                { key: "name_asc", label: "A→Z" },
                 { key: "name_desc", label: "Z→A" },
-                { key: "category",  label: "Categoria" },
-                { key: "owner",     label: "Proprietario" },
+                { key: "category", label: "Categoria" },
+                { key: "owner", label: "Proprietario" },
               ].map(({ key, label }) => (
                 <button
                   key={key}
@@ -1119,13 +1289,14 @@ export default function FridgePage({ params }) {
       </div>
 
       {/* Modals */}
-      {showRecipe      && <RecipeModal ingredients={ingredients} currentUserId={currentUser?.uid} onClose={() => setShowRecipe(false)} />}
-      {showAdd         && <AddModal members={members} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
-      {showInvite      && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
-      {toDelete        && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
-      {toKick          && <KickMemberModal memberName={toKick.name} onClose={() => setToKick(null)} onConfirm={handleKickMember} />}
+      {showRecipe && <RecipeModal ingredients={ingredients} currentUserId={currentUser?.uid} fridgeId={id} onClose={() => setShowRecipe(false)} onIngredientsUsed={(usedIds) => setIngredients(p => p.filter(i => !usedIds.has(i.id)))} />}
+      {showAdd && <AddModal members={members} currentUserId={currentUser?.uid} onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
+      {showInvite && <InviteModal fridgeId={id} onClose={() => setShowInvite(false)} />}
+      {toDelete && <DeleteModal ingredient={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />}
+      {toKick && <KickMemberModal memberName={toKick.name} onClose={() => setToKick(null)} onConfirm={handleKickMember} />}
       {showLeaveFridge && <LeaveFridgeModal fridgeName={fridge?.name} onClose={() => setShowLeaveFridge(false)} onConfirm={handleLeaveFridge} />}
-      {showDeleteFridge&& <DeleteFridgeModal fridgeName={fridge?.name} onClose={() => setShowDeleteFridge(false)} onConfirm={handleDeleteFridge} />}
+      {showDeleteFridge && <DeleteFridgeModal fridgeName={fridge?.name} onClose={() => setShowDeleteFridge(false)} onConfirm={handleDeleteFridge} />}
+      {showRecipeHistory && <RecipeHistoryModal fridgeId={id} members={members} onClose={() => setShowRecipeHistory(false)} />}
     </>
   );
 }
