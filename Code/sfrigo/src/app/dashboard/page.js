@@ -147,14 +147,16 @@ function FridgeCard({ fridge, isOwner, delay }) {
           fontSize: "0.6rem", fontWeight: 700,
           color: isOwner ? "var(--mint)" : "var(--sage)", flexShrink: 0
         }}>
-          {isOwner ? "T" : (fridge.owner_username?.charAt(0)?.toUpperCase() || "?")}
+          {isOwner
+            ? "Tu"
+            : (fridge.owner_username?.charAt(0)?.toUpperCase() || "?")}
         </span>
         {isOwner ? "Tu" : (fridge.owner_username || "Utente sconosciuto")}
         {fridge.role && (
           <>
             <span style={{ opacity: 0.4 }}>·</span>
             <span style={{ opacity: 0.7, fontSize: "0.75rem", textTransform: "capitalize" }}>
-              {"Proprietario"}
+              Proprietario
             </span>
           </>
         )}
@@ -180,25 +182,36 @@ export default function DashboardPage() {
   const [fetchError, setFetchError] = useState("");
   const [showModal, setShowModal] = useState(false);
 
+  const fetchFridges = async () => {
+    try {
+      const data = await apiFetch("/fridges");
+      setFridges(data || []);
+      setFetchError("");
+    } catch (err) {
+      console.error("Errore fetch frigo:", err);
+      setFetchError("Impossibile caricare i frigoriferi. Riprova più tardi.");
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
-        try {
-          const data = await apiFetch("/fridges");
-          setFridges(data || []);
-        } catch (err) {
-          console.error("Errore fetch frigo:", err);
-          setFetchError("Impossibile caricare i frigoriferi. Riprova più tardi.");
-        } finally {
-          setLoadingFridges(false);
-        }
+        await fetchFridges();
+        setLoadingFridges(false);
       } else {
         router.push("/login");
       }
     });
+
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const interval = setInterval(fetchFridges, 30000);
+    return () => clearInterval(interval);
+  }, [currentUser]);
 
   if (!currentUser) return null;
 

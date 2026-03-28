@@ -14,6 +14,7 @@ app.use(express.json());
 
 const USERS_SERVICE_URL = process.env.USERS_SERVICE_URL || 'http://localhost:8081';
 const FRIDGE_SERVICE_URL = process.env.FRIDGE_SERVICE_URL || 'http://localhost:8082';
+const RECIPE_SERVICE_URL = process.env.RECIPE_SERVICE_URL || 'http://localhost:8083';
 
 const forwardRequest = async (req, res, targetUrl) => {
   try {
@@ -57,11 +58,23 @@ apiRouter.post('/fridges', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
+apiRouter.post('/recipes', (req, res) => {
+  forwardRequest(req, res, RECIPE_SERVICE_URL);
+});
+
 apiRouter.delete('/fridges/:fridgeId', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
 apiRouter.get('/fridges/:fridgeId', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.post('/fridges/:fridgeId/recipe', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.get('/fridges/:fridgeId/recipe', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 
@@ -75,6 +88,14 @@ apiRouter.post('/invites/:token/accept', (req, res) => {
 });
 
 apiRouter.get('/fridges/:fridgeId/members', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.delete('/fridges/:fridgeId/members/:userId', (req, res) => {
+  forwardRequest(req, res, FRIDGE_SERVICE_URL);
+});
+
+apiRouter.delete('/fridges/:fridgeId/members/me', (req, res) => {
   forwardRequest(req, res, FRIDGE_SERVICE_URL);
 });
 

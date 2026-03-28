@@ -72,6 +72,16 @@ export const globalStyles = `
   }
   .btn-primary:hover { background: #d4ed7a; transform: scale(1.04); box-shadow: 0 8px 20px rgba(200,224,110,0.35); }
 
+  .btn-secondary {
+    display:inline-flex; align-items:center; gap:7px; padding:5px 9px;
+    background:var(--lime); color:var(--forest);
+    font-family:'DM Sans',sans-serif; font-weight:500; font-size:0.75rem;
+    border:none; border-radius:100px; cursor:pointer; white-space:nowrap;
+    transition:background 0.2s, transform 0.15s;
+  }
+  .btn-secondary:hover { background: #d4ed7a; transform: scale(1.04); box-shadow: 0 8px 20px rgba(200,224,110,0.35); }
+
+
   .modal-overlay {
     position:fixed; inset:0; z-index:200; background:rgba(26,51,32,0.45);
     backdrop-filter:blur(6px); display:flex; align-items:center;

@@ -166,6 +166,51 @@ app.post('/fridges/:fridgeId/members', async (req, res) => {
   }
 });
 
+// DELETE /fridges/:fridgeId/members/me — lascia il frigorifero
+app.delete('/fridges/:fridgeId/members/me', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(404).json({ error: 'Non sei membro di questo frigorifero' });
+    if (membership.role === 'ADMIN')
+      return res.status(403).json({ error: 'Il proprietario non può lasciare il frigorifero. Eliminalo invece.' });
+
+    await pgPool.query(
+      'DELETE FROM fridge_members WHERE fridge_id = $1 AND user_id = $2',
+      [fridgeId, req.userId]
+    );
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante l\'uscita dal frigorifero' });
+  }
+});
+
+// DELETE /fridges/:fridgeId/members/:userId — espelli membro
+app.delete('/fridges/:fridgeId/members/:userId', async (req, res) => {
+  const { fridgeId, userId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership || membership.role !== 'ADMIN')
+      return res.status(403).json({ error: 'Solo il proprietario può espellere membri' });
+    if (userId === req.userId)
+      return res.status(400).json({ error: 'Non puoi espellere te stesso' });
+
+    const result = await pgPool.query(
+      'DELETE FROM fridge_members WHERE fridge_id = $1 AND user_id = $2 RETURNING user_id',
+      [fridgeId, userId]
+    );
+    if (result.rowCount === 0)
+      return res.status(404).json({ error: 'Membro non trovato' });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante l\'espulsione del membro' });
+  }
+});
+
 // POST /fridges - Creazione Frigorifero (Transazione SQL)
 app.post('/fridges', async (req, res) => {
   const { name } = req.body;
@@ -384,6 +429,81 @@ app.get('/fridges/:fridgeId/items', async (req, res) => {
     res.status(500).json({ error: 'Errore nel recupero degli alimenti' });
   }
 });
+
+// POST /fridges/:fridgeId/recipe - Usa ricetta e aggiorna inventario
+app.post('/fridges/:fridgeId/recipe', async (req, res) => {
+  const { fridgeId } = req.params;
+  const { recipe_name, ingredients_used, item_ids, mode } = req.body;
+
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
+
+    const itemsCollection      = mongoDb.collection('items');
+    const recipeUsesCollection = mongoDb.collection('recipes');
+
+    if (mode === "shared") {
+      
+      const membersResult = await pgPool.query(
+        `SELECT fm.user_id, fm.role, u.username
+         FROM fridge_members fm
+         JOIN users u ON fm.user_id = u.id
+         WHERE fm.fridge_id = $1`,
+        [fridgeId]
+      );
+
+      const members_snapshot = membersResult.rows.map(m => ({
+        user_id:  m.user_id,
+        username: m.username,
+        role:     m.role,
+      }));
+
+      await recipeUsesCollection.insertOne({
+        fridge_id:        fridgeId,
+        recipe_name,
+        requested_by:     req.userId,
+        used_at:          new Date(),
+        ingredients:      ingredients_used,
+        members_snapshot, 
+      });
+    }
+
+    await itemsCollection.deleteMany({
+      _id:       { $in: item_ids.map(id => new ObjectId(id)) },
+      fridge_id: fridgeId,
+    });
+
+    res.status(200).json({ deleted: item_ids.length });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante l\'utilizzo della ricetta' });
+  }
+});
+
+// GET /fridges/:fridgeId/recipe — storico utilizzi ricette
+app.get('/fridges/:fridgeId/recipe', async (req, res) => {
+  const { fridgeId } = req.params;
+  try {
+    const membership = await checkFridgeMembership(fridgeId, req.userId);
+    if (!membership)
+      return res.status(403).json({ error: 'Non hai accesso a questo frigorifero' });
+
+    const recipeUsesCollection = mongoDb.collection('recipes');
+    const uses = await recipeUsesCollection
+      .find({ fridge_id: fridgeId })
+      .sort({ used_at: -1 })
+      .limit(50)
+      .toArray();
+
+    res.json(uses);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel recupero dello storico ricette' });
+  }
+});
+
+
 
 // DELETE /fridges/:fridgeId/items/:itemId - Rimuovi alimento
 app.delete('/fridges/:fridgeId/items/:itemId', async (req, res) => {
