@@ -1,8 +1,6 @@
-export const dynamic = 'force-dynamic';
-
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -16,6 +14,14 @@ import { globalStyles } from "./layout.js";
 import { setSessionCookie, syncUserToDb } from "@/lib/authHelpers";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/dashboard";
