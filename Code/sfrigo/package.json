@@ -16,7 +16,7 @@
     "firebase": "^12.10.0",
     "lucide-react": "^0.576.0",
     "mongodb": "^7.1.0",
-    "next": "16.1.6",
+    "next": "^16.2.1",
     "pg": "^8.20.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -24,9 +24,8 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "16.1.6",
-    "eslint-plugin-react": "^7.37.5",
+    "eslint": "^10.1.0",
+    "eslint-config-next": "^16.2.1",
     "globals": "^17.4.0",
     "jest": "^30.2.0",
     "supertest": "^7.2.2",
