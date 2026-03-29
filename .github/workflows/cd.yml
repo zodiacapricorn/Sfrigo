@@ -16,6 +16,7 @@ jobs:
       fridge: ${{ steps.filter.outputs.fridge }}
       user: ${{ steps.filter.outputs.user }}
       sfrigo: ${{ steps.filter.outputs.sfrigo }}
+      recipes: ${{ steps.filter.outputs.recipes }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -23,13 +24,34 @@ jobs:
         with:
           filters: |
             gateway:
-              - 'api/gateway/**'
+              - 'Code/api/gateway/**'
             fridge:
-              - 'api/fridge-service/**'
+              - 'Code/api/fridge-service/**'
             user:
-              - 'api/user-service/**'
+              - 'Code/api/user-service/**'
             sfrigo:
-              - 'sfrigo/**'
+              - 'Code/sfrigo/**'
+            recipes:
+              - 'Code/api/recipe-service/**'
+              
+  build-recipe-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.recipes == 'true'
+    runs-on: arc-runner-set
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./Code/api/recipe-service
+          push: ${{ github.event_name == 'push' }}
+          tags: |
+            ${{ env.REGISTRY }}/recipe-service:latest
+            ${{ env.REGISTRY }}/recipe-service:${{ github.sha }}
 
   build-gateway:
     needs: detect-changes
@@ -44,7 +66,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - uses: docker/build-push-action@v6
         with:
-          context: ./api/gateway
+          context: ./Code/api/gateway
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.REGISTRY }}/gateway:latest
@@ -63,7 +85,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - uses: docker/build-push-action@v6
         with:
-          context: ./api/fridge-service
+          context: ./Code/api/fridge-service
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.REGISTRY }}/fridge-service:latest
@@ -82,7 +104,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - uses: docker/build-push-action@v6
         with:
-          context: ./api/user-service
+          context: ../Code/api/user-service
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.REGISTRY }}/user-service:latest

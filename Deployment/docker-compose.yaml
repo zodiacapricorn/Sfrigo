@@ -2,7 +2,7 @@
 services:
   gateway:
     build:
-      context: ./api/gateway
+      context: ../Code/api/gateway
       dockerfile: Dockerfile
     image: ${REGISTRY:-ghcr.io/your-org}/gateway:${TAG:-latest}
     ports:
@@ -10,12 +10,13 @@ services:
     depends_on:
       - fridge-service
       - user-service
+      - recipe-service
     networks:
       - app-net
 
   fridge-service:
     build:
-      context: ./api/fridge-service
+      context: ../Code/api/fridge-service
       dockerfile: Dockerfile
     image: ${REGISTRY:-ghcr.io/your-org}/fridge-service:${TAG:-latest}
     ports:
@@ -25,7 +26,7 @@ services:
 
   user-service:
     build:
-      context: ./api/user-service
+      context: ../Code/api/user-service
       dockerfile: Dockerfile
     image: ${REGISTRY:-ghcr.io/your-org}/user-service:${TAG:-latest}
     ports:
@@ -33,9 +34,19 @@ services:
     networks:
       - app-net
 
+  recipe-service:
+    build:
+      context: ../Code/api/recipe-service
+      dockerfile: Dockerfile
+    image: ${REGISTRY:-ghcr.io/your-org}/recipe-service:${TAG:-latest}
+    ports:
+      - "3003:3000"
+    networks:
+      - app-net
+
   sfrigo:
     build:
-      context: ./sfrigo
+      context: ../Code/sfrigo
       dockerfile: Dockerfile
     image: ${REGISTRY:-ghcr.io/your-org}/sfrigo:${TAG:-latest}
     ports:
