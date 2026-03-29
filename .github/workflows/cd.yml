@@ -48,7 +48,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: ./Code/api/recipe-service
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: |
             ${{ env.REGISTRY }}/recipe-service:latest
             ${{ env.REGISTRY }}/recipe-service:${{ github.sha }}
@@ -67,7 +67,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: ./Code/api/gateway
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: |
             ${{ env.REGISTRY }}/gateway:latest
             ${{ env.REGISTRY }}/gateway:${{ github.sha }}
@@ -86,7 +86,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: ./Code/api/fridge-service
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: |
             ${{ env.REGISTRY }}/fridge-service:latest
             ${{ env.REGISTRY }}/fridge-service:${{ github.sha }}
@@ -105,7 +105,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: ./Code/api/user-service
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: |
             ${{ env.REGISTRY }}/user-service:latest
             ${{ env.REGISTRY }}/user-service:${{ github.sha }}
@@ -124,7 +124,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: ./Code/sfrigo
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: |
             ${{ env.REGISTRY }}/sfrigo:latest
             ${{ env.REGISTRY }}/sfrigo:${{ github.sha }}
