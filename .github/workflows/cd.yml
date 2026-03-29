@@ -104,7 +104,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - uses: docker/build-push-action@v6
         with:
-          context: ../Code/api/user-service
+          context: ./Code/api/user-service
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.REGISTRY }}/user-service:latest
@@ -123,7 +123,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - uses: docker/build-push-action@v6
         with:
-          context: ./sfrigo
+          context: ./Code/sfrigo
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.REGISTRY }}/sfrigo:latest
