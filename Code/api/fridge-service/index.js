@@ -630,7 +630,8 @@ app.get('/fridges/:fridgeId/equity', async (req, res) => {
 
       // Etichetta
       let label, color;
-      if (display_score >= 0.9) { label = "In equilibrio"; color = "green"; }
+      if (display_score >= 1.1) { label = "Contribuisce troppo"; color = "lightblue"; }
+      else if (display_score >= 0.9) { label = "In equilibrio"; color = "green"; }
       else if (display_score >= 0.6) { label = "Contribuisce poco"; color = "yellow"; }
       else if (display_score >= 0.3) { label = "Contribuisce raramente"; color = "orange"; }
       else { label = "Non contribuisce"; color = "red"; }
