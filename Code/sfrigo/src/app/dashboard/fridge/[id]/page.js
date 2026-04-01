@@ -709,6 +709,7 @@ Formato JSON richiesto:
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                       {equityData.map((m, i) => {
                         const colorMap = {
+                          lightblue: { bar: "#118296", text: "#118296" },
                           green: { bar: "#2D4A2D", text: "#2D4A2D" },
                           yellow: { bar: "#7a6010", text: "#7a6010" },
                           orange: { bar: "#C4622D", text: "#C4622D" },
