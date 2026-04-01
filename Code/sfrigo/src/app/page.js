@@ -9,20 +9,21 @@ import { useRouter } from "next/navigation";
 export default function HomePage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
+      setAuthLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
   const handleLogout = async () => {
     await signOut(auth);
-    document.cookie = "__session=; path=/; max-age=0";
+    document.cookie = "__session=; path=/; max-age=0; SameSite=Strict";
     router.refresh();
   };
-
 
   return (
     <>
@@ -37,7 +38,7 @@ export default function HomePage() {
 
           {/* Buttons */}
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            {user ? (
+            {authLoading ? null : user ? (
               <>
                 <a href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 100, color: "var(--forest)", fontSize: "0.87rem", fontWeight: 400, textDecoration: "none", transition: "background 0.2s" }}
                   onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
@@ -84,7 +85,7 @@ export default function HomePage() {
               Monitora gli alimenti, condividi le scorte e organizza gli spazi in modo semplice e collaborativo.
             </p>
             <div className="animate-floatUp delay-3" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-              {user ? (
+              {authLoading ? null : user ? (
                 <a href="/dashboard" className="btn-primary">
                   Vai alla dashboard <ArrowRight size={15} strokeWidth={2.25} />
                 </a>
@@ -206,7 +207,7 @@ export default function HomePage() {
         {/* CTA */}
         <section style={{ padding: "clamp(90px, 14vw, 160px) clamp(24px, 5vw, 80px)", background: "var(--cream)", textAlign: "center" }}>
           <div style={{ maxWidth: 560, margin: "0 auto" }}>
-            {user ? (
+            {authLoading ? null : user ? (
               <>
                 <h2 className="serif" style={{ fontSize: "clamp(2.2rem, 5.5vw, 4rem)", fontWeight: 700, color: "var(--forest)", lineHeight: 1.08, marginBottom: 22 }}>
                   Bentornato.<br />
