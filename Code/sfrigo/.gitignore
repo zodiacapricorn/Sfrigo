@@ -42,6 +42,3 @@ next-env.d.ts
 
 # ESlint report folder
 eslint-reports/
-
-# Jest coverage report
-coverage-reports/
