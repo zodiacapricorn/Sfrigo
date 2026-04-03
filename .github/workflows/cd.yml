@@ -140,6 +140,8 @@ jobs:
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
+      - name: Install system dependencies (libatomic1)
+        run: sudo apt-get update && sudo apt-get install -y libatomic1 || (apt-get update && apt-get install -y libatomic1)
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
