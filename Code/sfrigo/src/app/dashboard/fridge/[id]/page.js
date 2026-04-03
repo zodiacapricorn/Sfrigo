@@ -4,7 +4,7 @@ import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus, ChefHat, UserRound, ArrowUpDown, BookOpen } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, X, ChevronDown, Users, UserPlus, Link2, Check, Copy, LogOut, UserMinus, ChefHat, UserRound, ArrowUpDown, BookOpen, Scale } from "lucide-react";
 import { globalStyles } from "./layout";
 import { apiFetch } from "@/lib/api";
 import { auth } from "@/lib/firebase";
@@ -411,12 +411,22 @@ function RecipeModal({ ingredients, currentUserId, fridgeId, onClose, onIngredie
   const [error, setError] = useState("");
   const [usingIdx, setUsingIdx] = useState(null);
   const [usedIdx, setUsedIdx] = useState(null);
+  const [showEquityPanel, setShowEquityPanel] = useState(false);
+  const [equityData, setEquityData] = useState([]);
 
   const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:8080";
 
   const personalItems = ingredients.filter(i => i.owner === currentUserId);
   const sharedItems = ingredients.filter(i => i.is_common_use || i.owner === currentUserId);
   const list = mode === "personal" ? personalItems : sharedItems;
+
+  useEffect(() => {
+    if (mode === "shared") {
+      apiFetch(`/fridges/${fridgeId}/equity`)
+        .then(d => setEquityData(d || []))
+        .catch(() => { });
+    }
+  }, [mode]);
 
   const toggleItem = (id) =>
     setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
@@ -549,7 +559,7 @@ Formato JSON richiesto:
   };
 
   return (
-    <ModalBase onClose={onClose} maxWidth={500}>
+    <ModalBase onClose={onClose} maxWidth={showEquityPanel && mode === "shared" ? 700 : 500}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -615,61 +625,122 @@ Formato JSON richiesto:
                 {selected.length} selezionati
               </span>
             )}
+            {/* Pulsante equità — solo ricetta condivisa */}
+            {mode === "shared" && (
+              
+                <button
+                type="button"
+                onClick={() => setShowEquityPanel(p => !p)}
+                title="Mostra equità"
+                style={{ marginLeft: selected.length > 0 ? 0 : "auto", width: 28, height: 28, borderRadius: "50%", background: showEquityPanel ? "var(--forest)" : "rgba(45,74,45,0.07)", color: showEquityPanel ? "var(--lime)" : "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "all 0.2s" }}
+              >
+                <Scale size={13} strokeWidth={1.75} />
+              </button>
+              
+            )}
           </div>
 
-          {list.length === 0 ? (
-            <div style={{ padding: "32px 16px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.15)", borderRadius: 12 }}>
-              <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.65 }}>
-                {mode === "personal"
-                  ? "Non hai alimenti intestati a te in questo frigo."
-                  : "Non ci sono alimenti condivisi in questo frigo."}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7, maxHeight: 280, overflowY: "auto", marginBottom: 16 }}>
-                {list.map(ing => {
-                  const cat = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
-                  const isSelected = selected.includes(ing.id);
-                  return (
-                    <button
-                      key={ing.id}
-                      type="button"
-                      onClick={() => toggleItem(ing.id)}
-                      style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: `1.5px solid ${isSelected ? "var(--forest)" : "rgba(45,74,45,0.09)"}`, borderRadius: 10, background: isSelected ? "rgba(200,224,110,0.12)" : "#fff", cursor: "pointer", textAlign: "left", transition: "all 0.15s", width: "100%" }}
-                    >
-                      <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${isSelected ? "var(--forest)" : "rgba(45,74,45,0.25)"}`, background: isSelected ? "var(--forest)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
-                        {isSelected && <Check size={11} strokeWidth={3} color="var(--lime)" />}
-                      </div>
-                      <span style={{ width: 7, height: 7, borderRadius: "50%", background: cat.dot, flexShrink: 0 }} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ing.name}</div>
-                        <div style={{ fontSize: "0.72rem", color: "var(--mid)", marginTop: 1 }}>{ing.qty}</div>
-                      </div>
-                      {ing.expiry && <ExpiryBadge dateStr={ing.expiry} />}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Layout a due colonne quando il pannello è aperto */}
+          <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
 
-              {!canSearch && (
-                <p style={{ fontSize: "0.75rem", color: "var(--mid)", textAlign: "center", marginBottom: 10 }}>
-                  Seleziona almeno 2 alimenti per cercare ricette
-                </p>
+            {/* Colonna sinistra — lista alimenti */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {list.length === 0 ? (
+                <div style={{ padding: "32px 16px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.15)", borderRadius: 12 }}>
+                  <p style={{ color: "var(--mid)", fontSize: "0.88rem", lineHeight: 1.65 }}>
+                    {mode === "personal"
+                      ? "Non hai alimenti intestati a te in questo frigo."
+                      : "Non ci sono alimenti condivisi in questo frigo."}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7, maxHeight: 280, overflowY: "auto", marginBottom: 16 }}>
+                    {list.map(ing => {
+                      const cat = CATEGORY_COLORS[ing.category] || CATEGORY_COLORS["Altro"];
+                      const isSelected = selected.includes(ing.id);
+                      return (
+                        <button
+                          key={ing.id}
+                          type="button"
+                          onClick={() => toggleItem(ing.id)}
+                          style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", border: `1.5px solid ${isSelected ? "var(--forest)" : "rgba(45,74,45,0.09)"}`, borderRadius: 10, background: isSelected ? "rgba(200,224,110,0.12)" : "#fff", cursor: "pointer", textAlign: "left", transition: "all 0.15s", width: "100%" }}
+                        >
+                          <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${isSelected ? "var(--forest)" : "rgba(45,74,45,0.25)"}`, background: isSelected ? "var(--forest)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
+                            {isSelected && <Check size={11} strokeWidth={3} color="var(--lime)" />}
+                          </div>
+                          <span style={{ width: 7, height: 7, borderRadius: "50%", background: cat.dot, flexShrink: 0 }} />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--forest)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ing.name}</div>
+                            <div style={{ fontSize: "0.72rem", color: "var(--mid)", marginTop: 1 }}>{ing.qty}</div>
+                          </div>
+                          {ing.expiry && <ExpiryBadge dateStr={ing.expiry} />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {!canSearch && (
+                    <p style={{ fontSize: "0.75rem", color: "var(--mid)", textAlign: "center", marginBottom: 10 }}>
+                      Seleziona almeno 2 alimenti per cercare ricette
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    disabled={!canSearch || loading}
+                    style={{ width: "100%", padding: "12px", background: canSearch ? "var(--forest)" : "rgba(45,74,45,0.15)", color: canSearch ? "var(--lime)" : "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.92rem", border: "none", borderRadius: 10, cursor: canSearch ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s" }}
+                    onMouseEnter={e => { if (canSearch) e.currentTarget.style.background = "var(--moss)"; }}
+                    onMouseLeave={e => { if (canSearch) e.currentTarget.style.background = "var(--forest)"; }}
+                  >
+                    <ChefHat size={15} strokeWidth={2} />
+                    {loading ? "Generazione in corso…" : `Cerca ricette (${selected.length})`}
+                  </button>
+                </>
               )}
-              <button
-                type="button"
-                onClick={handleSearch}
-                disabled={!canSearch || loading}
-                style={{ width: "100%", padding: "12px", background: canSearch ? "var(--forest)" : "rgba(45,74,45,0.15)", color: canSearch ? "var(--lime)" : "var(--mid)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "0.92rem", border: "none", borderRadius: 10, cursor: canSearch ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s" }}
-                onMouseEnter={e => { if (canSearch) e.currentTarget.style.background = "var(--moss)"; }}
-                onMouseLeave={e => { if (canSearch) e.currentTarget.style.background = "var(--forest)"; }}
-              >
-                <ChefHat size={15} strokeWidth={2} />
-                {loading ? "Generazione in corso…" : `Cerca ricette (${selected.length})`}
-              </button>
-            </>
-          )}
+            </div>
+
+            {/* Pannello equità — colonna destra */}
+            {showEquityPanel && mode === "shared" && (
+                <div style={{ width: 160, flexShrink: 0, background: "rgba(45,74,45,0.03)", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 12, padding: "12px 10px" }}>
+                  <div style={{ fontSize: "0.6rem", color: "var(--mid)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Equità</div>
+                  {equityData.length === 0 ? (
+                    <p style={{ fontSize: "0.72rem", color: "var(--mid)", lineHeight: 1.5 }}>Nessuna ricetta condivisa ancora.</p>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {equityData.map((m, i) => {
+                        const colorMap = {
+                          lightblue: { bar: "#118296", text: "#118296" },
+                          green: { bar: "#2D4A2D", text: "#2D4A2D" },
+                          yellow: { bar: "#7a6010", text: "#7a6010" },
+                          orange: { bar: "#C4622D", text: "#C4622D" },
+                          red: { bar: "#b43c3c", text: "#b43c3c" },
+                          gray: { bar: "rgba(45,74,45,0.2)", text: "var(--mid)" },
+                        };
+                        const c = colorMap[m.color] || colorMap.gray;
+                        const maxScore = Math.max(...equityData.map(x => x.display_score ?? 0), 0.001);
+                        const barWidth = m.display_score !== null
+                          ? `${Math.min((m.display_score / maxScore) * 100, 100)}%`
+                          : "4px";
+                        return (
+                          <div key={i}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--forest)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 90 }}>{m.username}</span>
+                              <span style={{ fontSize: "0.65rem", color: c.text, fontWeight: 600, flexShrink: 0 }}>
+                                {m.contribution_rate !== null ? `${Math.round(m.contribution_rate * 100)}%` : "—"}
+                              </span>
+                            </div>
+                            <div style={{ height: 5, background: "rgba(45,74,45,0.08)", borderRadius: 100, overflow: "hidden" }}>
+                              <div style={{ height: "100%", width: barWidth, background: c.bar, borderRadius: 100 }} />
+                            </div>
+                            <div style={{ fontSize: "0.62rem", color: "var(--mid)", marginTop: 2 }}>{m.label}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+            )}
+          </div>
         </>
       )}
 
@@ -797,7 +868,7 @@ function RecipeHistoryModal({ fridgeId, members, onClose }) {
   return (
     <ModalBase onClose={onClose} maxWidth={500} overflowY="auto">
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-        <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.6rem", fontWeight: 700, color: "var(--forest)" }}>Storico Ricette</h3>
+        <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.6rem", fontWeight: 700, color: "var(--forest)" }}>Storico Ricette Condivise</h3>
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}>
           <X size={17} strokeWidth={1.75} />
         </button>
@@ -829,7 +900,7 @@ function RecipeHistoryModal({ fridgeId, members, onClose }) {
             const requestedBy = members.find(m => m.uid === entry.requested_by)?.name || entry.requested_by;
             const date = new Date(entry.used_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" });
             return (
-              <div key={i} style={{ border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 12, overflow: "hidden", flexShrink : 0 }}>
+              <div key={i} style={{ border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 12, overflow: "hidden", flexShrink: 0 }}>
                 {/* Header */}
                 <div style={{ padding: "12px 14px 8px", background: "rgba(45,74,45,0.03)", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1rem", fontWeight: 700, color: "var(--forest)" }}>{entry.recipe_name}</div>
@@ -859,9 +930,123 @@ function RecipeHistoryModal({ fridgeId, members, onClose }) {
     </ModalBase>
   );
 }
+
+// ── Modal Equità ──────────────────────────────────────────────────────────────
+
+function EquityModal({ fridgeId, onClose }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    apiFetch(`/fridges/${fridgeId}/equity`)
+      .then(d => setData(d || []))
+      .catch(() => setError("Errore nel caricamento dei dati."))
+      .finally(() => setLoading(false));
+  }, [fridgeId]);
+
+  const colorMap = {
+    lightblue: { bar: "#118296", badge: "rgba(24, 219, 219, 0.2)", text: "#118296" },
+    green: { bar: "#2D4A2D", badge: "rgba(200,224,110,0.2)", text: "#2D4A2D" },
+    yellow: { bar: "#7a6010", badge: "rgba(200,180,60,0.15)", text: "#7a6010" },
+    orange: { bar: "#C4622D", badge: "rgba(196,98,45,0.12)", text: "#C4622D" },
+    red: { bar: "#b43c3c", badge: "rgba(180,60,60,0.1)", text: "#b43c3c" },
+    gray: { bar: "rgba(45,74,45,0.2)", badge: "rgba(45,74,45,0.07)", text: "var(--mid)" },
+  };
+
+  const maxScore = Math.max(...data.map(m => m.display_score ?? 0), 0.001);
+
+  return (
+    <ModalBase onClose={onClose} maxWidth={480}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.6rem", fontWeight: 700, color: "var(--forest)" }}>Equità</h3>
+        <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--mid)", display: "flex", padding: 4 }}>
+          <X size={17} strokeWidth={1.75} />
+        </button>
+      </div>
+
+      <p style={{ fontSize: "0.82rem", color: "var(--mid)", lineHeight: 1.65, marginBottom: 20 }}>
+        Misura quanto ogni membro contribuisce nelle ricette condivise rispetto a quanto consuma. L&apos;indice considera il numero di partecipazioni e la % di ingredienti portati.
+      </p>
+
+      {loading && (
+        <div style={{ textAlign: "center", padding: "32px 0", color: "var(--mid)", fontSize: "0.88rem" }}>Caricamento…</div>
+      )}
+
+      {error && (
+        <div style={{ padding: "10px 14px", borderRadius: 9, background: "rgba(196,98,45,0.07)", border: "1px solid rgba(196,98,45,0.2)", color: "#C4622D", fontSize: "0.83rem" }}>{error}</div>
+      )}
+
+      {!loading && !error && data.length === 0 && (
+        <div style={{ padding: "32px 16px", textAlign: "center", border: "1.5px dashed rgba(45,74,45,0.15)", borderRadius: 12 }}>
+          <p style={{ color: "var(--mid)", fontSize: "0.88rem" }}>Nessuna ricetta condivisa ancora. Usa la funzione Ricetta AI per iniziare.</p>
+        </div>
+      )}
+
+      {!loading && data.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {data.map((m, i) => {
+            const c = colorMap[m.color] || colorMap.gray;
+            const barWidth = m.display_score !== null
+              ? `${Math.min((m.display_score / maxScore) * 100, 100)}%`
+              : "0%";
+            const pct = m.contribution_rate !== null
+              ? `${Math.round(m.contribution_rate * 100)}%`
+              : "—";
+
+            return (
+              <div key={i}>
+                {/* Riga nome + badge */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: m.role === "ADMIN" ? "var(--forest)" : "rgba(107,140,107,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.68rem", fontWeight: 700, color: m.role === "ADMIN" ? "var(--lime)" : "var(--sage)", flexShrink: 0 }}>
+                      {m.username?.charAt(0).toUpperCase()}
+                    </div>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--forest)" }}>{m.username}</span>
+                  </div>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 600, padding: "2px 10px", borderRadius: 100, background: c.badge, color: c.text }}>
+                    {m.label}
+                  </span>
+                </div>
+
+                {/* Barra progresso */}
+                <div style={{ height: 7, background: "rgba(45,74,45,0.08)", borderRadius: 100, overflow: "hidden", marginBottom: 6 }}>
+                  <div style={{ height: "100%", width: barWidth, background: c.bar, borderRadius: 100, transition: "width 0.7s ease" }} />
+                </div>
+
+                {/* Statistiche dettaglio */}
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                  {[
+                    { label: "Ricette", val: m.recipes_participated },
+                    { label: "Ingredienti", val: m.ingredients_provided },
+                    { label: "Contributo", val: pct },
+                    { label: "Indice", val: m.display_score !== null ? m.display_score.toFixed(2) : "—" },
+                    { label: "Confidenza", val: m.confidence !== null ? `${Math.round(m.confidence * 100)}%` : "—" },
+                  ].map(({ label, val }) => (
+                    <div key={label}>
+                      <div style={{ fontSize: "0.6rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 1 }}>{label}</div>
+                      <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--forest)" }}>{val}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          <div style={{ marginTop: 4, paddingTop: 14, borderTop: "1px solid rgba(45,74,45,0.08)", fontSize: "0.72rem", color: "var(--mid)", lineHeight: 1.7 }}>
+            <strong style={{ color: "var(--forest)" }}>Indice</strong> = (ingredienti propri / totale) ÷ quota attesa · peso per partecipazioni<br />
+            <strong style={{ color: "var(--forest)" }}>Confidenza</strong> bassa = poche partecipazioni, giudizio non ancora affidabile
+          </div>
+        </div>
+      )}
+    </ModalBase>
+  );
+}
+
+
 // ── Sidebar membri ────────────────────────────────────────────────────────────
 
-function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle, onRecipeHistory }) {
+function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle, onRecipeHistory, onEquity }) {
   return (
     <>
       {!hideTitle && (
@@ -916,8 +1101,9 @@ function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle, 
       </div>
 
 
-      <div style={{ borderTop: "1px solid rgba(45,74,45,0.08)", marginTop: 22, paddingTop: 14}}>
+      <div style={{ borderTop: "1px solid rgba(45,74,45,0.08)", marginTop: 22, paddingTop: 14 }}>
         <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Ricetta</div>
+        <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", lineHeight: "1.4", marginBottom: 10 }}>Crea una ricetta personalizzata con l'intelligenza artificiale.</div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
             onClick={onRecipe}
@@ -929,16 +1115,30 @@ function MembersList({ members, isOwner, onInvite, onKick, onRecipe, hideTitle, 
           </button>
           <button
             onClick={onRecipeHistory}
-            title="Storico ricette"
+            title="Storico ricette condivise"
             style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "background 0.2s" }}
             onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
             onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
           >
             <BookOpen size={14} strokeWidth={1.75} />
           </button>
+
         </div>
       </div>
 
+      <div style={{ borderTop: "1px solid rgba(45,74,45,0.08)", marginTop: 22, paddingTop: 14 }}>
+        <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>Contributo</div>
+        <div style={{ fontSize: "0.65rem", color: "var(--mid)", letterSpacing: "0.07em", lineHeight: "1.4", marginBottom: 10 }}>Traccia i contributi dei membri nelle ricette condivise </div>
+        <button
+          onClick={onEquity}
+          title="Equità"
+          style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 14px", background: "rgba(45,74,45,0.07)", color: "var(--forest)", border: "1.5px solid rgba(45,74,45,0.14)", borderRadius: 10, fontFamily: "'DM Sans',sans-serif", fontSize: "0.82rem", fontWeight: 500, cursor: "pointer", transition: "background 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.background = "rgba(45,74,45,0.14)"}
+          onMouseLeave={e => e.currentTarget.style.background = "rgba(45,74,45,0.07)"}
+        >
+          <Scale size={14} strokeWidth={1.75} /> Equità
+        </button>
+      </div>
 
 
       {isOwner && (
@@ -1056,6 +1256,7 @@ export default function FridgePage({ params }) {
   const [showRecipeHistory, setShowRecipeHistory] = useState(false);
   const [mobMembersOpen, setMobMembersOpen] = useState(false);
   const [sortMode, setSortMode] = useState("urgency");
+  const [showEquity, setShowEquity] = useState(false);
 
   // ── Data fetching ───────────────────────────────────────────────────────────
 
@@ -1211,7 +1412,7 @@ export default function FridgePage({ params }) {
 
       <div className="page-grid">
         <aside className="desktop-sidebar fade-up" style={{ background: "#fff", border: "1.5px solid rgba(45,74,45,0.09)", borderRadius: 18, padding: "20px 17px", position: "sticky", top: 76 }}>
-          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} onRecipeHistory={() => setShowRecipeHistory(true)} />
+          <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} onRecipeHistory={() => setShowRecipeHistory(true)} onEquity={() => setShowEquity(true)} />
         </aside>
 
         <section>
@@ -1236,7 +1437,7 @@ export default function FridgePage({ params }) {
               </button>
               {mobMembersOpen && (
                 <div style={{ padding: "4px 16px 16px" }}>
-                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} onRecipeHistory={() => setShowRecipeHistory(true)} hideTitle />
+                  <MembersList members={members} isOwner={isOwner} onInvite={() => setShowInvite(true)} onKick={setToKick} onRecipe={() => setShowRecipe(true)} onRecipeHistory={() => setShowRecipeHistory(true)} onEquity={() => setShowEquity(true)} hideTitle />
                 </div>
               )}
             </div>
@@ -1297,6 +1498,7 @@ export default function FridgePage({ params }) {
       {showLeaveFridge && <LeaveFridgeModal fridgeName={fridge?.name} onClose={() => setShowLeaveFridge(false)} onConfirm={handleLeaveFridge} />}
       {showDeleteFridge && <DeleteFridgeModal fridgeName={fridge?.name} onClose={() => setShowDeleteFridge(false)} onConfirm={handleDeleteFridge} />}
       {showRecipeHistory && <RecipeHistoryModal fridgeId={id} members={members} onClose={() => setShowRecipeHistory(false)} />}
+      {showEquity && <EquityModal fridgeId={id} onClose={() => setShowEquity(false)} />}
     </>
   );
 }

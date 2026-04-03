@@ -49,19 +49,12 @@ If no version is returned, download and install Node.js from [nodejs.org](https:
 
 ```bash
 git clone https://github.com/zodiacapricorn/Sfrigo.git
-cd Sfrigo\Code\sfrigo
+cd Sfrigo\Code
 ```
 
 **2. Start the services**
 
-Each service runs in its own terminal. Open four terminal windows and run the following commands — one per terminal.
-
-**Fridge Service** — port 8082
-```bash
-cd api\fridge-service
-npm install
-npm start
-```
+Each service runs in its own terminal. Open five terminal windows and run the following commands — one per terminal.
 
 **API Gateway** — port 8080
 ```bash
@@ -77,8 +70,23 @@ npm install
 npm start
 ```
 
+**Fridge Service** — port 8082
+```bash
+cd api\fridge-service
+npm install
+npm start
+```
+
+**Recipe Service** — port 8083
+```bash
+cd api\recipe-service
+npm install
+npm start
+```
+
 **Next.js App** — port 3000
 ```bash
+cd ..\sfrigo
 npm install --legacy-peer-deps
 npm run dev
 ```
