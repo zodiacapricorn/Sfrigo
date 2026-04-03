@@ -12,11 +12,11 @@ jobs:
   detect-changes:
     runs-on: arc-runner-set
     outputs:
-      gateway: ${{ steps.filter.outputs.gateway }}
-      fridge: ${{ steps.filter.outputs.fridge }}
-      user: ${{ steps.filter.outputs.user }}
-      sfrigo: ${{ steps.filter.outputs.sfrigo }}
-      recipes: ${{ steps.filter.outputs.recipes }}
+      gateway: ${{ steps.filter.outputs.gateway == 'true' || github.event_name == 'workflow_dispatch' }}
+      fridge: ${{ steps.filter.outputs.fridge == 'true' || github.event_name == 'workflow_dispatch' }}
+      user: ${{ steps.filter.outputs.user == 'true' || github.event_name == 'workflow_dispatch' }}
+      sfrigo: ${{ steps.filter.outputs.sfrigo == 'true' || github.event_name == 'workflow_dispatch' }}
+      recipes: ${{ steps.filter.outputs.recipes == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
