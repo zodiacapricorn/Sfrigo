@@ -417,7 +417,7 @@ function RecipeModal({ ingredients, currentUserId, fridgeId, onClose, onIngredie
   const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:8080";
 
   const personalItems = ingredients.filter(i => i.owner === currentUserId);
-  const sharedItems = ingredients.filter(i => i.is_common_use || i.owner === currentUserId);
+  const sharedItems = ingredients.filter(i => i.is_common_use );
   const list = mode === "personal" ? personalItems : sharedItems;
 
   useEffect(() => {
