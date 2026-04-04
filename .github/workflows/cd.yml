@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Test and Build Pipelines
 
 on:
   workflow_dispatch:
