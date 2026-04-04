@@ -53,7 +53,7 @@ jobs:
           cache-dependency-path: Code/api/recipe-service/package-lock.json
       - name: Install dependencies
         working-directory: ./Code/api/recipe-service
-        run: npm ci
+        run: npm install && npm ci
       - name: Circular dependencies check (Madge)
         working-directory: ./Code/api/recipe-service
         run: npx madge --circular .
@@ -79,7 +79,7 @@ jobs:
           cache-dependency-path: Code/api/gateway/package-lock.json
       - name: Install dependencies
         working-directory: ./Code/api/gateway
-        run: npm ci
+        run: npm install && npm ci
       - name: Circular dependencies check (Madge)
         working-directory: ./Code/api/gateway
         run: npx madge --circular .
@@ -105,7 +105,7 @@ jobs:
           cache-dependency-path: Code/api/fridge-service/package-lock.json
       - name: Install dependencies
         working-directory: ./Code/api/fridge-service
-        run: npm ci
+        run: npm install && npm ci
       - name: Circular dependencies check (Madge)
         working-directory: ./Code/api/fridge-service
         run: npx madge --circular .
@@ -131,7 +131,7 @@ jobs:
           cache-dependency-path: Code/api/user-service/package-lock.json
       - name: Install dependencies
         working-directory: ./Code/api/user-service
-        run: npm ci
+        run: npm install && npm ci
       - name: Circular dependencies check (Madge)
         working-directory: ./Code/api/user-service
         run: npx madge --circular .
@@ -159,7 +159,7 @@ jobs:
           cache-dependency-path: Code/sfrigo/package-lock.json
       - name: Install dependencies
         working-directory: ./Code/sfrigo
-        run: npm ci
+        run: npm install && npm ci
       - name: Circular dependencies check (Madge)
         working-directory: ./Code/sfrigo
         run: npx madge --circular src/
