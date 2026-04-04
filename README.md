@@ -86,7 +86,7 @@ npm start
 
 **Next.js App** — port 3000
 ```bash
-cd ..\sfrigo
+cd code\sfrigo
 npm install --legacy-peer-deps
 npm run dev
 ```
@@ -108,7 +108,7 @@ An HTML file will be generated in the `eslint-reports/` folder containing the re
 
 # Dynamic Analysis
 
-To run the automated tests, open the terminal in the project root and run:
+To run the automated tests, open a terminal, move to which api folder you want to execute tests(eg. ` cd api\user-service` ):
 ```bash
 npm test
 ```
@@ -120,4 +120,4 @@ To generate the coverage report run:
 npm run test:coverage
 ```
 
-The report will be generated in the `coverage-reports/lcov-report/index.html` folder and will show the percentage of code covered by the tests broken down by file.
+The report will be generated in the `coverage-reports/lcov-report/index.html` folder and will show the percentage of code covered by the tests.

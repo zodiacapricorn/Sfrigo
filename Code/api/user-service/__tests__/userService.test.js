@@ -12,7 +12,7 @@ const { Pool } = require('pg');
 const pool = new Pool();
 
 // Importo app
-const app = require('../api/user-service/index.js');
+const app = require('../index.js');
 
 describe('User Service - POST /users', () => {
 
