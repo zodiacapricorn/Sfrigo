@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+     "test": "jest",
+    "test:coverage": "jest --coverage --coverageDirectory=coverage-reports"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +15,9 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "pg": "^8.19.0"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
   }
 }
