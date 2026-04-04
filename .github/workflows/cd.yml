@@ -1,4 +1,4 @@
-name: Build & Push
+name: Test and Build Pipelines
 
 on:
   workflow_dispatch:
@@ -12,11 +12,11 @@ jobs:
   detect-changes:
     runs-on: arc-runner-set
     outputs:
-      gateway: ${{ steps.filter.outputs.gateway }}
-      fridge: ${{ steps.filter.outputs.fridge }}
-      user: ${{ steps.filter.outputs.user }}
-      sfrigo: ${{ steps.filter.outputs.sfrigo }}
-      recipes: ${{ steps.filter.outputs.recipes }}
+      gateway: ${{ steps.filter.outputs.gateway == 'true' || github.event_name == 'workflow_dispatch' }}
+      fridge: ${{ steps.filter.outputs.fridge == 'true' || github.event_name == 'workflow_dispatch' }}
+      user: ${{ steps.filter.outputs.user == 'true' || github.event_name == 'workflow_dispatch' }}
+      sfrigo: ${{ steps.filter.outputs.sfrigo == 'true' || github.event_name == 'workflow_dispatch' }}
+      recipes: ${{ steps.filter.outputs.recipes == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -33,10 +33,150 @@ jobs:
               - 'Code/sfrigo/**'
             recipes:
               - 'Code/api/recipe-service/**'
-              
-  build-recipe-service:
+
+  # ==========================================
+  # TEST & CODE QUALITY STAGES
+  # ==========================================
+
+  test-recipe-service:
     needs: detect-changes
     if: needs.detect-changes.outputs.recipes == 'true'
+    runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.recipes }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Code/api/recipe-service/package-lock.json
+      - name: Install dependencies
+        working-directory: ./Code/api/recipe-service
+        run: npm install && npm ci
+      - name: Circular dependencies check (Madge)
+        working-directory: ./Code/api/recipe-service
+        run: npx madge --circular .
+      - name: Linting
+        working-directory: ./Code/api/recipe-service
+        run: npm run lint --if-present
+      - name: Unit Tests
+        working-directory: ./Code/api/recipe-service
+        run: npm test --if-present
+
+  test-gateway:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.gateway == 'true'
+    runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.gateway }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Code/api/gateway/package-lock.json
+      - name: Install dependencies
+        working-directory: ./Code/api/gateway
+        run: npm install && npm ci
+      - name: Circular dependencies check (Madge)
+        working-directory: ./Code/api/gateway
+        run: npx madge --circular .
+      - name: Linting
+        working-directory: ./Code/api/gateway
+        run: npm run lint --if-present
+      - name: Unit Tests
+        working-directory: ./Code/api/gateway
+        run: npm test --if-present
+
+  test-fridge-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.fridge == 'true'
+    runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.fridge }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Code/api/fridge-service/package-lock.json
+      - name: Install dependencies
+        working-directory: ./Code/api/fridge-service
+        run: npm install && npm ci
+      - name: Circular dependencies check (Madge)
+        working-directory: ./Code/api/fridge-service
+        run: npx madge --circular .
+      - name: Linting
+        working-directory: ./Code/api/fridge-service
+        run: npm run lint --if-present
+      - name: Unit Tests
+        working-directory: ./Code/api/fridge-service
+        run: npm test --if-present
+
+  test-user-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.user == 'true'
+    runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.user }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Code/api/user-service/package-lock.json
+      - name: Install dependencies
+        working-directory: ./Code/api/user-service
+        run: npm install && npm ci
+      - name: Circular dependencies check (Madge)
+        working-directory: ./Code/api/user-service
+        run: npx madge --circular .
+      - name: Linting
+        working-directory: ./Code/api/user-service
+        run: npm run lint --if-present
+      - name: Unit Tests
+        working-directory: ./Code/api/user-service
+        run: npm test --if-present
+
+  test-sfrigo:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.sfrigo == 'true'
+    runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.sfrigo }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system dependencies (libatomic1)
+        run: sudo apt-get update && sudo apt-get install -y libatomic1 || (apt-get update && apt-get install -y libatomic1)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Code/sfrigo/package-lock.json
+      - name: Install dependencies
+        working-directory: ./Code/sfrigo
+        run: npm install && npm ci
+      - name: Circular dependencies check (Madge)
+        working-directory: ./Code/sfrigo
+        run: npx madge --circular src/
+      - name: Linting
+        working-directory: ./Code/sfrigo
+        run: npm run lint --if-present
+      - name: Unit Tests
+        working-directory: ./Code/sfrigo
+        run: npm test --if-present
+
+  # ==========================================
+  # BUILD & PUSH STAGES
+  # ==========================================
+
+  build-recipe-service:
+    needs: test-recipe-service
+    if: needs.test-recipe-service.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -54,8 +194,8 @@ jobs:
             ${{ env.REGISTRY }}/recipe-service:${{ github.sha }}
 
   build-gateway:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.gateway == 'true'
+    needs: test-gateway
+    if: needs.test-gateway.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -73,8 +213,8 @@ jobs:
             ${{ env.REGISTRY }}/gateway:${{ github.sha }}
 
   build-fridge-service:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.fridge == 'true'
+    needs: test-fridge-service
+    if: needs.test-fridge-service.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -92,8 +232,8 @@ jobs:
             ${{ env.REGISTRY }}/fridge-service:${{ github.sha }}
 
   build-user-service:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.user == 'true'
+    needs: test-user-service
+    if: needs.test-user-service.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -111,8 +251,8 @@ jobs:
             ${{ env.REGISTRY }}/user-service:${{ github.sha }}
 
   build-sfrigo:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.sfrigo == 'true'
+    needs: test-sfrigo
+    if: needs.test-sfrigo.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
