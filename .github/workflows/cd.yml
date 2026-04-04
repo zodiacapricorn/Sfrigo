@@ -33,7 +33,7 @@ jobs:
               - 'Code/sfrigo/**'
             recipes:
               - 'Code/api/recipe-service/**'
-              
+
   # ==========================================
   # TEST & CODE QUALITY STAGES
   # ==========================================
@@ -42,6 +42,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.recipes == 'true'
     runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.recipes }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -66,6 +68,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.gateway == 'true'
     runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.gateway }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -90,6 +94,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.fridge == 'true'
     runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.fridge }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -114,6 +120,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.user == 'true'
     runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.user }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -138,6 +146,8 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.sfrigo == 'true'
     runs-on: arc-runner-set
+    outputs:
+      should_build: ${{ needs.detect-changes.outputs.sfrigo }}
     steps:
       - uses: actions/checkout@v4
       - name: Install system dependencies (libatomic1)
@@ -165,8 +175,8 @@ jobs:
   # ==========================================
 
   build-recipe-service:
-    needs: [detect-changes, test-recipe-service]
-    if: needs.detect-changes.outputs.recipes == 'true'
+    needs: test-recipe-service
+    if: needs.test-recipe-service.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -184,8 +194,8 @@ jobs:
             ${{ env.REGISTRY }}/recipe-service:${{ github.sha }}
 
   build-gateway:
-    needs: [detect-changes, test-gateway]
-    if: needs.detect-changes.outputs.gateway == 'true'
+    needs: test-gateway
+    if: needs.test-gateway.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -203,8 +213,8 @@ jobs:
             ${{ env.REGISTRY }}/gateway:${{ github.sha }}
 
   build-fridge-service:
-    needs: [detect-changes, test-fridge-service]
-    if: needs.detect-changes.outputs.fridge == 'true'
+    needs: test-fridge-service
+    if: needs.test-fridge-service.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -222,8 +232,8 @@ jobs:
             ${{ env.REGISTRY }}/fridge-service:${{ github.sha }}
 
   build-user-service:
-    needs: [detect-changes, test-user-service]
-    if: needs.detect-changes.outputs.user == 'true'
+    needs: test-user-service
+    if: needs.test-user-service.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
@@ -241,8 +251,8 @@ jobs:
             ${{ env.REGISTRY }}/user-service:${{ github.sha }}
 
   build-sfrigo:
-    needs: [detect-changes, test-sfrigo]
-    if: needs.detect-changes.outputs.sfrigo == 'true'
+    needs: test-sfrigo
+    if: needs.test-sfrigo.outputs.should_build == 'true'
     runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
