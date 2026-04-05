@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where pdflatex:*)",
+      "Bash(where xelatex:*)",
+      "Bash(where lualatex:*)",
+      "Bash(python3 - c:/Users/thoma/Nextcloud/UniBG/2025-2026/Progettazione_Algoritmi_Computabilita/progetto/Sfrigo/Docs/LaTeX/documentation.tex)"
+    ]
+  }
+}
