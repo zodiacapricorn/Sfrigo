@@ -70,15 +70,11 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead{}
-\fancyfoot[LE]{\thepage}
-\fancyfoot[RO]{\thepage}
-\fancyfoot[C]{}
+\fancyfoot[C]{\thepage} % Inserisce il numero al centro (Center)
 \fancypagestyle{plain}{%
   \fancyhf{}
   \fancyhead{}
-  \fancyfoot[LE]{\thepage}
-  \fancyfoot[RO]{\thepage}
-  \fancyfoot[C]{}
+  \fancyfoot[C]{\thepage} % Al centro anche nelle pagine di inizio capitolo
 }
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
@@ -485,6 +481,7 @@ Tutti i membri possono aggiungere alimenti all'inventario. Il sistema tiene trac
 \subsection{Supporto alla Creazione di Ricette}
 
 Il modulo di generazione ricette integra un LLM (OpenAI GPT-4o-mini) per suggerire ricette basate sugli ingredienti selezionati dall'utente. Le ricette possono essere personali (solo ingredienti dell'utente) o condivise (ingredienti di tutti i membri). Al termine, gli ingredienti utilizzati vengono rimossi dall'inventario. Un algoritmo di equità garantisce una distribuzione bilanciata del contributo degli alimenti tra gli utenti nelle ricette condivise.
+
 
 \section{Use Case Diagram}
 
@@ -934,9 +931,9 @@ Il diagramma descrive il meccanismo di invito basato su token temporanei. L'Admi
 
 \newpage
 
-\subsection{Gestione Frigorifero (Modifica e Cancellazione)}
+\subsection{Gestione Frigorifero (Cancellazione)}
 
-Il diagramma illustra le operazioni di modifica del nome e cancellazione di un frigorifero, entrambe riservate all'utente con ruolo \texttt{OWNER}. Prima di eseguire qualsiasi operazione, il Fridge Service verifica il ruolo dell'utente tramite una query su \texttt{FRIDGE\_MEMBERS}; in caso di ruolo insufficiente risponde con \texttt{403 Forbidden}. La cancellazione è un'operazione a cascata: vengono eliminati in sequenza tutti gli alimenti in MongoDB, i record in \texttt{FRIDGE\_MEMBERS}, i token di invito in \texttt{FRIDGE\_INVITATIONS} e infine il record del frigorifero in \texttt{FRIDGES}.
+Il diagramma illustra le operazioni di cancellazione di un frigorifero, riservata all'utente con ruolo \texttt{OWNER}. Prima di eseguire qualsiasi operazione, il Fridge Service verifica il ruolo dell'utente tramite una query su \texttt{FRIDGE\_MEMBERS}; in caso di ruolo insufficiente risponde con \texttt{403 Forbidden}. La cancellazione è un'operazione a cascata: vengono eliminati in sequenza tutti gli alimenti in MongoDB, i record in \texttt{FRIDGE\_MEMBERS}, i token di invito in \texttt{FRIDGE\_INVITATIONS} e infine il record del frigorifero in \texttt{FRIDGES}.
 
 \begin{figure}[H]
   \centering
@@ -1092,19 +1089,15 @@ Le API sviluppate nell'Iterazione 1 sono state verificate manualmente tramite Po
 
 \begin{figure}[H]
   \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth, height=0.28\textheight, keepaspectratio]{add-item.png}
-    \caption{POST /api/v1/fridges/:id/items}
-    \label{fig:api_add}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth, height=0.28\textheight, keepaspectratio]{delete-item.png}
-    \caption{DELETE /api/v1/fridges/:id/items/:itemId}
-    \label{fig:api_delete}
-  \end{minipage}
+  \includegraphics[width=\textwidth]{add-item.png}
+  \caption{POST /api/v1/fridges/:id/items}
+  \label{fig:api_add}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{delete-item.png}
+  \caption{DELETE /api/v1/fridges/:id/items/:itemId}
+  \label{fig:api_delete}
 \end{figure}
 
 \subsection{Get Frigos e Get Items}
@@ -1115,19 +1108,15 @@ Le API sviluppate nell'Iterazione 1 sono state verificate manualmente tramite Po
 
 \begin{figure}[H]
   \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth, height=0.28\textheight, keepaspectratio]{get-frigos.png}
-    \caption{GET /api/v1/fridges}
+  \includegraphics[width=0.8\textwidth]{get-frigos.png}
+  \caption{GET /api/v1/fridges}
     \label{fig:api_frigos}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth, height=0.28\textheight, keepaspectratio]{get-items.png}
-    \caption{GET /api/v1/fridges/:id/items}
-    \label{fig:api_items}
-  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{get-items.png}
+  \caption{GET /api/v1/fridges/:id/items}
+  \label{fig:api_items}
 \end{figure}
 
 \subsection{Login tramite Firebase}
@@ -1136,7 +1125,7 @@ Il login non è gestito da un endpoint REST applicativo, ma direttamente dall'SD
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth, height=0.32\textheight, keepaspectratio]{login-firebase.png}
+  \includegraphics[width=\textwidth]{login-firebase.png}
   \caption{Verifica del token Firebase tramite Gateway}
   \label{fig:api_login}
 \end{figure}
@@ -1572,7 +1561,7 @@ La figura~\ref{fig:cicd2} mostra la struttura del grafo di esecuzione (\textit{w
   \hfill
   \begin{minipage}[t]{\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=0.28\textheight, keepaspectratio]{4.PNG}
+    \includegraphics[width=0.95\linewidth, height=0.28\textheight, keepaspectratio]{4.PNG}
     \caption{Workflow DAG -- stato \textit{Success}}
     \label{fig:cicd4}
   \end{minipage}
@@ -1609,7 +1598,7 @@ La figura~\ref{fig:cicd3} riporta il log di esecuzione del job \texttt{test-frid
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{3.PNG}
+  \includegraphics[width=\textwidth]{3.PNG}
   \caption{Log del job \texttt{test-fridge-service}}
   \label{fig:cicd3}
 \end{figure}
