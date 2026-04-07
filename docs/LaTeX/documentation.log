@@ -1,0 +1,1565 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.5)  7 APR 2026 17:53
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex
+(c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
+Document Class: report 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@chapter=\count276
+\c@section=\count277
+\c@subsection=\count278
+\c@subsubsection=\count279
+\c@paragraph=\count280
+\c@subparagraph=\count281
+\c@figure=\count282
+\c@table=\count283
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks17
+\inpenc@posthook=\toks18
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2026/03/24 v26.5 The multilingual framework for LuaLaTeX, pdfLaTeX and XeLaTeX
+\babel@savecnt=\count284
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input line 2078.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input line 2080.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input line 2082.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input line 2083.
+LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) on input line 2084.
+LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) on input line 2086.
+LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) on input line 2111.
+\U@D=\dimen149
+\l@unhyphenated=\language79
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count285
+Package babel Info: Configuration files are deprecated, as
+(babel)             they can break document portability.
+(babel)             Reported on input line 4206.
+
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of babel
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/it\babel-italian.tex)
+Package babel Info: Importing font and identification data for italian
+(babel)             from babel-it.ini. Reported on input line 4330.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/babel-italian\italian.ldf
+Language: italian 2026/01/13 v.1.5.02 Italian support for the babel system
+\it@lettering=\count286
+\it@doublequoteactive=\count287
+\it@ISOcompliance=\count288
+)) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count289
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+Package: geometry 2026/03/07 v6.0 Page Geometry
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+))
+\Gm@cnth=\count290
+\Gm@cntv=\count291
+\c@Gm@tempcnt=\count292
+\Gm@bindingoffset=\dimen150
+\Gm@wd@mp=\dimen151
+\Gm@odd@mp=\dimen152
+\Gm@even@mp=\dimen153
+\Gm@layoutwidth=\dimen154
+\Gm@layoutheight=\dimen155
+\Gm@layouthoffset=\dimen156
+\Gm@layoutvoffset=\dimen157
+\Gm@dimlist=\toks20
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+\f@nch@headwidth=\skip51
+\f@nch@offset@elh=\skip52
+\f@nch@offset@erh=\skip53
+\f@nch@offset@olh=\skip54
+\f@nch@offset@orh=\skip55
+\f@nch@offset@elf=\skip56
+\f@nch@offset@erf=\skip57
+\f@nch@offset@olf=\skip58
+\f@nch@offset@orf=\skip59
+\f@nch@height=\skip60
+\f@nch@footalignment=\skip61
+\f@nch@widthL=\skip62
+\f@nch@widthC=\skip63
+\f@nch@widthR=\skip64
+\@temptokenb=\toks21
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+Package: titlesec 2025/01/04 v2.17 Sectioning titles
+\ttl@box=\box53
+\beforetitleunit=\skip65
+\aftertitleunit=\skip66
+\ttl@plus=\dimen158
+\ttl@minus=\dimen159
+\ttl@toksa=\toks22
+\titlewidth=\dimen160
+\titlewidthlast=\dimen161
+\titlewidthfirst=\dimen162
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+Package: tocloft 2017/08/31 v2.3i parameterised ToC, etc., typesetting
+Package tocloft Info: The document has chapter divisions on input line 51.
+\cftparskip=\skip67
+\cftbeforetoctitleskip=\skip68
+\cftaftertoctitleskip=\skip69
+\cftbeforepartskip=\skip70
+\cftpartnumwidth=\skip71
+\cftpartindent=\skip72
+\cftbeforechapskip=\skip73
+\cftchapindent=\skip74
+\cftchapnumwidth=\skip75
+\cftbeforesecskip=\skip76
+\cftsecindent=\skip77
+\cftsecnumwidth=\skip78
+\cftbeforesubsecskip=\skip79
+\cftsubsecindent=\skip80
+\cftsubsecnumwidth=\skip81
+\cftbeforesubsubsecskip=\skip82
+\cftsubsubsecindent=\skip83
+\cftsubsubsecnumwidth=\skip84
+\cftbeforeparaskip=\skip85
+\cftparaindent=\skip86
+\cftparanumwidth=\skip87
+\cftbeforesubparaskip=\skip88
+\cftsubparaindent=\skip89
+\cftsubparanumwidth=\skip90
+\cftbeforeloftitleskip=\skip91
+\cftafterloftitleskip=\skip92
+\cftbeforefigskip=\skip93
+\cftfigindent=\skip94
+\cftfignumwidth=\skip95
+\c@lofdepth=\count293
+\c@lotdepth=\count294
+\cftbeforelottitleskip=\skip96
+\cftafterlottitleskip=\skip97
+\cftbeforetabskip=\skip98
+\cfttabindent=\skip99
+\cfttabnumwidth=\skip100
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.sty
+Package: csquotes 2024-04-04 v5.2o context-sensitive quotations (JAW)
+\csq@reset=\count295
+\csq@gtype=\count296
+\csq@glevel=\count297
+\csq@qlevel=\count298
+\csq@maxlvl=\count299
+\csq@tshold=\count300
+\csq@ltx@everypar=\toks23
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.def
+File: csquotes.def 2024-04-04 v5.2o csquotes generic definitions (JAW)
+)
+Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
+Package csquotes Info: ... configuration file loaded successfully.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.cfg
+File: csquotes.cfg 
+)) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen163
+\Gin@req@width=\dimen164
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2026-01-29 v7.01p Hypertext links for LaTeX
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count301
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+\@linkdim=\dimen165
+\Hy@linkcounter=\count302
+\Hy@pagecounter=\count303
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count304
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4201.
+Package hyperref Info: Link nesting OFF on input line 4206.
+Package hyperref Info: Hyper index ON on input line 4209.
+Package hyperref Info: Plain pages OFF on input line 4216.
+Package hyperref Info: Backreferencing OFF on input line 4221.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4468.
+\c@Hy@tempcnt=\count305
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4807.
+\XeTeXLinkMargin=\dimen166
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count306
+\Field@Width=\dimen167
+\Fld@charsize=\dimen168
+Package hyperref Info: Hyper figures OFF on input line 6084.
+Package hyperref Info: Link nesting OFF on input line 6089.
+Package hyperref Info: Hyper index ON on input line 6092.
+Package hyperref Info: backreferencing OFF on input line 6099.
+Package hyperref Info: Link coloring OFF on input line 6104.
+Package hyperref Info: Link coloring with OCG OFF on input line 6109.
+Package hyperref Info: PDF/A mode OFF on input line 6114.
+\Hy@abspage=\count307
+\c@Item=\count308
+\c@Hfootnote=\count309
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
+\Fld@listcount=\count310
+\c@bookmark@seq@number=\count311
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfilecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
+)
+\Hy@SectionHShift=\skip101
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/hypcap\hypcap.sty
+Package: hypcap 2024-07-26 v1.13 Adjusting the anchors of captions (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count312
+\float@exts=\toks24
+\float@box=\box54
+\@float@everytoks=\toks25
+\@floatcapt=\box55
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen169
+\captionmargin=\dimen170
+\caption@leftmargin=\dimen171
+\caption@rightmargin=\dimen172
+\caption@width=\dimen173
+\caption@indent=\dimen174
+\caption@parindent=\dimen175
+\caption@hangindent=\dimen176
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count313
+\c@continuedfloat=\count314
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: hypcap package is loaded.
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count315
+\lst@gtempboxa=\box56
+\lst@token=\toks26
+\lst@length=\count316
+\lst@currlwidth=\dimen177
+\lst@column=\count317
+\lst@pos=\count318
+\lst@lostspace=\dimen178
+\lst@width=\dimen179
+\lst@newlines=\count319
+\lst@lineno=\count320
+\lst@maxwidth=\dimen180
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
+File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
+\c@lstnumber=\count321
+\lst@skipnumbers=\count322
+\lst@framebox=\box57
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+File: listings.cfg 2025/11/14 1.11b listings configuration
+))
+Package: listings 2025/11/14 1.11b (Carsten Heinz)
+
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty
+Package: amsthm 2020/05/29 v2.20.6
+\thm@style=\toks27
+\thm@bodyfont=\toks28
+\thm@headfont=\toks29
+\thm@notefont=\toks30
+\thm@headpunct=\toks31
+\thm@preskip=\skip102
+\thm@postskip=\skip103
+\thm@headsep=\skip104
+\dth@everypar=\toks32
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2025/07/09 v2.17z AMS math features
+\@mathmargin=\skip105
+
+For additional information on amsmath, use the `?' option.
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks33
+\ex@=\dimen181
+)) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen182
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count323
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count324
+\leftroot@=\count325
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count326
+\DOTSCASE@=\count327
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box58
+\strutbox@=\box59
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen183
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count328
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count329
+\dotsspace@=\muskip18
+\c@parentequation=\count330
+\dspbrk@lvl=\count331
+\tag@help=\toks34
+\row@=\count332
+\column@=\count333
+\maxfields@=\count334
+\andhelp@=\toks35
+\eqnshift@=\dimen184
+\alignsep@=\dimen185
+\tagshift@=\dimen186
+\tagwidth@=\dimen187
+\totwidth@=\dimen188
+\lineht@=\dimen189
+\@envbody=\toks36
+\multlinegap=\skip106
+\multlinetaggap=\skip107
+\mathdisplay@stack=\toks37
+LaTeX Info: Redefining \[ on input line 2950.
+LaTeX Info: Redefining \] on input line 2951.
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen190
+\lightrulewidth=\dimen191
+\cmidrulewidth=\dimen192
+\belowrulesep=\dimen193
+\belowbottomsep=\dimen194
+\aboverulesep=\dimen195
+\abovetopsep=\dimen196
+\cmidrulesep=\dimen197
+\cmidrulekern=\dimen198
+\defaultaddspace=\dimen199
+\@cmidla=\count335
+\@cmidlb=\count336
+\@aboverulesep=\dimen256
+\@belowrulesep=\dimen257
+\@thisruleclass=\count337
+\@lastruleclass=\count338
+\@thisrulewidth=\dimen258
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
+\col@sep=\dimen259
+\ar@mcellbox=\box60
+\extrarowheight=\dimen260
+\NC@list=\toks38
+\extratabsurround=\skip108
+\backup@length=\skip109
+\ar@cellbox=\box61
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+Package: enumitem 2025/02/06 v3.11 Customized lists
+\labelindent=\skip110
+\enit@outerparindent=\dimen261
+\enit@toks=\toks39
+\enit@inbox=\box62
+\enit@count@id=\count339
+\enitdp@description=\count340
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/mdframed\mdframed.sty
+Package: mdframed 2013/07/01 1.9b: mdframed
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xparse.sty (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+Package: expl3 2026-01-19 L3 programming layer (loader) 
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count341
+))
+Package: xparse 2025-10-09 L3 Experimental document command parser
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/zref\zref-abspage.sty
+Package: zref-abspage 2026-03-07 v2.37 Module abspage for zref (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/zref\zref-base.sty
+Package: zref-base 2026-03-07 v2.37 Module base for zref (HO)
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+Package zref Info: New property list: main on input line 767.
+Package zref Info: New property: default on input line 768.
+Package zref Info: New property: page on input line 769.
+)
+\c@abspage=\count342
+Package zref Info: New property: abspage on input line 67.
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/needspace\needspace.sty
+Package: needspace 2025/03/13 v1.3e reserve vertical space
+)
+\mdf@templength=\skip111
+\c@mdf@globalstyle@cnt=\count343
+\mdf@skipabove@length=\skip112
+\mdf@skipbelow@length=\skip113
+\mdf@leftmargin@length=\skip114
+\mdf@rightmargin@length=\skip115
+\mdf@innerleftmargin@length=\skip116
+\mdf@innerrightmargin@length=\skip117
+\mdf@innertopmargin@length=\skip118
+\mdf@innerbottommargin@length=\skip119
+\mdf@splittopskip@length=\skip120
+\mdf@splitbottomskip@length=\skip121
+\mdf@outermargin@length=\skip122
+\mdf@innermargin@length=\skip123
+\mdf@linewidth@length=\skip124
+\mdf@innerlinewidth@length=\skip125
+\mdf@middlelinewidth@length=\skip126
+\mdf@outerlinewidth@length=\skip127
+\mdf@roundcorner@length=\skip128
+\mdf@footenotedistance@length=\skip129
+\mdf@userdefinedwidth@length=\skip130
+\mdf@needspace@length=\skip131
+\mdf@frametitleaboveskip@length=\skip132
+\mdf@frametitlebelowskip@length=\skip133
+\mdf@frametitlerulewidth@length=\skip134
+\mdf@frametitleleftmargin@length=\skip135
+\mdf@frametitlerightmargin@length=\skip136
+\mdf@shadowsize@length=\skip137
+\mdf@extratopheight@length=\skip138
+\mdf@subtitleabovelinewidth@length=\skip139
+\mdf@subtitlebelowlinewidth@length=\skip140
+\mdf@subtitleaboveskip@length=\skip141
+\mdf@subtitlebelowskip@length=\skip142
+\mdf@subtitleinneraboveskip@length=\skip143
+\mdf@subtitleinnerbelowskip@length=\skip144
+\mdf@subsubtitleabovelinewidth@length=\skip145
+\mdf@subsubtitlebelowlinewidth@length=\skip146
+\mdf@subsubtitleaboveskip@length=\skip147
+\mdf@subsubtitlebelowskip@length=\skip148
+\mdf@subsubtitleinneraboveskip@length=\skip149
+\mdf@subsubtitleinnerbelowskip@length=\skip150
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/mdframed\md-frame-0.mdf
+File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
+)
+\mdf@frametitlebox=\box63
+\mdf@footnotebox=\box64
+\mdf@splitbox@one=\box65
+\mdf@splitbox@two=\box66
+\mdf@splitbox@save=\box67
+\mdfsplitboxwidth=\skip151
+\mdfsplitboxtotalwidth=\skip152
+\mdfsplitboxheight=\skip153
+\mdfsplitboxdepth=\skip154
+\mdfsplitboxtotalheight=\skip155
+\mdfframetitleboxwidth=\skip156
+\mdfframetitleboxtotalwidth=\skip157
+\mdfframetitleboxheight=\skip158
+\mdfframetitleboxdepth=\skip159
+\mdfframetitleboxtotalheight=\skip160
+\mdffootnoteboxwidth=\skip161
+\mdffootnoteboxtotalwidth=\skip162
+\mdffootnoteboxheight=\skip163
+\mdffootnoteboxdepth=\skip164
+\mdffootnoteboxtotalheight=\skip165
+\mdftotallinewidth=\skip166
+\mdfboundingboxwidth=\skip167
+\mdfboundingboxtotalwidth=\skip168
+\mdfboundingboxheight=\skip169
+\mdfboundingboxdepth=\skip170
+\mdfboundingboxtotalheight=\skip171
+\mdf@freevspace@length=\skip172
+\mdf@horizontalwidthofbox@length=\skip173
+\mdf@verticalmarginwhole@length=\skip174
+\mdf@horizontalspaceofbox=\skip175
+\mdfsubtitleheight=\skip176
+\mdfsubsubtitleheight=\skip177
+\c@mdfcountframes=\count344
+
+****** mdframed patching \endmdf@trivlist
+
+****** -- success******
+
+\mdf@envdepth=\count345
+\c@mdf@env@i=\count346
+\c@mdf@env@ii=\count347
+\c@mdf@zref@counter=\count348
+Package zref Info: New property: mdf@pagevalue on input line 895.
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
+\TX@col@width=\dimen262
+\TX@old@table=\dimen263
+\TX@old@col=\dimen264
+\TX@target=\dimen265
+\TX@delta=\dimen266
+\TX@cols=\count349
+\TX@ftn=\toks40
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip178
+\multirow@cntb=\count350
+\multirow@dima=\skip179
+\bigstrutjot=\dimen267
+)
+\c@theorem=\count351
+Package csquotes Info: Checking for multilingual support...
+Package csquotes Info: ... found 'babel' package.
+Package csquotes Info: Adjusting default style.
+Package csquotes Info: Redefining alias 'default' -> 'italian'.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 154.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) (documentation.aux)
+\openout1 = `documentation.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 154.
+LaTeX Font Info:    ... okay on input line 154.
+LaTeX Info: Redefining \it@ocap on input line 154.
+LaTeX Info: Redefining \it@ccap on input line 154.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: twoside 
+* h-part:(L,W,R)=(99.58464pt, 412.56497pt, 85.35826pt)
+* v-part:(T,H,B)=(85.35826pt, 674.33032pt, 85.35826pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=412.56497pt
+* \textheight=674.33032pt
+* \oddsidemargin=27.31465pt
+* \evensidemargin=13.08827pt
+* \topmargin=-23.91173pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=85.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count352
+\scratchdimen=\dimen268
+\scratchbox=\box68
+\nofMPsegments=\count353
+\nofMParguments=\count354
+\everyMPshowfont=\toks41
+\MPscratchCnt=\count355
+\MPscratchDim=\dimen269
+\MPnumerator=\count356
+\makeMPintoPDFobject=\count357
+\everyMPtoPDFconversion=\toks42
+) (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+Package hyperref Info: Link coloring OFF on input line 154.
+\@outlinefile=\write3
+\openout3 = `documentation.out'.
+
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: listings package is loaded.
+Package caption Info: End \AtBeginDocument code.
+\c@lstlisting=\count358
+
+
+LaTeX Warning: File `logo_uni.jpg' not found on input line 162.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:162: Package pdftex.def Error: File `logo_uni.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...26\textwidth, height=3.5cm]{logo_uni.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 162.
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [1
+
+{C:/Users/petri/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
+No file documentation.toc.
+\tf@toc=\write4
+\openout4 = `documentation.toc'.
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.200 \chapter
+              {Contesto e Motivazioni} [1]
+Capitolo 1.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 213.
+(C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [2
+
+{C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] [3]
+Capitolo 2.
+
+LaTeX Warning: File `deployment_diagram.PNG' not found on input line 241.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:241: Package pdftex.def Error: File `deployment_diagram.PNG' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.241 ... keepaspectratio]{deployment_diagram.PNG}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4
+
+]
+Overfull \hbox (2.04268pt too wide) in paragraph at lines 262--263
+[]\T1/lmr/m/n/12 Iniettare le in-for-ma-zio-ni sul-l'u-ten-te au-ten-ti-ca-to (\T1/lmtt/m/n/12 X-User-Id\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 X-User-Email\T1/lmr/m/n/12 )
+ []
+
+[5] [6]
+Capitolo 3.
+
+Package enumitem Warning: Negative labelwidth. This does not make much
+(enumitem)                sense, on input line 294.
+
+[7
+
+] [8]
+Overfull \hbox (62.59482pt too wide) in paragraph at lines 338--339
+[]\T1/lmr/m/n/12 I cam-pi \T1/lmtt/m/n/12 sharing_status.is_common_use \T1/lmr/m/n/12 e \T1/lmtt/m/n/12 sharing_status.is_available_for_loan
+ []
+
+
+Package enumitem Warning: Negative labelwidth. This does not make much
+(enumitem)                sense, on input line 346.
+
+
+Overfull \hbox (1.03157pt too wide) in paragraph at lines 354--355
+\T1/lmr/m/n/12 pe-ro pas-sword. Fi-re-ba-se of-fre pro-vi-der OAuth in-te-gra-ti (Goo-gle, email/password),
+ []
+
+[9]
+Overfull \hbox (15.90428pt too wide) in paragraph at lines 363--364
+\T1/lmr/m/n/12 ESLint � in-te-gra-to in ogni ser-vi-zio con la con-fi-gu-ra-zio-ne spe-ci-fi-ca per No-de.js/Next.js,
+ []
+
+[10] [11]
+Capitolo 4.
+[12
+
+] [13]
+Capitolo 5.
+[14
+
+] [15]
+Capitolo 6.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [16
+
+]
+
+LaTeX Warning: File `use_case_diagram.PNG' not found on input line 490.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:490: Package pdftex.def Error: File `use_case_diagram.PNG' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.490 ...dth=0.75\textwidth]{use_case_diagram.PNG}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [17]
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 504.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
+File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 504.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 504.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 504.
+ (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
+File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 504.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 504.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 504.
+ [18]
+
+LaTeX Warning: File `deployment_diagram.PNG' not found on input line 569.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:569: Package pdftex.def Error: File `deployment_diagram.PNG' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.569 ... keepaspectratio]{deployment_diagram.PNG}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [19] [20]
+Capitolo 7.
+[21
+
+]
+Package mdframed Info: mdframed works in twoside mode on input line 613.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 613.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-1' on page 22 undefined on input line 621.
+
+[22]
+Package mdframed Info: mdframed works in twoside mode on input line 633.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 633.
+
+Overfull \hbox (1.12395pt too wide) in paragraph at lines 639--640
+   [] \T1/lmr/m/n/12 Pro-fi-lo uten-te crea-to in Fi-re-ba-se e in Post-gre-SQL; uten-
+ []
+
+
+LaTeX Warning: Reference `mdf@pagelabel-2' on page 23 undefined on input line 642.
+
+[23]
+Package mdframed Info: mdframed works in twoside mode on input line 664.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 664.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-3' on page 24 undefined on input line 673.
+
+[24]
+Package mdframed Info: mdframed works in twoside mode on input line 688.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 688.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-4' on page 25 undefined on input line 697.
+
+[25]
+Package mdframed Info: mdframed works in twoside mode on input line 716.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 716.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-5' on page 26 undefined on input line 725.
+
+[26]
+Package mdframed Info: mdframed works in twoside mode on input line 737.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 737.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-6' on page 27 undefined on input line 746.
+
+[27]
+Package mdframed Info: mdframed works in twoside mode on input line 761.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 761.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-7' on page 28 undefined on input line 770.
+
+Package mdframed Info: mdframed works in twoside mode on input line 774.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 774.
+
+LaTeX Warning: Reference `mdf@pagelabel-8' on page 28 undefined on input line 783.
+
+[28]
+Package mdframed Info: mdframed works in twoside mode on input line 798.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 798.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-9' on page 29 undefined on input line 807.
+
+[29]
+Package mdframed Info: mdframed works in twoside mode on input line 820.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 820.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-10' on page 30 undefined on input line 829.
+
+[30]
+Package mdframed Info: mdframed works in twoside mode on input line 843.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 843.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-11' on page 31 undefined on input line 852.
+
+
+Overfull \hbox (14.61252pt too wide) in paragraph at lines 858--859
+[]\T1/lmr/m/n/12 Il Frid-ge Ser-vi-ce ri-muo-ve il re-cord da \T1/lmtt/m/n/12 FRIDGES \T1/lmr/m/n/12 (con ca-sca-de su \T1/lmtt/m/n/12 FRIDGE_MEMBERS
+ []
+
+[31]
+<../Iteration_1/Component_Diagaram_V1.jpg, id=252, 892.83563pt x 441.14813pt>
+File: ../Iteration_1/Component_Diagaram_V1.jpg Graphic file (type jpg)
+<use ../Iteration_1/Component_Diagaram_V1.jpg>
+Package pdftex.def Info: ../Iteration_1/Component_Diagaram_V1.jpg  used on input line 869.
+(pdftex.def)             Requested size: 412.56218pt x 203.84607pt.
+ [32 <../Iteration_1/Component_Diagaram_V1.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/auth.jpg, id=260, 741.52031pt x 505.89pt>
+File: ../Iteration_1/Sequence_Diagram/V1/auth.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/auth.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/auth.jpg  used on input line 888.
+(pdftex.def)             Requested size: 412.56696pt x 281.467pt.
+ [33 <../Iteration_1/Sequence_Diagram/V1/auth.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/add_goods.jpg, id=267, 679.78969pt x 573.64313pt>
+File: ../Iteration_1/Sequence_Diagram/V1/add_goods.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/add_goods.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/add_goods.jpg  used on input line 901.
+(pdftex.def)             Requested size: 412.56543pt x 348.14491pt.
+ [34 <../Iteration_1/Sequence_Diagram/V1/add_goods.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/creation_fridge.jpg, id=274, 555.57562pt x 418.56375pt>
+File: ../Iteration_1/Sequence_Diagram/V1/creation_fridge.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/creation_fridge.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/creation_fridge.jpg  used on input line 914.
+(pdftex.def)             Requested size: 412.56914pt x 310.82445pt.
+ [35 <../Iteration_1/Sequence_Diagram/V1/creation_fridge.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/invite_usr_fridge.jpg, id=281, 643.6547pt x 603.75563pt>
+File: ../Iteration_1/Sequence_Diagram/V1/invite_usr_fridge.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/invite_usr_fridge.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/invite_usr_fridge.jpg  used on input line 927.
+(pdftex.def)             Requested size: 412.57599pt x 387.0011pt.
+ [36 <../Iteration_1/Sequence_Diagram/V1/invite_usr_fridge.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/mod_del_fridge.jpg, id=289, 560.0925pt x 520.94624pt>
+File: ../Iteration_1/Sequence_Diagram/V1/mod_del_fridge.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/mod_del_fridge.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/mod_del_fridge.jpg  used on input line 940.
+(pdftex.def)             Requested size: 412.58177pt x 383.7454pt.
+ [37 <../Iteration_1/Sequence_Diagram/V1/mod_del_fridge.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/show_goods.jpg, id=296, 687.31781pt x 580.41844pt>
+File: ../Iteration_1/Sequence_Diagram/V1/show_goods.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/show_goods.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/show_goods.jpg  used on input line 953.
+(pdftex.def)             Requested size: 412.56166pt x 348.39545pt.
+ [38 <../Iteration_1/Sequence_Diagram/V1/show_goods.jpg>]
+<../Iteration_1/Sequence_Diagram/V1/show_fridge.jpg, id=303, 554.82281pt x 438.13687pt>
+File: ../Iteration_1/Sequence_Diagram/V1/show_fridge.jpg Graphic file (type jpg)
+<use ../Iteration_1/Sequence_Diagram/V1/show_fridge.jpg>
+Package pdftex.def Info: ../Iteration_1/Sequence_Diagram/V1/show_fridge.jpg  used on input line 966.
+(pdftex.def)             Requested size: 412.56888pt x 325.80064pt.
+ [39 <../Iteration_1/Sequence_Diagram/V1/show_fridge.jpg>]
+<../Iteration_1/Class_Diagram/Iteration_1_cd_data_type.jpg, id=310, 420.06938pt x 508.14844pt>
+File: ../Iteration_1/Class_Diagram/Iteration_1_cd_data_type.jpg Graphic file (type jpg)
+<use ../Iteration_1/Class_Diagram/Iteration_1_cd_data_type.jpg>
+Package pdftex.def Info: ../Iteration_1/Class_Diagram/Iteration_1_cd_data_type.jpg  used on input line 983.
+(pdftex.def)             Requested size: 288.79422pt x 349.35118pt.
+ [40 <../Iteration_1/Class_Diagram/Iteration_1_cd_data_type.jpg>]
+<../Iteration_1/Testing/Static_Analisis_Eslint.jpg, id=317, 779.91376pt x 526.96875pt>
+File: ../Iteration_1/Testing/Static_Analisis_Eslint.jpg Graphic file (type jpg)
+<use ../Iteration_1/Testing/Static_Analisis_Eslint.jpg>
+Package pdftex.def Info: ../Iteration_1/Testing/Static_Analisis_Eslint.jpg  used on input line 996.
+(pdftex.def)             Requested size: 412.5669pt x 278.7614pt.
+
+Underfull \vbox (badness 1383) has occurred while \output is active []
+
+ [41 <../Iteration_1/Testing/Static_Analisis_Eslint.jpg>] (C:\Users\petri\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
+File: lstlang1.sty 2025/11/14 1.11b listings language file
+)
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 1011.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [42]
+<../Iteration_1/Testing/Dynamic_Analisis_Coverage_jest.jpg, id=374, 744.53156pt x 243.91125pt>
+File: ../Iteration_1/Testing/Dynamic_Analisis_Coverage_jest.jpg Graphic file (type jpg)
+<use ../Iteration_1/Testing/Dynamic_Analisis_Coverage_jest.jpg>
+Package pdftex.def Info: ../Iteration_1/Testing/Dynamic_Analisis_Coverage_jest.jpg  used on input line 1073.
+(pdftex.def)             Requested size: 412.57236pt x 135.16019pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [43 <../Iteration_1/Testing/Dynamic_Analisis_Coverage_jest.jpg>]
+Overfull \hbox (13.46114pt too wide) in paragraph at lines 1088--1089
+[]\T1/lmtt/m/n/12 DELETE /api/v1/fridges/:fridgeId/items/:itemId \T1/lmr/m/n/12 ri-muo-ve l'a-li-men-to iden-
+ []
+
+<../Iteration_1/Test_API/add-item.png, id=397, 965.85844pt x 611.28375pt>
+File: ../Iteration_1/Test_API/add-item.png Graphic file (type png)
+<use ../Iteration_1/Test_API/add-item.png>
+Package pdftex.def Info: ../Iteration_1/Test_API/add-item.png  used on input line 1092.
+(pdftex.def)             Requested size: 412.56497pt x 261.11198pt.
+<../Iteration_1/Test_API/delete-item.png, id=399, 965.85844pt x 225.09094pt>
+File: ../Iteration_1/Test_API/delete-item.png Graphic file (type png)
+<use ../Iteration_1/Test_API/delete-item.png>
+Package pdftex.def Info: ../Iteration_1/Test_API/delete-item.png  used on input line 1098.
+(pdftex.def)             Requested size: 330.05322pt x 76.91801pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [44 <../Iteration_1/Test_API/add-item.png>]
+Overfull \hbox (2.13048pt too wide) in paragraph at lines 1107--1108
+[]\T1/lmtt/m/n/12 GET /api/v1/fridges/:fridgeId/items \T1/lmr/m/n/12 re-sti-tui-sce l'in-ven-ta-rio com-ple-to del
+ []
+
+<../Iteration_1/Test_API/get-frigos.png, id=408, 965.10562pt x 352.31625pt>
+File: ../Iteration_1/Test_API/get-frigos.png Graphic file (type png)
+<use ../Iteration_1/Test_API/get-frigos.png>
+Package pdftex.def Info: ../Iteration_1/Test_API/get-frigos.png  used on input line 1111.
+(pdftex.def)             Requested size: 330.05322pt x 120.4848pt.
+<../Iteration_1/Test_API/get-items.png, id=409, 964.35281pt x 463.7325pt>
+File: ../Iteration_1/Test_API/get-items.png Graphic file (type png)
+<use ../Iteration_1/Test_API/get-items.png>
+Package pdftex.def Info: ../Iteration_1/Test_API/get-items.png  used on input line 1117.
+(pdftex.def)             Requested size: 330.05322pt x 158.7142pt.
+[45 <../Iteration_1/Test_API/delete-item.png> <../Iteration_1/Test_API/get-frigos.png> <../Iteration_1/Test_API/get-items.png>]
+<../Iteration_1/Test_API/login-firebase.png, id=421, 1114.1625pt x 526.96875pt>
+File: ../Iteration_1/Test_API/login-firebase.png Graphic file (type png)
+<use ../Iteration_1/Test_API/login-firebase.png>
+Package pdftex.def Info: ../Iteration_1/Test_API/login-firebase.png  used on input line 1128.
+(pdftex.def)             Requested size: 412.56497pt x 195.12816pt.
+ [46 <../Iteration_1/Test_API/login-firebase.png>]
+Capitolo 8.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [47
+
+]
+Package mdframed Info: mdframed works in twoside mode on input line 1167.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1167.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-12' on page 48 undefined on input line 1176.
+
+[48]
+Package mdframed Info: mdframed works in twoside mode on input line 1189.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1189.
+
+Overfull \hbox (9.2659pt too wide) in paragraph at lines 1195--1196
+   [] \T1/lmr/m/n/12 Il do-cu-men-to Mon-goDB del-l'a-li-men-to con-tie-ne \T1/lmtt/m/n/12 owner_id
+ []
+
+
+LaTeX Warning: Reference `mdf@pagelabel-13' on page 49 undefined on input line 1198.
+
+[49]
+Package mdframed Info: mdframed works in twoside mode on input line 1203.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1203.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-14' on page 50 undefined on input line 1212.
+
+[50{C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Package mdframed Info: mdframed works in twoside mode on input line 1233.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1233.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-15' on page 51 undefined on input line 1242.
+
+[51]
+Package mdframed Info: mdframed works in twoside mode on input line 1261.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1261.
+
+
+LaTeX Warning: Reference `mdf@pagelabel-16' on page 52 undefined on input line 1270.
+
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 1281.
+[52] [53{C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
+Package mdframed Info: mdframed works in twoside mode on input line 1321.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1321.
+
+Overfull \hbox (4.98108pt too wide) in paragraph at lines 1327--1328
+   [] \T1/lmr/m/n/12 Vi-sua-liz-za-zio-ne del rie-pi-lo-go con-tri-bu-ti-vo per ogni mem-
+ []
+
+
+LaTeX Warning: Reference `mdf@pagelabel-17' on page 54 undefined on input line 1330.
+
+[54] [55]
+Underfull \hbox (badness 10000) in paragraph at lines 1400--1402
+
+ []
+
+[56]
+Package mdframed Info: mdframed works in twoside mode on input line 1412.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1412.
+
+Overfull \hbox (0.93387pt too wide) in paragraph at lines 1417--1418
+   [] \T1/lmr/m/n/12 Uten-te log-ga-to; mem-bro del fri-go-ri-fe-ro con ruo-lo MEM-
+ []
+
+
+LaTeX Warning: Reference `mdf@pagelabel-18' on page 57 undefined on input line 1421.
+
+Package mdframed Info: mdframed works in twoside mode on input line 1425.
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1425.
+
+Overfull \hbox (0.32059pt too wide) in paragraph at lines 1431--1432
+   [] \T1/lmr/m/n/12 Mem-bro ri-mos-so da \T1/lmtt/m/n/12 FRIDGE_MEMBERS\T1/lmr/m/n/12 ; il mem-bro espul-
+ []
+
+
+LaTeX Warning: Reference `mdf@pagelabel-19' on page 57 undefined on input line 1434.
+
+[57]
+
+LaTeX Warning: File `get_recipe.jpg' not found on input line 1447.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1447: Package pdftex.def Error: File `get_recipe.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1447 ...ics[width=0.6\textwidth]{get_recipe.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[58]
+
+LaTeX Warning: File `get_equity.jpg' not found on input line 1460.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1460: Package pdftex.def Error: File `get_equity.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1460 ...height, keepaspectratio]{get_equity.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[59]
+
+LaTeX Warning: File `remove_user.jpg' not found on input line 1473.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1473: Package pdftex.def Error: File `remove_user.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1473 ...eight, keepaspectratio]{remove_user.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[60]
+<../iteration_2/tests/Coverage-fridge.jpg, id=619, 1274.51157pt x 624.83438pt>
+File: ../iteration_2/tests/Coverage-fridge.jpg Graphic file (type jpg)
+<use ../iteration_2/tests/Coverage-fridge.jpg>
+Package pdftex.def Info: ../iteration_2/tests/Coverage-fridge.jpg  used on input line 1487.
+(pdftex.def)             Requested size: 412.55832pt x 202.25836pt.
+<../iteration_2/tests/Coverage-recipie.jpg, id=620, 1139.75812pt x 604.50844pt>
+File: ../iteration_2/tests/Coverage-recipie.jpg Graphic file (type jpg)
+<use ../iteration_2/tests/Coverage-recipie.jpg>
+Package pdftex.def Info: ../iteration_2/tests/Coverage-recipie.jpg  used on input line 1494.
+(pdftex.def)             Requested size: 412.55609pt x 218.81277pt.
+ [61 <../iteration_2/tests/Coverage-fridge.jpg> <../iteration_2/tests/Coverage-recipie.jpg>]
+<../iteration_2/test_API/equity.PNG, id=629, 1099.10625pt x 889.07156pt>
+File: ../iteration_2/test_API/equity.PNG Graphic file (type png)
+<use ../iteration_2/test_API/equity.PNG>
+Package pdftex.def Info: ../iteration_2/test_API/equity.PNG  used on input line 1513.
+(pdftex.def)             Requested size: 198.01506pt x 160.1752pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1514--1514
+[]\T1/lmr/m/n/12 Figura 8.6: |GET
+ []
+
+<../iteration_2/test_API/recipes.PNG, id=630, 1099.85907pt x 1019.30812pt>
+File: ../iteration_2/test_API/recipes.PNG Graphic file (type png)
+<use ../iteration_2/test_API/recipes.PNG>
+Package pdftex.def Info: ../iteration_2/test_API/recipes.PNG  used on input line 1520.
+(pdftex.def)             Requested size: 198.01643pt x 183.5142pt.
+
+Overfull \hbox (8.19055pt too wide) in paragraph at lines 1528--1529
+\T1/lmtt/m/n/12 DELETE /api/v1/fridges/:fridgeId/members/:userId \T1/lmr/m/n/12 ri-muo-ve il mem-bro iden-
+ []
+
+<../iteration_2/test_API/espulsione.PNG, id=631, 1101.36469pt x 324.46219pt>
+File: ../iteration_2/test_API/espulsione.PNG Graphic file (type png)
+<use ../iteration_2/test_API/espulsione.PNG>
+Package pdftex.def Info: ../iteration_2/test_API/espulsione.PNG  used on input line 1532.
+(pdftex.def)             Requested size: 309.42195pt x 91.15573pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [62 <../iteration_2/test_API/equity.PNG> <../iteration_2/test_API/recipes.PNG>] [63 <../iteration_2/test_API/espulsione.PNG>]
+Capitolo 9.
+
+LaTeX Warning: Reference `fig:cicd2' on page 64 undefined on input line 1550.
+
+
+LaTeX Warning: Reference `fig:cicd4' on page 64 undefined on input line 1550.
+
+<../iteration_2/pipelines/2.PNG, id=648, 1431.09656pt x 694.84593pt>
+File: ../iteration_2/pipelines/2.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/2.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/2.PNG  used on input line 1556.
+(pdftex.def)             Requested size: 388.86879pt x 188.80898pt.
+<../iteration_2/pipelines/4.PNG, id=649, 1422.0628pt x 621.07031pt>
+File: ../iteration_2/pipelines/4.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/4.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/4.PNG  used on input line 1563.
+(pdftex.def)             Requested size: 391.92558pt x 171.16919pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [64
+
+] [65 <../iteration_2/pipelines/2.PNG> <../iteration_2/pipelines/4.PNG>]
+
+LaTeX Warning: Reference `fig:cicd3' on page 66 undefined on input line 1589.
+
+
+LaTeX Warning: Reference `fig:cicd5' on page 66 undefined on input line 1589.
+
+<../iteration_2/pipelines/5.PNG, id=665, 600.74437pt x 450.18187pt>
+File: ../iteration_2/pipelines/5.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/5.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/5.PNG  used on input line 1593.
+(pdftex.def)             Requested size: 412.56497pt x 309.17642pt.
+<../iteration_2/pipelines/3.PNG, id=666, 1427.3325pt x 698.61pt>
+File: ../iteration_2/pipelines/3.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/3.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/3.PNG  used on input line 1600.
+(pdftex.def)             Requested size: 412.56497pt x 201.93079pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [66 <../iteration_2/pipelines/5.PNG>]
+<../iteration_2/pipelines/1.PNG, id=674, 1440.88312pt x 686.565pt>
+File: ../iteration_2/pipelines/1.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/1.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/1.PNG  used on input line 1611.
+(pdftex.def)             Requested size: 412.56497pt x 196.574pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [67 <../iteration_2/pipelines/3.PNG> <../iteration_2/pipelines/1.PNG>]
+<../iteration_2/pipelines/0.PNG, id=684, 1428.83812pt x 694.09312pt>
+File: ../iteration_2/pipelines/0.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/0.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/0.PNG  used on input line 1626.
+(pdftex.def)             Requested size: 330.05322pt x 160.32648pt.
+ [68 <../iteration_2/pipelines/0.PNG>]
+<../iteration_2/pipelines/6.PNG, id=692, 1431.84938pt x 694.09312pt>
+File: ../iteration_2/pipelines/6.PNG Graphic file (type png)
+<use ../iteration_2/pipelines/6.PNG>
+Package pdftex.def Info: ../iteration_2/pipelines/6.PNG  used on input line 1637.
+(pdftex.def)             Requested size: 412.56497pt x 199.98975pt.
+ [69 <../iteration_2/pipelines/6.PNG>]
+Capitolo 10.
+
+LaTeX Warning: File `./img/home.jpg' not found on input line 1647.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1647: Package pdftex.def Error: File `./img/home.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1647 ...aphics[width=\textwidth]{./img/home.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `./img/login.jpg' not found on input line 1654.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1654: Package pdftex.def Error: File `./img/login.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1654 ...phics[width=\textwidth]{./img/login.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [70
+
+]
+
+LaTeX Warning: File `./img/dashboard.jpg' not found on input line 1661.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1661: Package pdftex.def Error: File `./img/dashboard.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1661 ...dth=0.93\textwidth]{./img/dashboard.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [71]
+
+LaTeX Warning: File `./img/inventario.jpg' not found on input line 1668.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1668: Package pdftex.def Error: File `./img/inventario.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1668 ...th=0.93\textwidth]{./img/inventario.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [72]
+
+LaTeX Warning: File `./img/aggiungi alimento.jpg' not found on input line 1675.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1675: Package pdftex.def Error: File `./img/aggiungi alimento.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1675 ...\textwidth]{./img/aggiungi alimento.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [73]
+
+LaTeX Warning: File `./img/equità.jpg' not found on input line 1682.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1682: Package pdftex.def Error: File `./img/equità.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1682 ...width=0.93\textwidth]{./img/equità.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [74]
+
+LaTeX Warning: File `./img/ricetta.jpg' not found on input line 1689.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1689: Package pdftex.def Error: File `./img/ricetta.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1689 ...width=0.93\textwidth]{./img/ricetta.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [75]
+
+LaTeX Warning: File `./img/ricette suggerite.jpg' not found on input line 1696.
+
+
+c:/Users/petri/Desktop/Sfrigo/docs/LaTeX/documentation.tex:1696: Package pdftex.def Error: File `./img/ricette suggerite.jpg' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1696 ...\textwidth]{./img/ricette suggerite.jpg}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [76] [77] (documentation.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ ***********
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `documentation.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `documentation.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  F00E95F1F0978782099A2AF93DB40169;18935.
+ ) 
+Here is how much of TeX's memory you used:
+ 19317 strings out of 467867
+ 323270 string characters out of 5418335
+ 1217325 words of memory out of 5000000
+ 47491 multiletter control sequences out of 15000+600000
+ 681405 words of font info for 69 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 76i,12n,79p,1087b,2152s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/petri/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
+Output written on documentation.pdf (78 pages, 3044490 bytes).
+PDF statistics:
+ 891 PDF objects out of 1000 (max. 8388607)
+ 436 named destinations out of 1000 (max. 500000)
+ 141 words of extra memory for PDF output out of 10000 (max. 10000000)
+
