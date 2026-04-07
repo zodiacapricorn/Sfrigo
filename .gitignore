@@ -2,11 +2,3 @@ Deployment/kube/
 *.env
 node_modules/
 serviceAccountKey.json
-
-Docs/LaTeX/documentation.out
-Docs/LaTeX/documentation.log
-Docs/LaTeX/documentation.aux
-Docs/LaTeX/documentation.fls
-Docs/LaTeX/documentation.fdb_latexmk
-Docs/LaTeX/documentation.toc
-Docs/LaTeX/documentation.synctex.gz
