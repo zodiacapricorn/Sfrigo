@@ -1253,10 +1253,9 @@ La terza area riguarda la \textbf{gestione avanzata dei membri}: UC10 introduce 
   \item Il sistema invia la richiesta all'API OpenAI e genera una lista di ricette suggerite.
   \item L'utente visualizza le ricette proposte e sceglie quella desiderata.
   \item L'utente clicca su \textit{``Usa questa ricetta''}.
-  \item Il sistema rimuove dall'inventario condiviso gli ingredienti selezionati.
+  \item Il sistema salva la ricetta in MongoDB e successivamente rimuove dall'inventario condiviso gli ingredienti selezionati. (E' stato inserito un bottone, che permette di vedere le ricette condivise passate, affianco al bottone \textit{Ricetta AI})
 \end{enumerate}
 
-\newpage
 \subsection{UC9 -- Algoritmo di Sorting}
 
 \begin{ucbox}
@@ -1320,7 +1319,7 @@ Per la modalità \textit{urgency} è stato adottato uno \textbf{score composito}
 \subsection{UC10 -- Algoritmo di Equità}
 
 \begin{ucbox}
-\textbf{Descrizione:} Il sistema calcola e visualizza la distribuzione equa del contributo alimentare tra i membri del frigorifero condiviso. L'algoritmo considera il valore (stimato o effettivo) degli alimenti inseriti da ciascun utente e calcola quante risorse ciascun membro ha messo a disposizione della collettività, esprimendo il risultato in termini monetari o percentuali.
+\textbf{Descrizione:} Il sistema calcola e visualizza la distribuzione equa del contributo alimentare tra i membri del frigorifero condiviso. L'algoritmo considera il valore effettivo degli alimenti inseriti da ciascun utente presi da MongoDB e calcola quante risorse ciascun membro ha messo a disposizione della collettività, esprimendo il risultato in termini percentuali.
 
 \begin{description}[leftmargin=4cm, style=sameline]
   \item[Attori Coinvolti:] Utente membro del frigorifero
